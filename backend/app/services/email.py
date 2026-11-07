@@ -49,7 +49,8 @@ class EmailService:
         if self._settings.email_driver == "resend" and self._settings.resend_api_key:
             await self._send_resend(to=to, subject=subject, link=link)
         else:
-            # Console driver: log the link (never any secret code or PII body).
+            # Console driver. The structured log records only that an email of
+            # this purpose went out — never the address or the link.
             _logger.info(
                 "email_sent",
                 extra={"route": "email", "purpose": purpose},
@@ -57,6 +58,11 @@ class EmailService:
             _outbox.append(
                 SentEmail(to=to, subject=subject, link=link, purpose=purpose)
             )
+            # Local development only: print the link so a developer can click
+            # it (there is no inbox). Production refuses to start with the
+            # console driver (config.Settings), so links never reach prod logs.
+            if self._settings.environment == "development":
+                print(f"[prohori email] {purpose}: {link}", flush=True)
 
     async def _send_resend(self, *, to: str, subject: str, link: str) -> None:
         import resend  # imported lazily so dev/test never needs the package

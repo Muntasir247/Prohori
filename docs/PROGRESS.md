@@ -53,12 +53,34 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
     `alembic upgrade head --sql` emits the full DDL for all 24 tables and
     `alembic downgrade head:base --sql` emits a clean reverse. ruff clean; the 32
     offline pytest suite is unaffected.
-  - **Not verified / outstanding:** live `upgrade → downgrade → upgrade` against
-    Postgres, and the "UPDATE on audit_events fails" proof — this machine has no
-    Postgres and the venv lacks `asyncpg` (install deps + `make migrate`). **The
-    seed (`scripts/seed.py`) is still not built — blocked on
-    `backend/seed/messages.json` from Prompt P4.** Seeded-counts acceptance is
-    pending that.
+  - **Seed (done):** `backend/seed/messages.json` (30 Prompt-P4 messages, 15
+    scam / 15 genuine, bn/en/banglish) is in place, alongside `scam_types.json`
+    (6), `samples.json` (6), `tips.json` (2) and `safe_actions.json` (10 — the six
+    generic actions plus the bKash row active with phone 16247 + source + verified
+    date, and Nagad 16167 / Rocket / Upay left inactive pending team verification).
+    `scripts/seed.py` is idempotent (reference rows upsert by PK; the simulated set
+    uses deterministic `uuid5` ids + `ON CONFLICT DO NOTHING`), reads the three
+    demo-user passwords from `SEED_*_PASSWORD` env vars (never hard-coded), masks
+    all digit runs out of stored text, stores numbers only as HMAC + masked
+    display, tags every simulated row `simulated-v1`, and prints a warning listing
+    the unverified provider rows. It generates **500 checks over 90 days, 120 cases
+    across all six statuses**, 40 repeat numbers, 6 campaigns, case notes and daily
+    aggregates so the dashboard has data.
+  - **Verified (offline):** `python scripts/seed.py --dry-run` builds and validates
+    every row with no database (asserts 6/6/2/10/3 reference rows, 500 checks, 120
+    cases across all statuses, distinct case→check links, `final_level` only
+    Low/Medium/High, and that no 4+ digit run survives in any stored text). ruff
+    clean; the 32-test offline pytest suite still passes.
+  - **Not verified / outstanding:** the live database proofs — `upgrade →
+    downgrade → upgrade`, seed-twice idempotency, actual row counts, and the
+    "UPDATE on `audit_events` fails" trigger proof. This machine has **no Postgres,
+    Docker, `psql` or `asyncpg`** and no `.env`, so none could run here. To run them
+    (from `backend/`, with `asyncpg` installed and `DATABASE_URL` + `SEED_*` set):
+    `alembic upgrade head` → `alembic downgrade base` → `alembic upgrade head`;
+    `python scripts/seed.py` twice (row counts must be identical both times); then
+    in `psql`, `INSERT INTO audit_events (action, entity_type, entity_id) VALUES
+    ('t','user','1');` followed by `UPDATE audit_events SET action='x';` — the
+    UPDATE must raise `audit_events is append-only`.
 - [~] **Phase 04 — Authentication and roles.** Sessions, guest identity, roles and
   account screens. _Done when:_ S03–S08 and S22 work end to end in both languages.
   - **Backend:** argon2id passwords (`security/passwords.py`, 10+ chars +

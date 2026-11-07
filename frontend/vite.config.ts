@@ -18,7 +18,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        // PROHORI_API_PORT lets a second backend run alongside one on :8000.
+        target: `http://localhost:${process.env.PROHORI_API_PORT ?? "8000"}`,
         changeOrigin: true,
       },
     },

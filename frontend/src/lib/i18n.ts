@@ -19,4 +19,10 @@ void i18n.use(initReactI18next).init({
   returnNull: false,
 });
 
+// Keep <html lang> in step with the UI language: screen readers pick the right
+// voice and the Bangla font rule (html[lang="bn"]) applies.
+i18n.on("languageChanged", (lng) => {
+  if (typeof document !== "undefined") document.documentElement.lang = lng;
+});
+
 export default i18n;

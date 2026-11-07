@@ -55,9 +55,13 @@ _RESEND_LIMIT = 3
 
 
 def _client_ip(request: Request) -> str:
-    fwd = request.headers.get("x-forwarded-for")
-    if fwd:
-        return fwd.split(",")[0].strip()
+    """Client IP for limiter keys. X-Forwarded-For is trusted only when the app
+    sits behind a proxy that sets it (TRUST_PROXY_HEADERS); otherwise it is
+    attacker-controlled and would let a client reset its own IP limits."""
+    if get_settings().trust_proxy_headers:
+        fwd = request.headers.get("x-forwarded-for")
+        if fwd:
+            return fwd.split(",")[0].strip()
     return request.client.host if request.client else "unknown"
 
 
@@ -81,7 +85,7 @@ async def register(
 ) -> dict[str, bool]:
     await _limit_or_429(
         session,
-        f"register:ip:{_client_ip(request)}",
+        f"register:ip:{auth_service.ip_key(_client_ip(request))}",
         limit=_REGISTER_LIMIT,
         window=_IP_HOUR,
     )
@@ -112,7 +116,7 @@ async def resend_verification(
 ) -> dict[str, bool]:
     await _limit_or_429(
         session,
-        f"resend:email:{body.email}",
+        f"resend:email:{auth_service.email_key(body.email)}",
         limit=_RESEND_LIMIT,
         window=_IP_HOUR,
     )
@@ -167,8 +171,15 @@ async def forgot_password(
 ) -> dict[str, bool]:
     await _limit_or_429(
         session,
-        f"forgot:ip:{_client_ip(request)}",
+        f"forgot:ip:{auth_service.ip_key(_client_ip(request))}",
         limit=_FORGOT_LIMIT,
+        window=_IP_HOUR,
+    )
+    # Per-email cap so one inbox cannot be flooded with reset mail (R13).
+    await _limit_or_429(
+        session,
+        f"forgot:email:{auth_service.email_key(body.email)}",
+        limit=_RESEND_LIMIT,
         window=_IP_HOUR,
     )
     await auth_service.forgot_password(

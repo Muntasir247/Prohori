@@ -14,6 +14,7 @@ from sqlalchemy import DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, created_at_col, uuid_pk
+from app.models.user import user_role_type
 
 
 class TokenPurpose(StrEnum):
@@ -31,7 +32,7 @@ class AuthToken(Base):
     )
     email: Mapped[str | None] = mapped_column(String(320), nullable=True)
     purpose: Mapped[str] = mapped_column(String(20), nullable=False)
-    role: Mapped[str | None] = mapped_column(String(12), nullable=True)
+    role: Mapped[str | None] = mapped_column(user_role_type(), nullable=True)
     token_hash: Mapped[str] = mapped_column(
         String(64), nullable=False, unique=True
     )

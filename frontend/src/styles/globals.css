@@ -21,3 +21,8 @@ body {
 html[lang="bn"] body {
   font-family: var(--font-bangla);
 }
+
+/* S22 text size "Large": Tailwind sizes are rem-based, so this scales the UI. */
+html[data-text-size="large"] {
+  font-size: 112.5%;
+}

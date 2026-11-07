@@ -6,9 +6,23 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AuthCard } from "@/components/auth/AuthCard";
 import { Button } from "@/components/ui/Button";
 import { authApi } from "@/features/auth/api";
-import { parseApiError } from "@/lib/apiError";
+import { parseApiError, waitText } from "@/lib/apiError";
 
 type Status = "idle" | "verifying" | "confirmed" | "expired" | "waiting";
+
+// A verification token is single-use. React may run the effect twice (StrictMode
+// in development, or a remount), and a second POST would get 410 and wrongly
+// show "expired" after the first one succeeded. Share one request per token.
+const verifyRequests = new Map<string, Promise<void>>();
+
+function verifyOnce(token: string): Promise<void> {
+  let request = verifyRequests.get(token);
+  if (!request) {
+    request = authApi.verifyEmail(token).then(() => undefined);
+    verifyRequests.set(token, request);
+  }
+  return request;
+}
 
 function maskEmail(email: string): string {
   const [local, domain] = email.split("@");
@@ -33,10 +47,12 @@ export default function VerifyEmail() {
     let active = true;
     (async () => {
       try {
-        await authApi.verifyEmail(token);
+        await verifyOnce(token);
         if (!active) return;
         setStatus("confirmed");
-        setTimeout(() => navigate("/onboarding", { replace: true }), 1200);
+        // Verifying does not sign the visitor in (an emailed link must not act
+        // as a login credential). Sign-in then lands new users on S08.
+        setTimeout(() => navigate("/login?verified=1", { replace: true }), 1200);
       } catch {
         if (active) setStatus("expired");
       }
@@ -60,7 +76,13 @@ export default function VerifyEmail() {
       setStatus("waiting");
     } catch (caught) {
       const parsed = parseApiError(caught);
-      setResendError(t(parsed.messageKey, { seconds: parsed.retryAfter ?? 3600 }));
+      if (parsed.status === 429) {
+        // 3 per hour (Doc 01 S05): show how long until the next one is allowed.
+        setCooldown(parsed.retryAfter ?? 3600);
+        setResendError(t("auth.resend_limited", { wait: waitText(parsed.retryAfter) }));
+      } else {
+        setResendError(t(parsed.messageKey));
+      }
     }
   };
 
@@ -111,7 +133,7 @@ export default function VerifyEmail() {
                 type="button"
               >
                 {cooldown > 0
-                  ? t("auth.resend_in", { seconds: cooldown })
+                  ? t("auth.resend_in", { wait: waitText(cooldown) })
                   : t("auth.resend_verification")}
               </Button>
             )}

@@ -10,7 +10,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -45,6 +45,10 @@ class Settings(BaseSettings):
     daily_llm_spend_cap_usd: float = Field(
         default=5.0, alias="DAILY_LLM_SPEND_CAP_USD", ge=0
     )
+    # Use X-Forwarded-For for the client IP. Only enable behind a proxy that
+    # overwrites the header; otherwise any client can spoof its IP and dodge the
+    # per-IP login lock and request limits (R01, R13).
+    trust_proxy_headers: bool = Field(default=False, alias="TRUST_PROXY_HEADERS")
 
     # --- Operational ------------------------------------------------------
     environment: Literal["development", "test", "production"] = Field(
@@ -59,6 +63,18 @@ class Settings(BaseSettings):
         if not value or not value.strip():
             raise ValueError("must not be empty")
         return value
+
+    @model_validator(mode="after")
+    def _production_sends_real_email(self) -> Settings:
+        # The console driver exists for development; in production it would
+        # silently drop verification/reset mail. Fail fast instead.
+        if self.environment == "production" and (
+            self.email_driver != "resend" or not self.resend_api_key
+        ):
+            raise ValueError(
+                "production requires EMAIL_DRIVER=resend and RESEND_API_KEY"
+            )
+        return self
 
     @property
     def cors_origins(self) -> list[str]:

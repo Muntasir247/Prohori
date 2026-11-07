@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "title_en": "Never share an OTP or PIN",
+    "title_bn": "ওটিপি বা পিন কখনো শেয়ার করবেন না",
+    "body_en": "No real bank, wallet or agent will ever ask for your OTP, PIN or password. A code is for you alone — anyone asking for it is trying to take your money.",
+    "body_bn": "কোনো আসল ব্যাংক, ওয়ালেট বা এজেন্ট কখনোই আপনার ওটিপি, পিন বা পাসওয়ার্ড চাইবে না। কোডটি শুধু আপনার জন্য — যে চায় সে টাকা হাতিয়ে নিতে চায়।",
+    "active_from": "2025-09-01"
+  },
+  {
+    "id": 2,
+    "title_en": "Pause before you pay",
+    "title_bn": "টাকা পাঠানোর আগে একটু থামুন",
+    "body_en": "If a message rushes you to send money, stop. Confirm with the person on a number you already know, and check inside the official app before paying.",
+    "body_bn": "কোনো বার্তা যদি তাড়াহুড়ো করে টাকা পাঠাতে বলে, থামুন। আপনার চেনা নম্বরে যোগাযোগ করে নিশ্চিত হোন এবং টাকা পাঠানোর আগে অফিসিয়াল অ্যাপে যাচাই করুন।",
+    "active_from": "2025-09-01"
+  }
+]

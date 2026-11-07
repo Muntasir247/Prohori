@@ -73,6 +73,7 @@ class UserOut(BaseModel):
     theme: str
     email_verified: bool
     onboarding_completed: bool
+    consent_at: datetime | None = None
     created_at: datetime
 
     @classmethod
@@ -86,5 +87,6 @@ class UserOut(BaseModel):
             theme=user.theme,
             email_verified=user.email_verified_at is not None,
             onboarding_completed=user.onboarding_completed_at is not None,
+            consent_at=user.consent_at,
             created_at=user.created_at,
         )

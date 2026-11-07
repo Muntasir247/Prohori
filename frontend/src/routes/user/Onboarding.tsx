@@ -1,11 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/Button";
 import { authApi } from "@/features/auth/api";
-import { useSession } from "@/features/auth/useSession";
+import { clearPendingOnboarding, queueOnboarding } from "@/features/auth/preferences";
+import { homeFor, SESSION_KEY, useSession } from "@/features/auth/useSession";
 
 type Lang = "bn" | "en";
 
@@ -25,15 +26,27 @@ export default function Onboarding() {
     void i18n.changeLanguage(value);
   };
 
+  const [saving, setSaving] = useState(false);
+
+  // New accounts only (Doc 01 S08): anyone who finished it, or staff, go home.
+  if (user && (user.onboarding_completed || user.role !== "user")) {
+    return <Navigate to={homeFor(user)} replace />;
+  }
+
   const finish = async () => {
+    setSaving(true);
     try {
       const updated = await authApi.updateMe({
         language: lang,
         onboarding_completed: true,
       });
-      qc.setQueryData(["session"], updated);
+      clearPendingOnboarding();
+      qc.setQueryData(SESSION_KEY, updated);
     } catch {
-      // Failure saves nothing server-side; the next load will retry (Doc 01 S08).
+      // Save locally; useSyncLanguage replays it on the next load (Doc 01 S08).
+      queueOnboarding({ language: lang });
+    } finally {
+      setSaving(false);
     }
     navigate("/check", { replace: true });
   };
@@ -131,8 +144,8 @@ export default function Onboarding() {
             {t("onboarding.next")}
           </Button>
         ) : (
-          <Button type="button" onClick={finish}>
-            {t("onboarding.start")}
+          <Button type="button" onClick={finish} loading={saving}>
+            {t("onboarding.understand_start")}
           </Button>
         )}
       </div>

@@ -17,6 +17,7 @@ from app.api.cookies import (
     guest_cookie_name,
     session_cookie_name,
     set_guest_cookie,
+    set_session_cookie,
 )
 from app.config import get_settings
 from app.db import get_sessionmaker
@@ -58,12 +59,22 @@ async def enforce_csrf(request: Request) -> None:
         raise AppError("csrf_failed", status=403, message_key="errors.csrf_failed")
 
 
-async def get_optional_user(request: Request, session: DbSession) -> User | None:
+async def get_optional_user(
+    request: Request, response: Response, session: DbSession
+) -> User | None:
     token = request.cookies.get(session_cookie_name())
     if not token:
         return None
     resolved = await auth_service.resolve_session(session, token)
-    return resolved[0] if resolved else None
+    if not resolved:
+        return None
+    user = resolved[0]
+    # Rolling lifetime (Doc 02 Section 7): the DB expiry moved forward in
+    # resolve_session, so move the cookie's max-age forward with it.
+    set_session_cookie(
+        response, token, max_age=auth_service.session_max_age(user.role)
+    )
+    return user
 
 
 async def get_current_user(

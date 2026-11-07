@@ -43,12 +43,16 @@
     "email_confirmed": "Email confirmed",
     "verify_expired": "This link has expired. Request a new one below.",
     "verify_instruction": "We sent a link to confirm your email. Open it to continue.",
-    "resend_in": "Resend in {{seconds}}s",
+    "resend_in": "Resend in {{wait}}",
     "forgot_sent": "If this email has an account, we sent a link.",
     "send_reset_link": "Send reset link",
     "reset_expired": "This link is invalid or has expired.",
     "request_new_link": "Request a new link",
-    "set_new_password": "Set new password"
+    "set_new_password": "Set new password",
+    "notice_reset": "Password changed. You were signed out everywhere — sign in with the new password.",
+    "notice_verified": "Email confirmed. Sign in to continue.",
+    "notice_invited": "Your reviewer account is ready. Sign in to continue.",
+    "resend_limited": "You can resend 3 times an hour. Try again in {{wait}}."
   },
   "onboarding": {
     "skip": "Skip",
@@ -67,7 +71,8 @@
       "We never ask for your OTP or PIN.",
       "We can be wrong — always confirm.",
       "You stay in control. Prohori never blocks a payment."
-    ]
+    ],
+    "understand_start": "I understand — start checking"
   },
   "settings": {
     "title": "Settings",
@@ -98,8 +103,16 @@
     "delete_desc": "This permanently deletes your account. Type DELETE to confirm.",
     "delete_confirm_label": "Type DELETE to confirm",
     "delete_button": "Delete my account",
-    "consent_recorded": "Consent recorded on {{date}}.",
-    "logout": "Log out"
+    "consent_recorded": "You accepted the privacy note on {{date}}.",
+    "logout": "Log out",
+    "text_size": "Text size",
+    "text_normal": "Normal",
+    "text_large": "Large",
+    "read_aloud_default": "Read results aloud by default",
+    "device_prefs_note": "Text size and read-aloud are saved on this device.",
+    "last_seen": "Last active {{date}}",
+    "consent_title": "Consent record",
+    "consent_none": "No consent is recorded for this account."
   },
   "errors": {
     "unknown": "Something went wrong",
@@ -110,7 +123,7 @@
     "invalid_credentials": "Email or password is wrong",
     "email_unverified": "Please confirm your email first",
     "rate_limited": "Too many requests. Please wait and try again.",
-    "login_locked": "Too many tries. Wait 15 minutes.",
+    "login_locked": "Too many tries. Wait {{wait}}.",
     "token_invalid": "This link is invalid or has expired",
     "csrf_failed": "Your request could not be verified. Reload and try again.",
     "consent_required": "Please accept the privacy note",
@@ -125,7 +138,36 @@
       "invalid_email": "Enter a valid email",
       "mismatch": "Passwords do not match",
       "wrong": "Incorrect",
-      "must_equal_DELETE": "Type DELETE exactly"
-    }
+      "must_equal_DELETE": "Type DELETE exactly",
+      "too_long": "Too long"
+    },
+    "network": "Could not reach Prohori. Check your connection and try again."
+  },
+  "time": {
+    "minutes": "{{n}} minutes",
+    "seconds": "{{n}} seconds"
+  },
+  "roles": {
+    "user": "User",
+    "reviewer": "Reviewer",
+    "admin": "Admin"
+  },
+  "check": {
+    "title": "Check a message",
+    "greeting": "Welcome, {{name}}",
+    "not_ready": "Message and payment checks are not available in this build yet. Never share an OTP or PIN with anyone."
+  },
+  "review": {
+    "title": "Review overview",
+    "signed_in_as": "Signed in as {{name}} ({{role}})",
+    "session_note": "Reviewer sessions end after 8 hours, or after 30 minutes without activity.",
+    "not_ready": "The case queue and dashboards are not available in this build yet.",
+    "manage_sessions": "Manage your sessions"
+  },
+  "invite": {
+    "title": "Set up your reviewer account",
+    "subtitle": "Choose a name and a password of at least 10 characters.",
+    "expired": "This invite link is invalid or has expired. Ask an admin for a new invite.",
+    "submit": "Create reviewer account"
   }
 }

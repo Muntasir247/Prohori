@@ -10,6 +10,7 @@ export interface User {
   theme: string;
   email_verified: boolean;
   onboarding_completed: boolean;
+  consent_at: string | null;
   created_at: string;
 }
 

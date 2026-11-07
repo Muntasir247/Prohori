@@ -12,23 +12,29 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import JSON, BigInteger, DateTime, String
+from sqlalchemy import JSON, BigInteger, DateTime, Integer, String
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, utcnow
+
+# bigserial on Postgres; SQLite only autoincrements an INTEGER PRIMARY KEY.
+_ID_TYPE = BigInteger().with_variant(Integer(), "sqlite")
+# jsonb on Postgres (bind as jsonb, not json); plain JSON elsewhere.
+_JSON_TYPE = JSON().with_variant(JSONB(), "postgresql")
 
 
 class AuditEvent(Base):
     __tablename__ = "audit_events"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(_ID_TYPE, primary_key=True, autoincrement=True)
     actor_id: Mapped[UUID | None] = mapped_column(nullable=True)
     actor_role: Mapped[str | None] = mapped_column(String(12), nullable=True)
     action: Mapped[str] = mapped_column(String(60), nullable=False)
     entity_type: Mapped[str] = mapped_column(String(30), nullable=False)
     entity_id: Mapped[str] = mapped_column(String, nullable=False)
-    before: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
-    after: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    before: Mapped[dict[str, Any] | None] = mapped_column(_JSON_TYPE, nullable=True)
+    after: Mapped[dict[str, Any] | None] = mapped_column(_JSON_TYPE, nullable=True)
     request_id: Mapped[str | None] = mapped_column(String(40), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utcnow

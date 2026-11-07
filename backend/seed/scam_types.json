@@ -1,0 +1,8 @@
+[
+  {"id": 1, "slug": "fake_otp_pin",        "name_en": "Fake OTP or PIN request",        "name_bn": "ভুয়া ওটিপি বা পিন চাওয়া"},
+  {"id": 2, "slug": "fake_staff",          "name_en": "Fake bank or wallet staff",      "name_bn": "ভুয়া ব্যাংক বা ওয়ালেট কর্মী"},
+  {"id": 3, "slug": "prize_cashback",      "name_en": "Prize or cashback lure",         "name_bn": "পুরস্কার বা ক্যাশব্যাকের প্রলোভন"},
+  {"id": 4, "slug": "wrong_number_refund", "name_en": "Wrong-number refund",            "name_bn": "ভুল নম্বরে টাকা ফেরতের ফাঁদ"},
+  {"id": 5, "slug": "fake_agent",          "name_en": "Fake agent",                     "name_bn": "ভুয়া এজেন্ট"},
+  {"id": 6, "slug": "other",               "name_en": "Other",                          "name_bn": "অন্যান্য"}
+]

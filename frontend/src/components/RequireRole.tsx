@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 import type { User } from "@/features/auth/api";
-import { useSession, useSyncLanguage } from "@/features/auth/useSession";
+import { homeFor, useSession, useSyncLanguage } from "@/features/auth/useSession";
 
-// Role gate (Doc 02 Section 7). A signed-in user without the role is redirected
-// to their own home rather than shown a 403 page; a guest goes to /login.
+// Role gate (Doc 02 Sections 6–7). UX only — every reviewer/admin API route is
+// enforced server-side by require_role. A guest goes to /login (and returns here
+// after signing in); a signed-in user without the role goes to their own home.
 export function RequireRole({
   roles,
   children,
@@ -14,10 +15,13 @@ export function RequireRole({
   children: ReactNode;
 }) {
   const { data: user, isLoading } = useSession();
+  const location = useLocation();
   useSyncLanguage(user);
 
   if (isLoading) return null;
-  if (!user) return <Navigate to="/login" replace />;
-  if (!roles.includes(user.role)) return <Navigate to="/check" replace />;
+  if (!user) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+  if (!roles.includes(user.role)) return <Navigate to={homeFor(user)} replace />;
   return <>{children}</>;
 }

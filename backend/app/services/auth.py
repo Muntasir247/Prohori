@@ -38,14 +38,37 @@ RESET_TTL = timedelta(minutes=30)
 INVITE_TTL = timedelta(hours=48)
 
 # --- Login defence (Doc 02 Sections 7 & 11, R01) ---------------------------
+# 5 failures per email and per IP within 15 minutes start a 15-minute lock.
 LOGIN_MAX_FAILS = 5
 LOGIN_WINDOW_SECONDS = 15 * 60
+LOGIN_LOCK_SECONDS = 15 * 60
 
 _STAFF_ROLES = {UserRole.reviewer.value, UserRole.admin.value}
+
+# A real argon2id hash of a throwaway value. Verifying against it when the email
+# is unknown makes a failed login cost the same as a wrong password, so response
+# time does not reveal whether an account exists. Built lazily (argon2 is slow).
+_dummy_hash: str | None = None
+
+
+def _timing_dummy_hash() -> str:
+    global _dummy_hash
+    if _dummy_hash is None:
+        _dummy_hash = passwords.hash_password(new_token())
+    return _dummy_hash
 
 
 def normalize_email(email: str) -> str:
     return email.strip().lower()
+
+
+def email_key(email: str) -> str:
+    """Opaque, non-reversible identifier for an email in limiter keys/audit."""
+    return hash_token(normalize_email(email))
+
+
+def ip_key(ip: str | None) -> str:
+    return hash_token(ip or "unknown")
 
 
 # --- User lookup -----------------------------------------------------------
@@ -218,8 +241,11 @@ async def register(
 
     existing = await get_user_by_email(session, norm)
     if existing is not None:
-        # Do not disclose existence. If the account is still unverified, quietly
-        # resend the verification link so a legitimate retry still works.
+        # Do not disclose existence — not in the response, and not in timing:
+        # spend the same argon2 work the new-account path spends.
+        passwords.hash_password(password)
+        # If the account is still unverified, quietly resend the verification
+        # link so a legitimate retry still works.
         if existing.email_verified_at is None:
             token = await _mint_token(
                 session,
@@ -309,41 +335,50 @@ async def login(
     403 when the email is not yet verified.
     """
     norm = normalize_email(email)
-    email_key = f"login:email:{hash_token(norm)}"
-    ip_key = f"login:ip:{ip or 'unknown'}"
+    keys = {
+        "email": f"login:email:{email_key(norm)}",
+        "ip": f"login:ip:{ip_key(ip)}",
+    }
 
-    # Lockout check first, before touching the password (constant behaviour).
-    for key in (email_key, ip_key):
-        state = await rate_limit.peek(
-            session, key, limit=LOGIN_MAX_FAILS, window_seconds=LOGIN_WINDOW_SECONDS
+    # Lockout check first, before touching the password: a locked account
+    # refuses even the correct password until the lock expires.
+    for key in keys.values():
+        remaining = await rate_limit.locked_for(
+            session, key, seconds=LOGIN_LOCK_SECONDS
         )
-        if not state.allowed:
+        if remaining:
             raise AppError(
                 "rate_limited",
                 status=429,
                 message_key="errors.login_locked",
-                retry_after=state.retry_after,
+                retry_after=remaining,
             )
 
     user = await get_user_by_email(session, norm)
-    ok = user is not None and user.is_active and passwords.verify_password(
-        user.password_hash, password
-    )
+    if user is None:
+        passwords.verify_password(_timing_dummy_hash(), password)
+        ok = False
+    else:
+        ok = passwords.verify_password(user.password_hash, password) and user.is_active
 
     if not ok:
-        for key in (email_key, ip_key):
+        for scope, key in keys.items():
             result = await rate_limit.hit(
                 session,
                 key,
                 limit=LOGIN_MAX_FAILS,
                 window_seconds=LOGIN_WINDOW_SECONDS,
             )
-            if not result.allowed:
+            if result.count >= LOGIN_MAX_FAILS:
+                # The 5th failure starts a full 15-minute lock from now.
+                await rate_limit.lock(session, key)
+                await rate_limit.clear(session, key)
                 await audit.record(
                     session,
                     action="login_locked",
-                    entity_type="user",
-                    entity_id=norm,
+                    entity_type="login_" + scope,
+                    entity_id=key.rsplit(":", 1)[-1],
+                    after={"lock_seconds": LOGIN_LOCK_SECONDS},
                 )
         # Persist the failure count now: the request ends in a 401, and the
         # request-scoped unit of work would otherwise roll these increments back,
@@ -357,7 +392,7 @@ async def login(
         )
 
     # Success clears the failure counters and rehashes if parameters changed.
-    await rate_limit.clear(session, email_key, ip_key)
+    await rate_limit.clear(session, *keys.values())
     if passwords.needs_rehash(user.password_hash):
         user.password_hash = passwords.hash_password(password)
 
@@ -401,6 +436,15 @@ async def reset_password(
         user.email_verified_at = datetime.now(UTC)
     # Revoke every session: a reset must log out all devices (Doc 01 S07).
     await revoke_all_sessions(session, user.id)
+    await audit.record(
+        session,
+        action="password_reset",
+        entity_type="user",
+        entity_id=str(user.id),
+        actor_id=user.id,
+        actor_role=user.role,
+        after={"sessions_revoked": True},
+    )
     await session.flush()
 
 
@@ -433,6 +477,7 @@ async def accept_invite(
     role = record.role or UserRole.reviewer.value
     now = datetime.now(UTC)
     user = await get_user_by_email(session, record.email)
+    before_role = user.role if user is not None else None
     if user is None:
         user = User(
             email=record.email,
@@ -450,6 +495,18 @@ async def accept_invite(
         user.email_verified_at = user.email_verified_at or now
         user.is_active = True
     await session.flush()
+    # Role changes always go to audit (Doc 02 Section 7, admin safety).
+    await audit.record(
+        session,
+        action="invite_accepted",
+        entity_type="user",
+        entity_id=str(user.id),
+        actor_id=user.id,
+        actor_role=role,
+        before={"role": before_role} if before_role else None,
+        after={"role": role},
+    )
+    await session.flush()
 
 
 # --- Account management ----------------------------------------------------
@@ -463,12 +520,36 @@ async def change_password(
             message_key="errors.invalid_credentials",
             fields={"current": "wrong"},
         )
-    passwords.validate_password(new)
+    try:
+        passwords.validate_password(new)
+    except AppError as exc:
+        # Report the weakness on the form's `new` field, not a generic one.
+        exc.fields = {"new": next(iter(exc.fields.values()), "invalid")}
+        raise
     user.password_hash = passwords.hash_password(new)
+    await audit.record(
+        session,
+        action="password_changed",
+        entity_type="user",
+        entity_id=str(user.id),
+        actor_id=user.id,
+        actor_role=user.role,
+    )
     await session.flush()
 
 
 async def delete_account(session: AsyncSession, *, user: User) -> None:
-    await revoke_all_sessions(session, user.id)
+    """Delete the account. Sessions and tokens cascade; the audit row keeps only
+    the opaque user id, never the email."""
+    user_id, role = user.id, user.role
+    await revoke_all_sessions(session, user_id)
     await session.delete(user)
+    await audit.record(
+        session,
+        action="account_deleted",
+        entity_type="user",
+        entity_id=str(user_id),
+        actor_id=user_id,
+        actor_role=role,
+    )
     await session.flush()

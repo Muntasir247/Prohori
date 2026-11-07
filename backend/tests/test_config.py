@@ -56,3 +56,39 @@ def test_defaults_applied_for_optional_values(monkeypatch):
     assert settings.email_driver == "console"
     assert settings.daily_llm_spend_cap_usd == 5.0
     assert settings.cors_origins == ["http://localhost:5173"]
+    assert settings.trust_proxy_headers is False
+
+
+_BASE = {
+    "_env_file": None,
+    "DATABASE_URL": "postgresql+asyncpg://x/y",
+    "ANTHROPIC_API_KEY": "k",
+    "NUMBER_HMAC_KEY": "h",
+    "SESSION_SECRET": "s",
+}
+
+
+@pytest.mark.parametrize(
+    "email",
+    [
+        {},  # console driver
+        {"EMAIL_DRIVER": "resend"},  # resend without a key
+    ],
+)
+def test_production_refuses_to_start_without_real_email(monkeypatch, email):
+    _clear_required(monkeypatch)
+    monkeypatch.delenv("ENVIRONMENT", raising=False)
+    with pytest.raises(ValidationError, match="EMAIL_DRIVER=resend"):
+        Settings(**_BASE, ENVIRONMENT="production", **email)  # type: ignore[arg-type]
+
+
+def test_production_with_resend_starts_with_secure_cookies(monkeypatch):
+    _clear_required(monkeypatch)
+    monkeypatch.delenv("ENVIRONMENT", raising=False)
+    settings = Settings(
+        **_BASE,
+        ENVIRONMENT="production",
+        EMAIL_DRIVER="resend",
+        RESEND_API_KEY="re_x",
+    )  # type: ignore[arg-type]
+    assert settings.cookie_secure is True

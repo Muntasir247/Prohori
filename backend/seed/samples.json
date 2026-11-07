@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "label_en": "Fake OTP request (Bangla)",
+    "label_bn": "ভুয়া ওটিপি চাওয়া",
+    "body": "প্রিয় গ্রাহক, আপনার অ্যাকাউন্ট যাচাই করতে এখনই ৬ সংখ্যার কোডটি এই নম্বরে পাঠান, না হলে অ্যাকাউন্ট বন্ধ হয়ে যাবে।",
+    "language": "bn"
+  },
+  {
+    "id": 2,
+    "label_en": "Prize or cashback lure (Banglish)",
+    "label_bn": "পুরস্কার বা ক্যাশব্যাকের প্রলোভন",
+    "body": "Congrats bhai! Apni amader lottery te 50000 taka jiteche. Taka nite hole ekhoni ei link e click kore 200 taka fee pathan.",
+    "language": "banglish"
+  },
+  {
+    "id": 3,
+    "label_en": "Fake wallet staff (English)",
+    "label_bn": "ভুয়া ওয়ালেট কর্মী",
+    "body": "Hello, I am calling from the wallet helpdesk. Your KYC has expired. Please read me the verification code we just sent so I can keep your account active.",
+    "language": "en"
+  },
+  {
+    "id": 4,
+    "label_en": "Wrong-number refund (Bangla)",
+    "label_bn": "ভুল নম্বরে টাকা ফেরত",
+    "body": "ভাই, ভুল করে আপনার নম্বরে টাকা চলে গেছে। দয়া করে টাকাটা এই নম্বরে ফেরত পাঠিয়ে দিন, খুব বিপদে আছি।",
+    "language": "bn"
+  },
+  {
+    "id": 5,
+    "label_en": "Genuine transaction alert (Banglish)",
+    "label_bn": "আসল লেনদেন বার্তা",
+    "body": "Apnar account theke 1,250 taka payment hoyeche. Reference 8842. Eta apni na korle helpline e jogajog korun.",
+    "language": "banglish"
+  },
+  {
+    "id": 6,
+    "label_en": "Genuine service notice (English)",
+    "label_bn": "আসল সেবা নোটিশ",
+    "body": "Your monthly statement is ready. Log in to the official app to view it. We will never ask for your PIN or OTP over message.",
+    "language": "en"
+  }
+]
