@@ -122,9 +122,7 @@ def parse_amount_bdt(text: str) -> Decimal | None:
                 pass
 
     # Fallback: check if the string itself is a bare number (e.g. "50000")
-    bare_pattern = re.compile(
-        r"^\s*(\d{1,3}(?:,\d{2,3})*(?:\.\d+)?|\d+(?:\.\d+)?)\s*$"
-    )
+    bare_pattern = re.compile(r"^\s*(\d{1,3}(?:,\d{2,3})*(?:\.\d+)?|\d+(?:\.\d+)?)\s*$")
     match = bare_pattern.match(cleaned)
     if match:
         num_clean = match.group(1).replace(",", "")

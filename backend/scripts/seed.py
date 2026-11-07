@@ -980,9 +980,7 @@ async def _row_counts() -> dict[str, int]:
 # --------------------------------------------------------------------------- #
 def _print_warnings(safe_actions: list[dict[str, Any]]) -> None:
     unverified = [
-        a
-        for a in safe_actions
-        if a.get("provider") and not a.get("is_active")
+        a for a in safe_actions if a.get("provider") and not a.get("is_active")
     ]
     if unverified:
         print("\n  WARNING — unverified provider safe actions (left inactive):")

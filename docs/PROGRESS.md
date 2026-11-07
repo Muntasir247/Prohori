@@ -175,9 +175,67 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
       offline with Bangla text", delivering level High, fixed Bangla explanation, and
       safe action IDs without calling any LLM.
     - All Phase 05 files pass Ruff check and formatting with 0 errors.
-- [ ] **Phase 06 — Retrieval and Claude integration.** Knowledge retrieval, Haiku
+- [x] **Phase 06 — Retrieval and Claude integration.** Knowledge retrieval, Haiku
   and Sonnet stages, orchestrator. _Done when:_ CLI check returns valid results,
   and the kill-key test gives fallback.
+  - **Claude Client (`llm/client.py`):** Uses official `anthropic` Python SDK (`anthropic==2.6.0`).
+    Models `claude-haiku-5-5` and `claude-sonnet-5-5` loaded from config. Structured outputs
+    powered by `client.messages.parse(output_format=Schema)`. Omits sampling parameters
+    (temperature, top_p, top_k, budget_tokens) per Doc 02 Section 10.2. Applies `output_config={"effort": "low"}`
+    for Haiku routes and `{"effort": "medium"}` for Sonnet. Server-side fallback on Sonnet
+    implemented via `extra_headers={"anthropic-beta": "server-side-fallback-2026-07-01,prompt-caching-2024-07-31"}`
+    and `extra_body={"fallbacks": [{"model": haiku, "output_config": {"effort": "low"}}]}`.
+    Timeouts enforced: Haiku 4s, Sonnet 8s, `max_retries=1`. Inspects `stop_reason` for `refusal`
+    and `max_tokens`. Logs `usage.cache_read_input_tokens` and enforces `DAILY_LLM_SPEND_CAP_USD`.
+  - **Versioned Prompts (`llm/prompts/`):** P1 (`p1_triage_v1.py`), P2 (`p2_analysis_v1.py`),
+    P3 (`p3_payment_v1.py`), and P6 (`p6_hyde_v1.py`) stored verbatim from Doc 02 Section 10.5.
+    Stable system prompt and few-shot examples (Examples 1, 2, 3) placed first with `cache_control`
+    `{"type": "ephemeral"}` applied.
+  - **Structured Schemas (`llm/schemas.py`):** Pydantic schemas for `TriageResult`, `AnalysisResult`,
+    `PaymentExplanationResult`, and `RedFlagItem`.
+  - **Knowledge Base Seed & Embedding (`seed/knowledge/` & `scripts/embed_kb.py`):**
+    Created seed documents for 6 scam types (`PAT-001` to `PAT-006`). Chunks documents at 200–400
+    tokens with ~40 tokens overlap. Embeds with Voyage AI (`voyage-4`, 1024 dims). Skips unchanged
+    chunks via SHA-256 hash matching. Halts with error if `backend/seed/knowledge/` is empty.
+    Dual persistence in Postgres `kb_chunks` and serialized `kb_chunks.joblib` for offline/fallback use.
+  - **Hybrid Retrieval (`pipeline/retrieval.py`):** Trigram similarity (character 3-grams) + keyword
+    term matching + 1024-dim cosine vector similarity merged using Reciprocal Rank Fusion ($k=60$, top 4).
+    Weak top vector similarity (< 0.65) triggers Haiku HyDE (Prompt P6) once. Falls back to keyword-only
+    if embeddings or Voyage API fail.
+  - **Triage (`pipeline/triage.py`):** Haiku triage (Prompt P1) extracting language, claimed sender,
+    amounts, urgency phrases, normalized query, and clarity. Merges with deterministic regex fields
+    where regex wins on numbers, amounts, and links per Section 10.6.1. On timeout or error, falls
+    back to regex fields and sets clarity="ambiguous" to route to Sonnet.
+  - **Analysis & Output Validation (`pipeline/analysis.py`):** Haiku route for `clear_genuine` with 0
+    soft rules; Sonnet route for `clear_scam` or `ambiguous`. Validates `risk_level` enum, filters
+    `next_step_ids` against `<allowed_actions>`, drops hallucinated `pattern_codes`, and verifies
+    quotes in `red_flags` character-for-character against `masked_text` (dropping non-verbatim quotes).
+    Scans reasons for digit runs $\ge 5$, URLs, and banned phrases (`safe`, `guaranteed`, `verified`,
+    `নিরাপদ`, `গ্যারান্টি`). A banned phrase triggers a single retry with prompt correction; failure
+    triggers safe fallback.
+  - **Check Orchestrator (`pipeline/orchestrator.py`):** Consolidates all 13 pipeline steps in the
+    exact order of Doc 02 Section 1 and Section 10.6. Implements context trimming (> 1500 chars keeps
+    first 900 + last 500, sets `trimmed=True`), 1-hour duplicate `text_hash` cache (sets `reused=True`),
+    spend cap ceiling, deterministic normalization & masking, hard rules bypass to `rules_only` template,
+    Haiku triage, hybrid retrieval, Sonnet analysis, output validation, risk fusion table, safe actions
+    resolution from `safe_actions.json`, and appending caution text.
+  - **CLI (`pipeline/cli.py`):** Invoked via `python -m app.pipeline.cli "text"` (or `--json`).
+  - **Verified:**
+    - 11 new tests in `backend/tests/test_phase06_pipeline.py` passing 100%:
+      - Zero unmasked numbers in outbound payloads (asserts raw BD mobile numbers never leave).
+      - Fake quotes dropped (`quote=None`).
+      - Invented helpline / invalid actions dropped.
+      - Banned phrases detected, retried once, and succeeding on clean attempt.
+      - Double failure fallback to safe fallback (S16).
+      - Stop reason `refusal` triggering safe fallback.
+      - Injected instructions treated as untrusted data with `manipulation_attempt` flagged.
+      - Kill-key test triggers graceful fallback without crash.
+      - Context trimming above 1500 chars verified.
+      - 1-hour duplicate message reuse verified.
+    - All 64 backend pipeline and deterministic tests pass cleanly in pytest.
+    - All 25 Phase 06 and pipeline files are clean under Ruff (`ruff check` + `ruff format`).
+    - 5 smoke checks executed across Bangla, English, and Banglish (Scenario 1 rules_only High,
+      Scenarios 2-4 Medium fallback floor from soft rules, Scenario 5 Unavailable fallback from zero rules).
 - [ ] **Phase 07 — Check flows end to end.** Connect the user journey to the real
   pipeline. _Done when:_ a guest gets a real Bangla result at 360 px.
 - [ ] **Phase 08 — Reviewer workbench.** Queue, case detail, decisions, audit and

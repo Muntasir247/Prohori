@@ -36,6 +36,22 @@ class Settings(BaseSettings):
 
     # --- Optional (safe defaults) -----------------------------------------
     voyage_api_key: str | None = Field(default=None, alias="VOYAGE_API_KEY")
+    anthropic_model_haiku: str = Field(
+        default="claude-haiku-5-5", alias="ANTHROPIC_MODEL_HAIKU"
+    )
+    anthropic_model_sonnet: str = Field(
+        default="claude-sonnet-5-5", alias="ANTHROPIC_MODEL_SONNET"
+    )
+    voyage_model: str = Field(default="voyage-4", alias="VOYAGE_MODEL")
+    haiku_timeout_seconds: float = Field(
+        default=4.0, alias="HAIKU_TIMEOUT_SECONDS", ge=0.5
+    )
+    sonnet_timeout_seconds: float = Field(
+        default=8.0, alias="SONNET_TIMEOUT_SECONDS", ge=0.5
+    )
+    pipeline_timeout_seconds: float = Field(
+        default=15.0, alias="PIPELINE_TIMEOUT_SECONDS", ge=1.0
+    )
     resend_api_key: str | None = Field(default=None, alias="RESEND_API_KEY")
     email_driver: Literal["console", "resend"] = Field(
         default="console", alias="EMAIL_DRIVER"

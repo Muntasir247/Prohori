@@ -22,7 +22,8 @@ select = ["E", "F", "I", "UP", "B", "W", "C4", "ASYNC"]
 ignore = ["B008"]  # FastAPI uses callables in argument defaults (Depends()).
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["B018"]
+"tests/*" = ["B018", "E501"]
+"app/llm/prompts/*" = ["E501"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

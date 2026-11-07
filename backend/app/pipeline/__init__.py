@@ -10,6 +10,8 @@ from app.pipeline.normalize import (
     normalize_text,
     parse_amount_bdt,
 )
+from app.pipeline.orchestrator import PipelineOrchestrator
+from app.pipeline.retrieval import RetrievalEngine
 from app.pipeline.riskmodel import PaymentRiskResult, predict_payment_risk
 from app.pipeline.rules import RuleEngine, RuleEngineResult, RuleHit, get_rule_engine
 from app.pipeline.templates import RuleOnlyExplanation, get_rule_only_explanation
@@ -19,6 +21,8 @@ __all__ = [
     "MaskedPhone",
     "MaskingResult",
     "PaymentRiskResult",
+    "PipelineOrchestrator",
+    "RetrievalEngine",
     "RiskLevel",
     "RuleEngine",
     "RuleEngineResult",
