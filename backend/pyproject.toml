@@ -1,0 +1,30 @@
+[project]
+name = "prohori-backend"
+version = "0.1.0"
+description = "Prohori — Bangla-first fraud-check API (FastAPI + PostgreSQL/pgvector)"
+requires-python = ">=3.12"
+readme = "README.md"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+src = ["app", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W", "C4", "ASYNC"]
+ignore = ["B008"]  # FastAPI uses callables in argument defaults (Depends()).
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B018"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-ra -q"

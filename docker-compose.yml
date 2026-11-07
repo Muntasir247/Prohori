@@ -1,0 +1,55 @@
+# Local development stack: PostgreSQL 16 + pgvector and the FastAPI backend with
+# live reload. The frontend runs separately with `npm run dev` (Vite proxies /api
+# to the backend on :8000).
+#
+# Usage:
+#   cp .env.example .env   # fill in ANTHROPIC_API_KEY, NUMBER_HMAC_KEY, SESSION_SECRET
+#   docker compose up --build
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: prohori
+      POSTGRES_PASSWORD: prohori
+      POSTGRES_DB: prohori
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prohori -d prohori"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # Override the image CMD to enable autoreload for development.
+    command: >
+      uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      DATABASE_URL: postgresql+asyncpg://prohori:prohori@db:5432/prohori
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      NUMBER_HMAC_KEY: ${NUMBER_HMAC_KEY}
+      SESSION_SECRET: ${SESSION_SECRET}
+      VOYAGE_API_KEY: ${VOYAGE_API_KEY:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      EMAIL_DRIVER: ${EMAIL_DRIVER:-console}
+      APP_ORIGIN: ${APP_ORIGIN:-http://localhost:5173}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      DAILY_LLM_SPEND_CAP_USD: ${DAILY_LLM_SPEND_CAP_USD:-5.0}
+      ENVIRONMENT: development
+    volumes:
+      # Mount source for reload; the named volume keeps the image's venv/site-packages.
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

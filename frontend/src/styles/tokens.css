@@ -1,0 +1,36 @@
+/*
+ * Design tokens. The full Doc 01 token set lands in Phase 02; this is the
+ * minimal palette the Phase 01 skeleton needs. All colours live here as CSS
+ * variables — components never hard-code hex values.
+ */
+:root {
+  --color-bg: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-border: #e2e5ea;
+  --color-text: #15181d;
+  --color-text-muted: #5b6370;
+  --color-brand: #0b6b5a;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-bangla: "Noto Sans Bengali", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0f1216;
+    --color-surface: #171b21;
+    --color-border: #2a2f37;
+    --color-text: #eef1f5;
+    --color-text-muted: #9aa3af;
+    --color-brand: #3fb8a0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0f1216;
+  --color-surface: #171b21;
+  --color-border: #2a2f37;
+  --color-text: #eef1f5;
+  --color-text-muted: #9aa3af;
+  --color-brand: #3fb8a0;
+}
