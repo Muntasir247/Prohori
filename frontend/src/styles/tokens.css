@@ -1,36 +1,56 @@
 /*
- * Design tokens. The full Doc 01 token set lands in Phase 02; this is the
- * minimal palette the Phase 01 skeleton needs. All colours live here as CSS
- * variables — components never hard-code hex values.
+ * Design tokens per Doc 01 Section 3 and 5.
+ * Night Watch palette: dark-first with pine, bone and lantern yellow.
+ * All colours live here as CSS variables.
  */
 :root {
-  --color-bg: #f7f8fa;
-  --color-surface: #ffffff;
-  --color-border: #e2e5ea;
-  --color-text: #15181d;
-  --color-text-muted: #5b6370;
-  --color-brand: #0b6b5a;
+  --color-bg: #0c1614;
+  --color-surface: #13211e;
+  --color-surface-2: #1b2d29;
+  --color-border: #2a3f3a;
+  --color-border-strong: #4a635b;
+  --color-text: #f3f1e8;
+  --color-text-muted: #7e9088;
+  --color-brand: #3fb8a0;
+  --color-pine: #1f4d43;
+  --color-accent: #f2c14e;
+
+  /* Risk tokens (Doc 01 Section 3) */
+  --color-risk-high: #ff6b5e;
+  --color-risk-high-tint: #3a1714;
+  --color-risk-medium: #ff9f45;
+  --color-risk-medium-tint: #3a2510;
+  --color-risk-low: #9db4c0;
+  --color-risk-low-tint: #1d2a30;
+  --color-info: #7cc0ec;
+  --color-info-tint: #14293a;
+  --color-success: #4cc38a;
+  --color-success-tint: #12301f;
 
   --font-sans: "Inter", system-ui, sans-serif;
   --font-bangla: "Noto Sans Bengali", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-bg: #0f1216;
-    --color-surface: #171b21;
-    --color-border: #2a2f37;
-    --color-text: #eef1f5;
-    --color-text-muted: #9aa3af;
-    --color-brand: #3fb8a0;
-  }
-}
+:root[data-theme="light"] {
+  --color-bg: #f7f5ee;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0eee5;
+  --color-border: #d9ddd3;
+  --color-border-strong: #9aa89f;
+  --color-text: #10201c;
+  --color-text-muted: #4c5f58;
+  --color-brand: #0b6b5a;
+  --color-pine: #1f4d43;
+  --color-accent: #f2c14e;
 
-:root[data-theme="dark"] {
-  --color-bg: #0f1216;
-  --color-surface: #171b21;
-  --color-border: #2a2f37;
-  --color-text: #eef1f5;
-  --color-text-muted: #9aa3af;
-  --color-brand: #3fb8a0;
+  --color-risk-high: #c4291f;
+  --color-risk-high-tint: #fbebe9;
+  --color-risk-medium: #a85400;
+  --color-risk-medium-tint: #fbefe2;
+  --color-risk-low: #3f5e6e;
+  --color-risk-low-tint: #e9eff2;
+  --color-info: #1f6aa5;
+  --color-info-tint: #e6f0f8;
+  --color-success: #1e7a4c;
+  --color-success-tint: #e4f3ea;
 }

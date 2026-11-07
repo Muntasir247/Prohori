@@ -69,7 +69,7 @@ class EmailService:
 
         resend.api_key = self._settings.resend_api_key
         html = (
-            f'<p>{subject}</p>'
+            f"<p>{subject}</p>"
             f'<p><a href="{link}">{link}</a></p>'
             "<p>If you did not request this, you can ignore this email.</p>"
         )

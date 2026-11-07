@@ -22,9 +22,7 @@ class Session(Base):
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    token_hash: Mapped[str] = mapped_column(
-        String(64), nullable=False, unique=True
-    )
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
     user_agent: Mapped[str | None] = mapped_column(String(200), nullable=True)
     last_seen_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utcnow

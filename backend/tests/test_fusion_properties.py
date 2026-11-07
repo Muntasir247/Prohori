@@ -51,9 +51,9 @@ def test_property_llm_can_never_lower_floor(
 
     if result.floor is not None:
         # If there is a floor, final_level must not be None
-        assert result.final_level is not None, (
-            f"Floor {result.floor} was set but final_level was None!"
-        )
+        assert (
+            result.final_level is not None
+        ), f"Floor {result.floor} was set but final_level was None!"
         # And final_level must be greater than or equal to floor
         assert result.final_level >= result.floor, (
             f"VIOLATION: Floor was {result.floor} but final was {result.final_level} "
@@ -79,9 +79,9 @@ def test_property_null_llm_with_no_rule_hit_returns_null(
         payment_level=payment_level,
         is_message_check=True,
     )
-    assert result.final_level is None, (
-        f"VIOLATION: Expected null final_level, got {result.final_level}"
-    )
+    assert (
+        result.final_level is None
+    ), f"VIOLATION: Expected null final_level, got {result.final_level}"
 
 
 @given(

@@ -8,6 +8,7 @@ export function LanguageToggle() {
   return (
     <button
       type="button"
+      data-testid="language-toggle"
       onClick={() => void i18n.changeLanguage(next)}
       className="rounded-md border border-border px-2 py-1 text-xs text-muted hover:text-text"
       aria-label="Toggle language"

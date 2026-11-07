@@ -35,9 +35,7 @@ from app.services import auth as auth_service
 from app.services import rate_limit
 from app.services.email import EmailService
 
-router = APIRouter(
-    prefix="/auth", tags=["auth"], dependencies=[Depends(enforce_csrf)]
-)
+router = APIRouter(prefix="/auth", tags=["auth"], dependencies=[Depends(enforce_csrf)])
 
 
 def get_email_service() -> EmailService:
@@ -140,9 +138,7 @@ async def login(
         ip=_client_ip(request),
         user_agent=request.headers.get("user-agent"),
     )
-    set_session_cookie(
-        response, raw, max_age=auth_service.session_max_age(user.role)
-    )
+    set_session_cookie(response, raw, max_age=auth_service.session_max_age(user.role))
     return UserOut.from_user(user)
 
 

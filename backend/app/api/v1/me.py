@@ -16,9 +16,7 @@ from app.schemas.me import DeleteAccountIn, MeUpdateIn, PasswordChangeIn, Sessio
 from app.security.tokens import hash_token
 from app.services import auth as auth_service
 
-router = APIRouter(
-    prefix="/me", tags=["me"], dependencies=[Depends(enforce_csrf)]
-)
+router = APIRouter(prefix="/me", tags=["me"], dependencies=[Depends(enforce_csrf)])
 
 
 @router.get("")
@@ -27,9 +25,7 @@ async def read_me(user: CurrentUser) -> UserOut:
 
 
 @router.patch("")
-async def update_me(
-    body: MeUpdateIn, user: CurrentUser, session: DbSession
-) -> UserOut:
+async def update_me(body: MeUpdateIn, user: CurrentUser, session: DbSession) -> UserOut:
     if body.name is not None:
         user.display_name = body.name.strip()
     if body.language is not None:
@@ -37,9 +33,7 @@ async def update_me(
     if body.theme is not None:
         user.theme = body.theme
     if body.onboarding_completed:
-        user.onboarding_completed_at = user.onboarding_completed_at or datetime.now(
-            UTC
-        )
+        user.onboarding_completed_at = user.onboarding_completed_at or datetime.now(UTC)
     await session.flush()
     return UserOut.from_user(user)
 
@@ -88,9 +82,7 @@ async def revoke_sessions(
     if id is not None:
         target = next((r for r in rows if str(r.id) == id), None)
         if target is None:
-            raise AppError(
-                "not_found", status=404, message_key="errors.not_found"
-            )
+            raise AppError("not_found", status=404, message_key="errors.not_found")
         await auth_service.revoke_session(session, target.id)
     else:
         for row in rows:
@@ -119,9 +111,7 @@ async def export_me(user: CurrentUser, session: DbSession) -> JSONResponse:
     body = json.dumps(payload, ensure_ascii=False, indent=2)
     return JSONResponse(
         content=json.loads(body),
-        headers={
-            "Content-Disposition": 'attachment; filename="prohori-my-data.json"'
-        },
+        headers={"Content-Disposition": 'attachment; filename="prohori-my-data.json"'},
     )
 
 

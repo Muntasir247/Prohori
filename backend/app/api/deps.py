@@ -71,9 +71,7 @@ async def get_optional_user(
     user = resolved[0]
     # Rolling lifetime (Doc 02 Section 7): the DB expiry moved forward in
     # resolve_session, so move the cookie's max-age forward with it.
-    set_session_cookie(
-        response, token, max_age=auth_service.session_max_age(user.role)
-    )
+    set_session_cookie(response, token, max_age=auth_service.session_max_age(user.role))
     return user
 
 
@@ -81,9 +79,7 @@ async def get_current_user(
     user: Annotated[User | None, Depends(get_optional_user)],
 ) -> User:
     if user is None:
-        raise AppError(
-            "unauthorized", status=401, message_key="errors.unauthorized"
-        )
+        raise AppError("unauthorized", status=401, message_key="errors.unauthorized")
     return user
 
 
@@ -101,9 +97,7 @@ def require_role(*roles: str) -> Callable[[User], User]:
 
     async def _guard(user: CurrentUser) -> User:
         if user.role not in allowed:
-            raise AppError(
-                "forbidden", status=403, message_key="errors.forbidden"
-            )
+            raise AppError("forbidden", status=403, message_key="errors.forbidden")
         return user
 
     return _guard
@@ -119,9 +113,7 @@ def require_scope(*scopes: str) -> Callable[[Request], None]:
     async def _guard(request: Request) -> None:
         granted = getattr(request.state, "api_scopes", None) or set()
         if not set(scopes).issubset(granted):
-            raise AppError(
-                "forbidden", status=403, message_key="errors.forbidden"
-            )
+            raise AppError("forbidden", status=403, message_key="errors.forbidden")
 
     return _guard
 

@@ -117,9 +117,7 @@ async def _consume_token(
     token = result.scalar_one_or_none()
     now = datetime.now(UTC)
     if token is None or token.used_at is not None or _aware(token.expires_at) < now:
-        raise AppError(
-            "token_invalid", status=410, message_key="errors.token_invalid"
-        )
+        raise AppError("token_invalid", status=410, message_key="errors.token_invalid")
     token.used_at = now
     await session.flush()
     return token
@@ -279,18 +277,14 @@ async def register(
 
 
 async def verify_email(session: AsyncSession, *, token: str) -> None:
-    record = await _consume_token(
-        session, purpose=TokenPurpose.verify_email, raw=token
-    )
+    record = await _consume_token(session, purpose=TokenPurpose.verify_email, raw=token)
     user = None
     if record.user_id is not None:
         user = await session.get(User, record.user_id)
     elif record.email is not None:
         user = await get_user_by_email(session, record.email)
     if user is None:
-        raise AppError(
-            "token_invalid", status=410, message_key="errors.token_invalid"
-        )
+        raise AppError("token_invalid", status=410, message_key="errors.token_invalid")
     if user.email_verified_at is None:
         user.email_verified_at = datetime.now(UTC)
     await session.flush()
@@ -401,9 +395,7 @@ async def login(
 
 
 # --- Password reset --------------------------------------------------------
-async def forgot_password(
-    session: AsyncSession, *, email: str, email_service
-) -> None:
+async def forgot_password(session: AsyncSession, *, email: str, email_service) -> None:
     """Start a reset. Silent no-op for unknown emails (no account discovery)."""
     user = await get_user_by_email(session, email)
     if user is None:
@@ -427,9 +419,7 @@ async def reset_password(
     )
     user = await session.get(User, record.user_id) if record.user_id else None
     if user is None:
-        raise AppError(
-            "token_invalid", status=410, message_key="errors.token_invalid"
-        )
+        raise AppError("token_invalid", status=410, message_key="errors.token_invalid")
     user.password_hash = passwords.hash_password(new_password)
     # A reset is also an email proof, so confirm verification if still pending.
     if user.email_verified_at is None:
@@ -471,9 +461,7 @@ async def accept_invite(
     passwords.validate_password(password)
     record = await _consume_token(session, purpose=TokenPurpose.invite, raw=token)
     if record.email is None:
-        raise AppError(
-            "token_invalid", status=410, message_key="errors.token_invalid"
-        )
+        raise AppError("token_invalid", status=410, message_key="errors.token_invalid")
     role = record.role or UserRole.reviewer.value
     now = datetime.now(UTC)
     user = await get_user_by_email(session, record.email)

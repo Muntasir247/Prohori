@@ -33,9 +33,7 @@ class AuthToken(Base):
     email: Mapped[str | None] = mapped_column(String(320), nullable=True)
     purpose: Mapped[str] = mapped_column(String(20), nullable=False)
     role: Mapped[str | None] = mapped_column(user_role_type(), nullable=True)
-    token_hash: Mapped[str] = mapped_column(
-        String(64), nullable=False, unique=True
-    )
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True)
     expires_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False
     )

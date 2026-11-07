@@ -47,4 +47,3 @@ def test_payment_risk_input_from_string():
     assert payment.amount_band == "very_high"
     assert payment.urgency == 1
     assert payment.hour == 23
-

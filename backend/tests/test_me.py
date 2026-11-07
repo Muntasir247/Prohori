@@ -85,9 +85,7 @@ async def test_delete_account_requires_exact_confirmation(client):
     await register_verified(client, email="del@example.com")
     await login(client, "del@example.com", "correct-horse-battery")
 
-    bad = await client.request(
-        "DELETE", "/api/v1/me", json={"confirm": "delete"}
-    )
+    bad = await client.request("DELETE", "/api/v1/me", json={"confirm": "delete"})
     assert bad.status_code == 422
 
     ok = await client.request("DELETE", "/api/v1/me", json={"confirm": "DELETE"})

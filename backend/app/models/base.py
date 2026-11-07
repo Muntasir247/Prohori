@@ -32,9 +32,7 @@ def uuid_pk() -> Mapped[UUID]:
 
 
 def created_at_col() -> Mapped[datetime]:
-    return mapped_column(
-        DateTime(timezone=True), nullable=False, default=utcnow
-    )
+    return mapped_column(DateTime(timezone=True), nullable=False, default=utcnow)
 
 
 def updated_at_col() -> Mapped[datetime]:

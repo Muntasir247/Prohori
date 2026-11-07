@@ -30,9 +30,7 @@ PHONE_LEAK_REGEX = re.compile(
 )
 
 # 2. Email addresses
-EMAIL_LEAK_REGEX = re.compile(
-    r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
-)
+EMAIL_LEAK_REGEX = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b")
 
 # 3. URL query strings with parameters
 URL_PARAM_LEAK_REGEX = re.compile(r"https?://[^\s]*\?[^\s]+")
@@ -65,62 +63,72 @@ def test_zero_leaks_across_pii_fixtures(pii_fixtures):
 
         phone_leaks = PHONE_LEAK_REGEX.findall(text_without_placeholders)
         if phone_leaks:
-            leaks_found.append({
-                "id": f_id,
-                "type": "PHONE_LEAK",
-                "leaked": phone_leaks,
-                "masked": masked,
-            })
+            leaks_found.append(
+                {
+                    "id": f_id,
+                    "type": "PHONE_LEAK",
+                    "leaked": phone_leaks,
+                    "masked": masked,
+                }
+            )
 
         # 2. Check for Email Leaks
         email_leaks = EMAIL_LEAK_REGEX.findall(text_without_placeholders)
         if email_leaks:
-            leaks_found.append({
-                "id": f_id,
-                "type": "EMAIL_LEAK",
-                "leaked": email_leaks,
-                "masked": masked,
-            })
+            leaks_found.append(
+                {
+                    "id": f_id,
+                    "type": "EMAIL_LEAK",
+                    "leaked": email_leaks,
+                    "masked": masked,
+                }
+            )
 
         # 3. Check for URL Query String Leaks
         url_param_leaks = URL_PARAM_LEAK_REGEX.findall(text_without_placeholders)
         if url_param_leaks:
-            leaks_found.append({
-                "id": f_id,
-                "type": "URL_PARAM_LEAK",
-                "leaked": url_param_leaks,
-                "masked": masked,
-            })
+            leaks_found.append(
+                {
+                    "id": f_id,
+                    "type": "URL_PARAM_LEAK",
+                    "leaked": url_param_leaks,
+                    "masked": masked,
+                }
+            )
 
         # 4. Check for OTP/PIN Leaks when expected
         if "OTP" in pii_types or "PIN" in pii_types:
-            assert result.otp_pin_detected, (
-                f"Fixture {f_id} expected OTP/PIN detection but got False"
-            )
+            assert (
+                result.otp_pin_detected
+            ), f"Fixture {f_id} expected OTP/PIN detection but got False"
 
         # 5. Check NID / Account leaks
         if "NID" in pii_types or "ACCOUNT" in pii_types:
             long_runs = LONG_DIGIT_RUN_REGEX.findall(text_without_placeholders)
             if long_runs:
-                leaks_found.append({
-                    "id": f_id,
-                    "type": "NID_OR_ACCOUNT_LEAK",
-                    "leaked": long_runs,
-                    "masked": masked,
-                })
+                leaks_found.append(
+                    {
+                        "id": f_id,
+                        "type": "NID_OR_ACCOUNT_LEAK",
+                        "leaked": long_runs,
+                        "masked": masked,
+                    }
+                )
 
         # 6. Honest R07 reporting: Track unmasked Bangla names
         if "UNLABELED_NAME" in pii_types:
             # Presidio has no native Bangla NER model. We document this open risk.
-            r07_bangla_name_misses.append({
-                "id": f_id,
-                "raw_text": raw_text,
-                "masked_text": masked,
-                "reason": (
-                    "Unlabeled Bangla name without honorific prefix cannot be "
-                    "resolved by regex without a full Bangla NER model."
-                ),
-            })
+            r07_bangla_name_misses.append(
+                {
+                    "id": f_id,
+                    "raw_text": raw_text,
+                    "masked_text": masked,
+                    "reason": (
+                        "Unlabeled Bangla name without honorific prefix cannot be "
+                        "resolved by regex without a full Bangla NER model."
+                    ),
+                }
+            )
 
     # Print R07 honest miss report for transparency
     print("\n" + "=" * 70)

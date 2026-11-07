@@ -47,4 +47,3 @@ def build_user_payload(
         f"<allowed_actions>{', '.join(allowed_actions or [])}</allowed_actions>",
     ]
     return "\n\n".join(sections)
-

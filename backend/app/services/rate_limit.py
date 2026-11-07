@@ -71,9 +71,7 @@ async def _increment(
     session: AsyncSession, key: str, window_start: datetime, by: int = 1
 ) -> None:
     insert = _upsert(session)
-    stmt = insert(RateLimitCounter).values(
-        key=key, window_start=window_start, count=by
-    )
+    stmt = insert(RateLimitCounter).values(key=key, window_start=window_start, count=by)
     stmt = stmt.on_conflict_do_update(
         index_elements=["key", "window_start"],
         set_={"count": RateLimitCounter.count + by},

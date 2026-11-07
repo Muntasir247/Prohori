@@ -29,4 +29,3 @@ def build_system_blocks() -> list[dict[str, Any]]:
 
 def build_user_payload(normalized_query: str) -> str:
     return f"<summary>{normalized_query}</summary>"
-

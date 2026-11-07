@@ -72,8 +72,9 @@ class Settings(BaseSettings):
     )
     log_level: str = Field(default="INFO", alias="LOG_LEVEL")
 
-    @field_validator("database_url", "anthropic_api_key", "number_hmac_key",
-                     "session_secret")
+    @field_validator(
+        "database_url", "anthropic_api_key", "number_hmac_key", "session_secret"
+    )
     @classmethod
     def _not_blank(cls, value: str) -> str:
         if not value or not value.strip():

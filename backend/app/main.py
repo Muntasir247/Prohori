@@ -47,6 +47,15 @@ async def _lifespan(app: FastAPI):
     settings = get_settings()
     configure_logging(settings.log_level)
     _logger.info("startup", extra={"route": "lifespan"})
+
+    # Ensure tables exist
+    from app.db import get_engine
+    from app.models import Base
+
+    engine = get_engine()
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
     yield
     # Import here so app construction never needs a live DB driver.
     from app.db import dispose_engine
@@ -122,15 +131,11 @@ def _register_error_handlers(app: FastAPI) -> None:
         code = _STATUS_CODE_NAMES.get(exc.status_code, "error")
         return JSONResponse(
             status_code=exc.status_code,
-            content=envelope_from_parts(
-                code=code, request_id=_request_id(request)
-            ),
+            content=envelope_from_parts(code=code, request_id=_request_id(request)),
         )
 
     @app.exception_handler(Exception)
-    async def _handle_unexpected(
-        request: Request, exc: Exception
-    ) -> JSONResponse:
+    async def _handle_unexpected(request: Request, exc: Exception) -> JSONResponse:
         rid = _request_id(request)
         # Log the stack, but never the request body — it may hold message text.
         _logger.exception("unhandled_error", extra={"request_id": rid})

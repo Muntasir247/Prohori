@@ -11,8 +11,13 @@ import Register from "@/routes/public/Register";
 import ResetPassword from "@/routes/public/ResetPassword";
 import VerifyEmail from "@/routes/public/VerifyEmail";
 import NotFound from "@/routes/system/NotFound";
+import CheckDetail from "@/routes/user/CheckDetail";
 import CheckHome from "@/routes/user/CheckHome";
+import History from "@/routes/user/History";
+import MessageCheck from "@/routes/user/MessageCheck";
 import Onboarding from "@/routes/user/Onboarding";
+import PaymentCheck from "@/routes/user/PaymentCheck";
+import Result from "@/routes/user/Result";
 import Settings from "@/routes/user/Settings";
 
 // Reviewer screens load only for signed-in staff (Doc 02 Section 6).
@@ -34,6 +39,11 @@ export const router = createBrowserRouter([
 
   // S09 is open to guests: no account is needed to check a message.
   { path: "/check", element: <CheckHome /> },
+  { path: "/check/message", element: <MessageCheck /> },
+  { path: "/check/payment", element: <PaymentCheck /> },
+  { path: "/result/:id", element: <Result /> },
+  { path: "/history", element: <History /> },
+  { path: "/history/:id", element: <CheckDetail /> },
 
   // Signed-in account screens (S08, S22).
   {
