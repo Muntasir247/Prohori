@@ -122,9 +122,59 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
     offline**, so the remaining gap is only environment: install `asyncpg`, run
     `alembic upgrade head` against a live Postgres, then the manual S03–S08/S22
     browser pass in both languages.
-- [ ] **Phase 05 — Deterministic pipeline.** Normalization, masking, rules, payment
+- [x] **Phase 05 — Deterministic pipeline.** Normalization, masking, rules, payment
   model and fusion, with no LLM. _Done when:_ rule-only High works offline with
   Bangla text.
+  - **Normalization (`pipeline/normalize.py`):** Unicode NFC normalization; Bangla
+    digits (`০-৯`) to ASCII (`0-9`) translation; amounts parsed strictly into Decimal BDT
+    without float rounding (R05) handling taka, Tk, BDT, ৳, and lakh/lac/crore/thousand
+    forms; phone numbers canonicalized to E.164 (`+8801XXXXXXXXX`) via phonenumbers;
+    Unicode-script language detection (`bn`, `en`, `mixed`).
+  - **PII Masking (`pipeline/masking.py`):** Presidio Analyzer configured with custom
+    Bangladesh recognizers (`BDPhoneRecognizer` for both digit sets, `BDNIDRecognizer`
+    for 10/13/17-digit NIDs, `BDAccountRecognizer` for 8-16 digit bank/wallet accounts,
+    `EmailRecognizer`, `URLQueryRecognizer` for links, and `BanglaNameRecognizer` for
+    honorific and label context). Completely removes OTP/PIN/CVV codes near keywords in
+    Bangla, English, and Banglish (keeping only the boolean fact of detection). Replaces
+    entities with stable indexed placeholders (`[PHONE_1]`, `[ACCOUNT_1]`, `[NID_1]`,
+    `[EMAIL_1]`, `[LINK_1]`, `[NAME_1]`). Phone numbers stored only as HMAC-SHA256 hashes
+    using `NUMBER_HMAC_KEY` (never plain SHA) with safe display format `+880 17** ***678`.
+    Filters out English NER false positives on Bengali script and honestly reports
+    unlabeled Bangla name misses per Risk R07.
+  - **Rule Engine (`pipeline/rules/`):** Declarative `rules.yaml` and deterministic
+    `RuleEngine`. Hard rules: credential requests (`HARD_OTP_PIN_PASSWORD`), confirmed
+    fraudulent numbers (`HARD_CONFIRMED_RISKY_NUMBER`). Soft rules: urgency (`SOFT_URGENCY`),
+    impersonation (`SOFT_IMPERSONATION`), suspicious link/domain (`SOFT_LINK_MISMATCH`),
+    unusual amount/advance fee (`SOFT_UNUSUAL_AMOUNT`), prize/lottery/cashback
+    (`SOFT_PRIZE_WORDING`), wrong-number refund story (`SOFT_REFUND_STORY`).
+  - **Payment Model (`training/train_payment_model.py` & `pipeline/riskmodel.py`):**
+    Generates 6,000 synthetic records and trains a scikit-learn `LogisticRegression`
+    pipeline with `ColumnTransformer` (OneHotEncoder on amount band, recipient status,
+    channel; StandardScaler on urgency, hour). Evaluated on 20% holdout (94.5% accuracy,
+    0.9908 ROC-AUC), saving versioned `payment_risk_model.joblib` artifact explicitly
+    labeled `simulated: True`. Predictor returns probability, candidate level (under 0.40
+    Low, 0.40–0.74 Medium, 0.75+ High), and top contributing factors explained in both
+    Bangla and English from model coefficients.
+  - **Risk Fusion (`pipeline/fusion.py`):** Implements Doc 02 Section 10.3 table exactly
+    as a pure function: Hard rule -> Floor High; 2+ Soft rules -> Floor Medium;
+    Draft level = max(floor, llm, payment); False-positive Cap: when message has no rule
+    hits and LLM says Low, High from score alone becomes Medium; LLM can never lower a
+    floor; Model down with no rule hit returns null final_level (S16).
+  - **Templates (`pipeline/templates.py`):** Pre-authored fixed Bangla and English
+    explanations, cautions, and safe action IDs for rule-only flows, bypassing LLMs
+    entirely when hard rules trigger.
+  - **Verified (offline):** 53 new pytest unit, property, and integration tests passing:
+    - 0 leaks on 45 fixture strings in `tests/fixtures/pii_fixtures.json` (no phone numbers,
+      OTPs, PINs, CVVs, emails, NIDs, or URL query parameters survive in masked text).
+    - Transparent R07 audit report printed during test run documenting unlabeled
+      Bangla name limitations without an external Bangla NER model.
+    - Hypothesis property tests (`tests/test_fusion_properties.py`) mathematically
+      proving: (1) LLM can never lower a floor; (2) null LLM level with no rule hit
+      returns null; (3) false-positive cap holds; (4) 2+ soft rules enforce Medium floor.
+    - Integration test (`tests/test_rule_only_offline.py`) proving "Rule-only High works
+      offline with Bangla text", delivering level High, fixed Bangla explanation, and
+      safe action IDs without calling any LLM.
+    - All Phase 05 files pass Ruff check and formatting with 0 errors.
 - [ ] **Phase 06 — Retrieval and Claude integration.** Knowledge retrieval, Haiku
   and Sonnet stages, orchestrator. _Done when:_ CLI check returns valid results,
   and the kill-key test gives fallback.

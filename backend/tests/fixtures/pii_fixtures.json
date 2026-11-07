@@ -1,0 +1,274 @@
+[
+  {
+    "id": "PII_01",
+    "text": "আপনার একাউন্ট ব্লক করা হয়েছে। আনব্লক করতে OTP 492019 দিন।",
+    "expected_leak": false,
+    "pii_types": ["OTP"]
+  },
+  {
+    "id": "PII_02",
+    "text": "Call immediately at 01712345678 to update your KYC details.",
+    "expected_leak": false,
+    "pii_types": ["PHONE"]
+  },
+  {
+    "id": "PII_03",
+    "text": "যোগাযোগ করুন এই নম্বরে: ০১৭১২৩৪৫৬৭৮। সহায়তা টিম প্রস্তুত আছে।",
+    "expected_leak": false,
+    "pii_types": ["PHONE"]
+  },
+  {
+    "id": "PII_04",
+    "text": "Your one-time password is 839201. Never share this code with anyone.",
+    "expected_leak": false,
+    "pii_types": ["OTP"]
+  },
+  {
+    "id": "PII_05",
+    "text": "Send 2500 taka to +8801812345678 via bKash to claim your prize.",
+    "expected_leak": false,
+    "pii_types": ["PHONE"]
+  },
+  {
+    "id": "PII_06",
+    "text": "আপনার পিন নম্বর ৫৪৩২১ কাউকে বলবেন না। নিরাপদ থাকুন।",
+    "expected_leak": false,
+    "pii_types": ["PIN"]
+  },
+  {
+    "id": "PII_07",
+    "text": "Bhai urgent ekta code geche 749201 ta pathao 01911223344 e.",
+    "expected_leak": false,
+    "pii_types": ["OTP", "PHONE"]
+  },
+  {
+    "id": "PII_08",
+    "text": "Verification required for Account: 123456789012 at our Gulshan branch.",
+    "expected_leak": false,
+    "pii_types": ["ACCOUNT"]
+  },
+  {
+    "id": "PII_09",
+    "text": "হিসাব নম্বর: ৯৮৭৬৫৪৩২১০১২ এ টাকা জমা হয়েছে। বিস্তারিত দেখুন।",
+    "expected_leak": false,
+    "pii_types": ["ACCOUNT"]
+  },
+  {
+    "id": "PII_10",
+    "text": "আপনার জাতীয় পরিচয়পত্র: 1985269123456 যাচাই সম্পন্ন হয়েছে।",
+    "expected_leak": false,
+    "pii_types": ["NID"]
+  },
+  {
+    "id": "PII_11",
+    "text": "NID verification pending for smart card 9876543210. Reply soon.",
+    "expected_leak": false,
+    "pii_types": ["NID"]
+  },
+  {
+    "id": "PII_12",
+    "text": "Contact fraud department at security-desk@bank-bd.example for appeal.",
+    "expected_leak": false,
+    "pii_types": ["EMAIL"]
+  },
+  {
+    "id": "PII_13",
+    "text": "জরুরি তথ্যের জন্য helpdesk.support@wallet-bd.org এ ইমেইল পাঠান।",
+    "expected_leak": false,
+    "pii_types": ["EMAIL"]
+  },
+  {
+    "id": "PII_14",
+    "text": "Click https://verify.claim-reward.example/login?token=secret9988&uid=441 to claim bonus.",
+    "expected_leak": false,
+    "pii_types": ["LINK"]
+  },
+  {
+    "id": "PII_15",
+    "text": "Visit http://bank-update.xyz/auth?session=ab99382173167123 to keep card active.",
+    "expected_leak": false,
+    "pii_types": ["LINK"]
+  },
+  {
+    "id": "PII_16",
+    "text": "নাম: মোঃ রফিকুল ইসলাম, আপনার ঋণ অনুমোদিত হয়েছে। ফি দিন।",
+    "expected_leak": false,
+    "pii_types": ["NAME"]
+  },
+  {
+    "id": "PII_17",
+    "text": "গ্রহীতা: আয়েশা খাতুন (01711223344) এ ৫০০ টাকা পাঠানো সফল হয়েছে।",
+    "expected_leak": false,
+    "pii_types": ["NAME", "PHONE"]
+  },
+  {
+    "id": "PII_18",
+    "text": "Recipient: Tanvir Ahmed has received your transfer of 2000 BDT.",
+    "expected_leak": false,
+    "pii_types": ["NAME"]
+  },
+  {
+    "id": "PII_19",
+    "text": "জনাব কামরুল হাসান, আপনার বিদ্যুৎ বিল পরিশোধের শেষ তারিখ আজ।",
+    "expected_leak": false,
+    "pii_types": ["NAME"]
+  },
+  {
+    "id": "PII_20",
+    "text": "শ্রী সুজন কুমার ভৌমিক এর আবেদনটি পর্যালোচনাধীন রয়েছে।",
+    "expected_leak": false,
+    "pii_types": ["NAME"]
+  },
+  {
+    "id": "PII_21",
+    "text": "বেগম ফাতেমা খাতুন, আপনার অ্যাকাউন্টে সমস্যা হয়েছে। 01799001122 তে কল করুন।",
+    "expected_leak": false,
+    "pii_types": ["NAME", "PHONE"]
+  },
+  {
+    "id": "PII_22",
+    "text": "Your verification code: 382914. Valid for 3 minutes only.",
+    "expected_leak": false,
+    "pii_types": ["OTP"]
+  },
+  {
+    "id": "PII_23",
+    "text": "কনফার্মেশন কোড: ৯৮২৩৭১ দিয়ে ট্রানজেকশন সম্পন্ন করুন।",
+    "expected_leak": false,
+    "pii_types": ["OTP"]
+  },
+  {
+    "id": "PII_24",
+    "text": "Login attempt detected. Forward the 6 digit code 482103 to cancel.",
+    "expected_leak": false,
+    "pii_types": ["OTP"]
+  },
+  {
+    "id": "PII_25",
+    "text": "5 ডিজিটের PIN টি ১২৩৪৫ দিয়ে আপনার ওয়ালেটের পাসওয়ার্ড বদলান।",
+    "expected_leak": false,
+    "pii_types": ["PIN"]
+  },
+  {
+    "id": "PII_26",
+    "text": "CVV: 891 and card details required to restore access to your wallet.",
+    "expected_leak": false,
+    "pii_types": ["OTP"]
+  },
+  {
+    "id": "PII_27",
+    "text": "অফিসিয়াল এজেন্ট নম্বর 8801611223344 এ ১৫০০ টাকা প্রসেসিং ফি দিন।",
+    "expected_leak": false,
+    "pii_types": ["PHONE"]
+  },
+  {
+    "id": "PII_28",
+    "text": "Transfer confirmation sent to customer-care@mfs-bd.com for reference.",
+    "expected_leak": false,
+    "pii_types": ["EMAIL"]
+  },
+  {
+    "id": "PII_29",
+    "text": "Claim at www.lottery-winner.online/bdt?phone=01733445566&code=9901 today.",
+    "expected_leak": false,
+    "pii_types": ["LINK", "PHONE"]
+  },
+  {
+    "id": "PII_30",
+    "text": "স্মার্ট আইডি নম্বর ১০ ডিজিটের: ৯৮৭৬৫৪৩২১০ অবিলম্বে হালনাগাদ করুন।",
+    "expected_leak": false,
+    "pii_types": ["NID"]
+  },
+  {
+    "id": "PII_31",
+    "text": "Old 17-digit NID: 19882691234567890 submitted for registration.",
+    "expected_leak": false,
+    "pii_types": ["NID"]
+  },
+  {
+    "id": "PII_32",
+    "text": "১৯৯০১২৩৪৫৬৭৮৯০১২৩ নম্বরের জাতীয় পরিচয়পত্রের তথ্য যাচাই হচ্ছে।",
+    "expected_leak": false,
+    "pii_types": ["NID"]
+  },
+  {
+    "id": "PII_33",
+    "text": "ওয়ালেট নম্বর: ০১৭১২-৩৪৫৬৭৮ এ টাকা পাঠানো হয়েছে। চেক করুন।",
+    "expected_leak": false,
+    "pii_types": ["PHONE"]
+  },
+  {
+    "id": "PII_34",
+    "text": "Hello Mr. David Miller, please confirm receipt on 01300998877.",
+    "expected_leak": false,
+    "pii_types": ["NAME", "PHONE"]
+  },
+  {
+    "id": "PII_35",
+    "text": "প্রাপক: ফারহানা হক, লেনদেন সফল। ট্রানজেকশন ট্র্যাকিং নিশ্চিত করা হলো।",
+    "expected_leak": false,
+    "pii_types": ["NAME"]
+  },
+  {
+    "id": "PII_36",
+    "text": "Please reply with your secret passcode 9481 to unblock debit card.",
+    "expected_leak": false,
+    "pii_types": ["PIN"]
+  },
+  {
+    "id": "PII_37",
+    "text": "অ্যাকাউন্ট ভেরিফিকেশন কোড: ৫৬৭৮৯১ প্রবেশ করান।",
+    "expected_leak": false,
+    "pii_types": ["OTP"]
+  },
+  {
+    "id": "PII_38",
+    "text": "Send 5000 Tk to agent 01511223344 and 01722334455 for express service.",
+    "expected_leak": false,
+    "pii_types": ["PHONE"]
+  },
+  {
+    "id": "PII_39",
+    "text": "Mail your complaint to grievance-officer@fintech-support.com promptly.",
+    "expected_leak": false,
+    "pii_types": ["EMAIL"]
+  },
+  {
+    "id": "PII_40",
+    "text": "Visit https://rewards-gift.example/offer?user_id=88319&promo=win5000 now.",
+    "expected_leak": false,
+    "pii_types": ["LINK"]
+  },
+  {
+    "id": "PII_41",
+    "text": "A/C 882910293847 has received a deposit of 15,000 BDT today.",
+    "expected_leak": false,
+    "pii_types": ["ACCOUNT"]
+  },
+  {
+    "id": "PII_42",
+    "text": "কল দিন +৮৮০১৮৯৯৮৮৭৭৬৬ নম্বরে অবিলম্বে আপনার সার্ভিস সচল করতে।",
+    "expected_leak": false,
+    "pii_types": ["PHONE"]
+  },
+  {
+    "id": "PII_43",
+    "text": "Your login pin is 4829. Do not share your login pin with anyone.",
+    "expected_leak": false,
+    "pii_types": ["PIN"]
+  },
+  {
+    "id": "PII_44",
+    "text": "শাখা ব্যবস্থাপক মোহাম্মদ আসাদুজ্জামান এর সাথে সরাসরি দেখা করুন।",
+    "expected_leak": false,
+    "pii_types": ["NAME"]
+  },
+  {
+    "id": "PII_45",
+    "text": "শাকিব আল হাসান আজ টাকা পাঠিয়েছে ব্যাংক একাউন্টে।",
+    "expected_leak": false,
+    "pii_types": ["UNLABELED_NAME"],
+    "note": "R07 test case: Unlabeled Bangla name without honorific prefix to evaluate and honestly report NER limitations."
+  }
+]
+

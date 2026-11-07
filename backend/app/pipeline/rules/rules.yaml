@@ -1,0 +1,114 @@
+version: "1.0.0"
+description: "Prohori deterministic multilingual rule definitions for fraud detection"
+
+rules:
+  - id: "HARD_OTP_PIN_PASSWORD"
+    type: "hard"
+    category: "credential_theft"
+    name: "Asks for OTP, PIN or password"
+    description: "The message explicitly requests the recipient to send, reply with, or read an OTP, PIN, password, or security code."
+    floor: "High"
+    patterns:
+      bn:
+        - "(?i)(?:ওটিপি|পিন|পাসওয়ার্ড|পাসওয়ার্ড|কোড|সিক্রেট\\s*কোড|সিভিভি).*(?:পাঠান|দিন|বলুন|উত্তর\\s*দিন|শেয়ার\\s*করুন|পাঠাইয়েন|মেসেজ\\s*দিন)"
+        - "(?i)(?:আপনার|বর্তমান).*(?:ওটিপি|পিন|পাসওয়ার্ড|কোড).*(?:পাঠান|দিন|জানান)"
+        - "(?i)(?:OTP|PIN|password|code).*(?:পাঠান|দিন|উত্তর\\s*দিন|শেয়ার\\s*করুন)"
+      en:
+        - "(?i)(?:send|share|give|enter|confirm|provide|read|forward|reply\\s*with|message).*(?:otp|pin|password|passcode|code|cvv)"
+        - "(?i)(?:otp|pin|password|security\\s*code|verification\\s*code).*(?:to\\s*(?:this\\s*)?number|here|now|back)"
+        - "(?i)(?:read\\s*me\\s*the\\s*(?:\\d-digit\\s*)?code|forward\\s*the\\s*(?:\\d-digit\\s*)?confirmation\\s*code)"
+      banglish:
+        - "(?i)(?:otp|pin|code|pass|password).*(?:pathan|pathao|dao|din|send\\s*koren|share\\s*korun|message\\s*din|pathaiyen|pathayen)"
+        - "(?i)(?:code|pin)\\s*ta\\s*(?:dao|din|pathao|send\\s*koro)"
+
+  - id: "HARD_CONFIRMED_RISKY_NUMBER"
+    type: "hard"
+    category: "known_offender"
+    name: "Number with status confirmed_risky"
+    description: "The sender or recipient phone number is verified as fraudulent by human review in risky_numbers."
+    floor: "High"
+    patterns: {}
+
+  - id: "SOFT_URGENCY"
+    type: "soft"
+    category: "psychological_pressure"
+    name: "Urgent action requested"
+    description: "Imposes immediate urgency, imminent suspension, or artificial deadline."
+    patterns:
+      bn:
+        - "(?i)(?:জরুরি|আজকের\\s*মধ্যে|এখনই|অবিলম্বে|তাড়াতাড়ি|সময়\\s*শেষ|আজই|দ্রুত)"
+        - "(?i)(?:ব্লক\\s*হতে\\s*পারে|স্থগিত|ক্যানসেল\\s*করতে\\s*এখনই|এক্ষুণি|২৪\\s*ঘণ্টা)"
+      en:
+        - "(?i)(?:urgent|immediately|within\\s*24\\s*hours|due\\s*today|suspended|suspension|block(?:ed)?|asap|hurry|expires\\s*in)"
+        - "(?i)(?:avoid\\s*suspension|temporary\\s*suspended|urgent\\s*notice|act\\s*now)"
+      banglish:
+        - "(?i)(?:taratari|quick|ekhon-?i|ekhoni|aajker\\s*moddhe|ajker\\s*moddhe|somoy\\s*sesh|somoy\\s*ache|24\\s*ghonta)"
+
+  - id: "SOFT_IMPERSONATION"
+    type: "soft"
+    category: "impersonation"
+    name: "Authority or wallet impersonation"
+    description: "Claims to represent a bank, mobile financial service (bKash/Nagad), police, or official agent."
+    patterns:
+      bn:
+        - "(?i)(?:ব্যাংক|সহায়তা\\s*টিম|সহায়তা\\s*টিম|অফিসিয়াল\\s*এজেন্ট|হেল্পডেস্ক|কাস্টমার\\s*কেয়ার|ম্যানেজার|বিকাশ|নগদ|রকেট|উপায়)"
+        - "(?i)(?:আমি\\s*আপনার\\s*এলাকার\\s*অফিসিয়াল\\s*এজেন্ট|শাখার\\s*কর্মকর্তা)"
+      en:
+        - "(?i)(?:helpdesk|relationship\\s*manager|officer|customer\\s*care|support\\s*team|authorized\\s*agent|official\\s*agent|wallet\\s*helpdesk)"
+        - "(?i)(?:bkash|nagad|rocket|upay|bank\\s*officer|kyc\\s*update)"
+      banglish:
+        - "(?i)(?:helpdesk|relationship\\s*manager|agent\\s*bolchi|ami\\s*bank\\s*er|wallet\\s*helpdesk|customer\\s*care)"
+
+  - id: "SOFT_LINK_MISMATCH"
+    type: "soft"
+    category: "suspicious_link"
+    name: "Suspicious link or domain mismatch"
+    description: "Presents a link with generic domain, deceptive keywords, or unofficial shorteners."
+    patterns:
+      bn:
+        - "(?i)(?:লিংক\\s*এ\\s*যান|ক্লিক\\s*করুন|এই\\s*লিংকে)"
+      en:
+        - "(?i)(?:claim-now|free-|gift-|bonus-|reward-|\\.xyz|\\.top|\\.site|\\.example|bit\\.ly|tinyurl|goo\\.gl)"
+        - "(?i)(?:click\\s*here|visit\\s*link|open\\s*link)"
+      banglish:
+        - "(?i)(?:ei\\s*link\\s*e\\s*jaan|link\\s*e\\s*click|link\\s*e\\s*jan)"
+
+  - id: "SOFT_UNUSUAL_AMOUNT"
+    type: "soft"
+    category: "financial_anomaly"
+    name: "Unusual amount or advance fee"
+    description: "Demands an advance payment, processing fee, guarantee money, or refers to round large amounts (e.g. lakh)."
+    patterns:
+      bn:
+        - "(?i)(?:লাখ|লক্ষ|অগ্রিম|প্রসেসিং\\s*ফি|সার্ভিস\\s*চার্জ|ফি\\s*এই\\s*নম্বরে|টাকা\\s*ফি|টাকা\\s*অগ্রিম)"
+      en:
+        - "(?i)(?:advance\\s*fee|processing\\s*fee|service\\s*charge|advance\\s*to|lakh|advance\\s*payment|guaranteed)"
+      banglish:
+        - "(?i)(?:advance\\s*lagbe|advance\\s*fee|lakh\\s*taka|advance\\s*pathaiyen)"
+
+  - id: "SOFT_PRIZE_WORDING"
+    type: "soft"
+    category: "lottery_scam"
+    name: "Prize, lottery or cashback wording"
+    description: "Promises lottery winnings, lucky draw awards, unearned cashbacks, or free recharge."
+    patterns:
+      bn:
+        - "(?i)(?:লটারি|পুরস্কার|ক্যাশব্যাক\\s*জিতেছেন|অভিনন্দন|ফ্রি\\s*রিচার্জ|অফার|ক্লেইম\\s*করুন|নির্বাচিত\\s*হয়েছে)"
+      en:
+        - "(?i)(?:congratulations|congrats|won|lucky\\s*draw|cashback|prize|free\\s*recharge|claim\\s*your\\s*prize)"
+      banglish:
+        - "(?i)(?:congrats|cashback\\s*peyechen|lucky\\s*draw|lottery|claim\\s*korte|offer)"
+
+  - id: "SOFT_REFUND_STORY"
+    type: "soft"
+    category: "accidental_transfer"
+    name: "Mistaken transfer refund story"
+    description: "Claims to have mistakenly sent money and pressures recipient to return it."
+    patterns:
+      bn:
+        - "(?i)(?:ভুল\\s*করে.*পাঠিয়ে|ভুল\\s*করে.*পাঠিয়েছেন|ফেরত\\s*পাঠান|ফেরত\\s*দিন|টাকা\\s*ফেরত)"
+      en:
+        - "(?i)(?:by\\s*mistake|sent\\s*(?:money\\s*)?by\\s*mistake|wrong\\s*number|refund|send\\s*(?:it\\s*)?back)"
+      banglish:
+        - "(?i)(?:vul\\s*kore|bhul\\s*kore|ferot\\s*diye\\s*dan|ferot\\s*din|ferot\\s*pathan|taka\\s*pathaisi)"
+
