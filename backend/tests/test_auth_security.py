@@ -409,6 +409,18 @@ async def test_guest_cookie_is_httponly_and_only_its_hash_is_used(app, client):
     assert "set-cookie" not in second.headers
 
 
+async def test_guest_id_dependency_alias(app, client):
+    from app.api.deps import guest_id
+
+    @app.get("/api/v1/_guest_id_probe")
+    async def _probe(gid: str = Depends(guest_id)) -> dict[str, str]:
+        return {"guest": gid}
+
+    resp = await client.get("/api/v1/_guest_id_probe")
+    raw = client.cookies.get("prohori_guest")
+    assert resp.json()["guest"] == _sha(raw)
+
+
 # --- CSRF ------------------------------------------------------------------
 @pytest.mark.parametrize(
     "method,path",
@@ -488,6 +500,34 @@ async def test_role_guard_allows_admin_blocks_user_and_guest(app, client, db):
     await client.post("/api/v1/auth/logout")
     await login(client, "boss@example.com", "staff-strong-password")
     assert (await client.get("/api/v1/_staff_probe")).status_code == 200
+
+
+async def test_require_scope_dependency():
+    from unittest.mock import MagicMock
+
+    from app.api.deps import require_scope
+    from app.errors import AppError
+    from fastapi import Request
+
+    guard = require_scope("checks:write")
+    req = MagicMock(spec=Request)
+
+    # Missing api_scopes attribute raises 403
+    req.state = type("State", (), {})()
+    with pytest.raises(AppError) as exc_info:
+        await guard(req)
+    assert exc_info.value.status == 403
+    assert exc_info.value.code == "forbidden"
+
+    # Insufficient scopes raises 403
+    req.state.api_scopes = {"cases:read"}
+    with pytest.raises(AppError) as exc_info:
+        await guard(req)
+    assert exc_info.value.status == 403
+
+    # Granted scopes succeeds without error
+    req.state.api_scopes = {"checks:write", "cases:read"}
+    await guard(req)
 
 
 async def test_profile_update_cannot_escalate_role(client):

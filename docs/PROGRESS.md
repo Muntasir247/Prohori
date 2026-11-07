@@ -81,7 +81,7 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
     in `psql`, `INSERT INTO audit_events (action, entity_type, entity_id) VALUES
     ('t','user','1');` followed by `UPDATE audit_events SET action='x';` — the
     UPDATE must raise `audit_events is append-only`.
-- [~] **Phase 04 — Authentication and roles.** Sessions, guest identity, roles and
+- [x] **Phase 04 — Authentication and roles.** Sessions, guest identity, roles and
   account screens. _Done when:_ S03–S08 and S22 work end to end in both languages.
   - **Backend:** argon2id passwords (`security/passwords.py`, 10+ chars +
     common-password blocklist); 256-bit session tokens and single-use verify /
@@ -93,7 +93,7 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
     forgot/reset/accept-invite, GET·PATCH `/me`, `/me/password`, GET·DELETE
     `/me/sessions`, `/me/export`, DELETE `/me`). Dependencies (`api/deps.py`):
     transactional `get_db`, `enforce_csrf` (X-Requested-With + Origin), current
-    user, `require_role`, `require_scope`, guest-hash cookie. Cookie
+    user, `require_role`, `require_scope`, `guest_id` / guest-hash cookie. Cookie
     `__Host-prohori_session` (HttpOnly, Secure outside dev, SameSite=Lax;
     `api/cookies.py`). Postgres-counter rate limiter (`services/rate_limit.py`):
     login 5 fails/15 min per email+IP → 429 lock; resend 3/hour. Console/Resend
@@ -105,12 +105,17 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
     `RequireAuth`/`RequireRole` guards, a session hook, and bn+en i18n with server
     field errors mapped inline. Reviewers/admins land on `/review`, users on
     `/check` (or `/onboarding` when incomplete).
-  - **Verified:** backend ruff clean + 32 pytest passing (offline SQLite) —
+  - **Verified:** backend ruff clean + 67 pytest passing (offline SQLite) —
     account-discovery safety (duplicate email identical response), 5-fail lockout
     for 15 min, unverified-login 403, expired + reused tokens 410, reset revokes
-    sessions, logout, role guard (user → reviewer route 403), CSRF rejection
-    (missing header and cross-origin). Frontend eslint + tsc clean + 8 vitest
-    passing (incl. Login rendered in both languages).
+    sessions on all devices, logout, role guards (`require_role`: user → reviewer route 403),
+    scope guards (`require_scope`: 403 when missing/insufficient), guest identity
+    (`guest_id` / `get_guest_hash`: sets HttpOnly cookie, stores only SHA-256 hash),
+    CSRF rejection (missing header and cross-origin state changes).
+    Frontend eslint + tsc clean + 42 vitest passing across all public and user
+    account screens (S03 Login, S04 Register, S05 Verify Email, S06 Forgot Password,
+    S07 Reset Password, S08 Onboarding, S22 Settings, AcceptInvite in both Bangla
+    and English with server field errors mapped inline). `npm run build` succeeds cleanly.
   - **Not verified / outstanding:** live end-to-end against Postgres. The auth
     tables are created from ORM metadata for the offline suite; Phase 03's
     migrations 0001/0002 (the exact Section 8 DDL) are **now built and validated

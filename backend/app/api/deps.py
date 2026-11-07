@@ -137,3 +137,8 @@ async def get_guest_hash(request: Request, response: Response) -> str:
         token = new_token()
         set_guest_cookie(response, token)
     return hash_token(token)
+
+
+# Alias for compatibility with the spec naming
+guest_id = get_guest_hash
+GuestId = Annotated[str, Depends(guest_id)]
