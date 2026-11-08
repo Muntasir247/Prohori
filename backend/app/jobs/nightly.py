@@ -425,13 +425,11 @@ async def _execute_steps(
     now = reference_now or utcnow()
     logger.info("Starting nightly job at %s", now.isoformat())
 
+    deleted_guests = await delete_unreported_guest_checks(session, now)
     recounted = await recount_risky_numbers(session)
     rebuilt_agg = await rebuild_daily_aggregates(session, now)
     embedded = await embed_reported_messages(session)
-    clusters_count, campaigns_updated = await cluster_and_upsert_campaigns(
-        session, now
-    )
-    deleted_guests = await delete_unreported_guest_checks(session, now)
+    clusters_count, campaigns_updated = await cluster_and_upsert_campaigns(session, now)
 
     logger.info(
         "Nightly job completed: recounted %d numbers, %d daily aggregates, "

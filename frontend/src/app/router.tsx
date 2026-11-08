@@ -10,7 +10,9 @@ import Login from "@/routes/public/Login";
 import Register from "@/routes/public/Register";
 import ResetPassword from "@/routes/public/ResetPassword";
 import VerifyEmail from "@/routes/public/VerifyEmail";
+import SharedResult from "@/routes/public/SharedResult";
 import NotFound from "@/routes/system/NotFound";
+import AlreadySent from "@/routes/user/AlreadySent";
 import CheckDetail from "@/routes/user/CheckDetail";
 import CheckHome from "@/routes/user/CheckHome";
 import History from "@/routes/user/History";
@@ -45,6 +47,8 @@ export const router = createBrowserRouter([
   { path: "/check/message", element: <MessageCheck /> },
   { path: "/check/payment", element: <PaymentCheck /> },
   { path: "/result/:id", element: <Result /> },
+  { path: "/already-sent", element: <AlreadySent /> },
+  { path: "/s/:token", element: <SharedResult /> },
   { path: "/history", element: <History /> },
   { path: "/history/:id", element: <CheckDetail /> },
 

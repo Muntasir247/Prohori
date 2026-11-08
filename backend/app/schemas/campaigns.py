@@ -34,4 +34,3 @@ class CampaignsResponse(BaseModel):
 class UpdateCampaignRequest(BaseModel):
     label: str | None = Field(None, min_length=2, max_length=120)
     merge_into: UUID | None = None
-

@@ -20,6 +20,7 @@ from app.models.check import (
     DailyAggregate,
     RiskyNumber,
     ScamType,
+    Share,
 )
 from app.models.knowledge import SafeAction, Sample, Tip
 from app.models.rate_limit import RateLimitCounter
@@ -43,6 +44,7 @@ __all__ = [
     "Case",
     "DailyAggregate",
     "CheckEmbedding",
+    "Share",
     "SafeAction",
     "Sample",
     "Tip",

@@ -87,4 +87,3 @@ class RepeatNumbersResponse(BaseModel):
 class UpdateNumberStatusRequest(BaseModel):
     status: str = Field(..., pattern=r"^(watch|confirmed_risky|cleared)$")
     reason: str = Field(..., min_length=10, max_length=500)
-

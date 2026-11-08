@@ -102,9 +102,9 @@
     "taking_longer": "Analysis is taking longer than usual… please wait."
   },
   "pause": {
-    "title": "Pause and take a breath",
-    "message": "Scammers create artificial urgency to force hasty decisions. Do not rush.",
-    "skip": "Skip ({{seconds}}s)"
+    "title": "Take a breath",
+    "message": "Take a breath. Scammers want you to rush.",
+    "skip": "Skip"
   },
   "result": {
     "loading": "Loading result…",
@@ -381,5 +381,47 @@
     "subtitle": "Enter a name and a password with at least 10 characters.",
     "expired": "This invite link is invalid or has expired. Ask an admin for a new one.",
     "submit": "Create reviewer account"
+  },
+  "share": {
+    "ask_trusted": "Ask someone you trust",
+    "share_title": "Share masked check",
+    "share_desc": "Share a masked, private link with someone you trust to get a second opinion before sending money.",
+    "link_copied": "Link copied to clipboard!",
+    "copy_link": "Copy link",
+    "revoke_link": "Revoke link",
+    "link_revoked": "Share link has been revoked.",
+    "privacy_guarantee": "Zero personal data leaked: this link only shows masked text and risk indicators. No personal names, numbers, or account details are shared.",
+    "shared_view_title": "Shared Security Check",
+    "shared_by_relative": "Someone you know shared this security check with you for your advice before taking action.",
+    "expires_in": "Expires in 24 hours",
+    "expires_at": "Expires {{time}}",
+    "expired_title": "This link has expired or is invalid",
+    "expired_desc": "Shared check links automatically expire after 24 hours or when revoked by the sender to protect privacy. Please ask the sender to generate a new link if needed.",
+    "check_own_message": "Check a message yourself",
+    "close": "Close"
+  },
+  "read_aloud": {
+    "read_aloud": "Read aloud",
+    "stop_reading": "Stop reading",
+    "reading": "Reading aloud…"
+  },
+  "already_sent": {
+    "btn_text": "I already sent money",
+    "title": "Act now. Do this first.",
+    "honest_line": "Recovery is not guaranteed. Calling quickly gives the best chance.",
+    "step1_title": "1. Call your provider's official helpline",
+    "step1_desc": "Select your provider below and call immediately. Ask them to freeze the fraudulent transaction and flag the recipient account.",
+    "step2_title": "2. Keep transaction ID and screenshots",
+    "step2_desc": "Do not delete any SMS, WhatsApp messages, or transaction records. Keep the TrxID and clear screenshots as official evidence.",
+    "step3_title": "3. Do not pay recovery scammers",
+    "step3_desc": "Anyone contacting you offering to 'recover' your lost money for an advance fee is running another scam. Legitimate authorities never charge recovery fees.",
+    "step4_title": "4. Report to official law enforcement",
+    "step4_desc": "Contact National Emergency Service 999 or CID Cyber Police hotline to report the fraud officially.",
+    "select_provider": "Select your payment provider",
+    "call_provider": "Call {{provider}} ({{number}})",
+    "call_999": "Call Emergency 999",
+    "call_cyber_police": "Call CID Cyber Police (01320010148)",
+    "offline_mode": "Offline mode active",
+    "offline_note": "This emergency guide is saved and available without an internet connection."
   }
 }

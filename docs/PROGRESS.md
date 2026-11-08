@@ -335,8 +335,64 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
     - Frontend: 5 new tests in `src/features/analytics/analytics.test.tsx` (and all 59 vitest tests across frontend) passing 100%.
     - Production build: `npm run build` succeeds, generating isolated `CartesianChart` and reviewer chunks while keeping public chunks lean.
     - Code quality: `tsc --noEmit` clean, `eslint .` clean, `ruff check backend` clean, `ruff format --check backend` clean.
-- [ ] **Phase 10 — Differentiators.** Pressure Pause, sharing, Already Sent Money,
+- [x] **Phase 10 — Differentiators.** Pressure Pause, sharing, Already Sent Money,
   read aloud. _Done when:_ all four work on a low-end Android Chrome profile.
+  - **1. Pressure Pause (Doc 02 Feature F32, S13):**
+    - Renders on **High risk results only** as a calm 10-second countdown card with message:
+      *"Take a breath. Scammers want you to rush."* (*"এক মুহূর্ত থামুন। প্রতারকরা আপনাকে তাড়াহুড়ো করাতে চায়।"*).
+    - **Prohori Never-Block Rule:** Result content, reasons, and actions remain visible and usable beneath;
+      the countdown never traps or freezes user interaction.
+    - **Accessibility & Motion:** Skip control is always present and keyboard/screen-reader reachable (`tabIndex={0}`, focus rings).
+      Honors `prefers-reduced-motion: reduce` by disabling smooth CSS width animations.
+    - **API & Telemetry:** `POST /api/v1/checks/{id}/pause-ack` records whether the countdown `finished` or was `skipped`
+      into `checks.pause_outcome`. Non-blocking network errors are silently caught so user flow is never interrupted.
+  - **2. Ask Someone You Trust / Share (Doc 02 Feature F33, S13, S21):**
+    - **Backend Endpoints (`api/v1/shares.py`):**
+      - `POST /api/v1/checks/{id}/share`: Generates a random 256-bit URL-safe token, stored only as a SHA-256 hash in the `shares`
+        table. Expires in 24 hours. Automatically revokes prior active shares for the check.
+      - `DELETE /api/v1/checks/{id}/share`: Immediately revokes all active shares for the check (`revoked_at = utcnow()`). Returns `204 No Content`.
+      - `GET /api/v1/shares/{token}`: Sets `X-Robots-Tag: noindex, nofollow` to prevent search engine indexing.
+      - **Token Probing Defense:** Invalid, revoked, and expired tokens return an identical `410 Gone` response with error code
+        `share_expired_or_invalid`, preventing attackers from probing token existence.
+    - **Strict Privacy / Zero Leakage Rule:** Shared response payload and view never expose check UUIDs, user IDs, accounts,
+      personal names, raw phone numbers, or unmasked text. Only masked text, level, reasons, and generic safe actions are exposed.
+    - **UI & Web Share API:** In `Result.tsx`, "Ask someone you trust" invokes the native Web Share API (`navigator.share`)
+      when supported, falling back to a copyable modal with clipboard write and a one-click "Revoke link" button.
+    - **S21 Shared Result (`/s/:token`):** Public reader view with no AppShell, displaying the masked message, reasons,
+      safe actions, 24-hour expiration notice, and calm expired state with link to check own message.
+  - **3. Already Sent Money (Doc 02 Feature F34, S18):**
+    - **Public Emergency Reader (`routes/user/AlreadySent.tsx`, `/already-sent`):** Open to anyone without requiring an account or check.
+    - **Headline:** *"Act now. Do this first."* (*"দেরি করবেন না। এখনই এই পদক্ষেপগুলো নিন।"*).
+    - **Mandatory Honest Line:** *"Recovery is not guaranteed. Calling quickly gives the best chance."*
+      (*"টাকা ফেরত পাওয়ার নিশ্চয়তা নেই। তবে দ্রুত ফোন করলে সুযোগ সবচেয়ে বেশি।"*). Never falsely promises recovery.
+    - **4 Ordered Emergency Steps:**
+      1. *Call provider helpline:* Interactive provider picker (bKash: `16247`, Nagad: `16167`, Rocket: `16216`, Upay: `16268`, Bank/Other: `999`)
+         with large direct `tel:` call button and query parameter support (`?provider=nagad` preselection).
+      2. *Keep transaction ID and screenshots:* Do not delete SMS or chats; save TrxID.
+      3. *Do not pay recovery scammers:* Explicit warning that advance recovery fees are another scam.
+      4. *Report to official law enforcement:* Direct buttons to Emergency `999` and CID Cyber Police `01320010148`.
+    - **Service Worker Offline Cache (`public/sw.js`):** Lightweight service worker pre-caches `/already-sent` and
+      `GET /api/v1/safe-actions?context=after_payment`. Registered in `main.tsx`. UI provides embedded fallback steps so the guide
+      functions immediately and reliably even offline on low-end Android Chrome profiles.
+  - **4. Read Aloud (Doc 02 Feature F37, S13):**
+    - Browser `window.speechSynthesis` with strict feature and voice detection.
+    - **Omission Rule:** The "Read aloud" button is **completely hidden from the DOM** when no `bn-BD` or `bn-IN` voice exists
+      in Bengali mode, or when `SpeechSynthesisUtterance` is unavailable.
+    - When a matching voice is available, speaks the risk rating, reasons, and next safe actions, with stop/cancel controls.
+  - **Verified:**
+    - Backend: 4 integration tests passing in `tests/test_phase10_differentiators.py`:
+      - `POST /checks/{id}/pause-ack` with finished/skipped recorded in DB.
+      - 24h share token lifecycle, `X-Robots-Tag: noindex, nofollow`, and token probing defense (invalid, expired, and revoked all return 410).
+      - Zero leakage test: confirms no check UUID, user ID, unmasked numbers, or names in shared data.
+      - `GET /safe-actions?context=after_payment` accessible without login.
+    - Frontend: 9 integration tests in `src/features/checks/differentiators.test.tsx` (and all 68 vitest tests across frontend) passing 100%:
+      - PressurePause countdown, keyboard skip, reduced motion, and ack dispatch.
+      - Share link generation, copy to clipboard, and revocation.
+      - SharedResult reader view zero-leakage DOM verification and 410 expired state.
+      - AlreadySent 4 ordered steps, honest reality check line, provider picker switching hotlines, and preselection via query params.
+      - Read aloud button hiding when voice is absent, and speaking/stopping when present.
+    - Production build: `npm run build` succeeds cleanly with `dist/sw.js` emitted.
+    - Code quality: `tsc --noEmit` clean (0 errors), `eslint .` clean (0 problems), `ruff check backend` clean (0 errors), `ruff format --check backend` clean.
 - [ ] **Phase 11 — Admin and partner API.** Admin screens and partner keys.
   _Done when:_ publishing a pattern changes retrieval results.
 - [ ] **Phase 12 — Evaluation.** Measure quality and stop regressions. _Done when:_

@@ -223,3 +223,22 @@ class Case(Base):
     check = relationship("Check", lazy="joined")
     scam_type = relationship("ScamType", lazy="joined")
     campaign = relationship("Campaign", back_populates="cases")
+
+
+class Share(Base):
+    __tablename__ = "shares"
+
+    id: Mapped[UUID] = uuid_pk()
+    check_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("checks.id", ondelete="CASCADE"), nullable=False
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    revoked_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = created_at_col()
+
+    check = relationship("Check", lazy="joined")

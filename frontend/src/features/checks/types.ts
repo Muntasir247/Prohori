@@ -12,6 +12,8 @@ export interface SafeActionItem {
   label: string;
   body?: string | null;
   phone?: string | null;
+  label_bn?: string | null;
+  body_bn?: string | null;
 }
 
 export interface EvidenceItem {
@@ -109,4 +111,20 @@ export interface SafeActionResponse {
   verified_at?: string | null;
   is_active: boolean;
 }
+
+export interface CreateShareResponse {
+  share_url: string;
+  token: string;
+  expires_at: string;
+}
+
+export interface SharedResultResponse {
+  level: RiskLevel;
+  masked_text?: string | null;
+  reasons: string[];
+  scam_type?: string | null;
+  safe_actions: SafeActionItem[];
+  expires_at: string;
+}
+
 

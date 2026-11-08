@@ -16,3 +16,16 @@ createRoot(rootElement).render(
     </Providers>
   </StrictMode>,
 );
+
+// Register offline emergency service worker (Doc 02 Feature F34, S18)
+if (
+  typeof window !== "undefined" &&
+  "serviceWorker" in navigator &&
+  import.meta.env.MODE !== "test"
+) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      // SW registration failure is non-fatal
+    });
+  });
+}

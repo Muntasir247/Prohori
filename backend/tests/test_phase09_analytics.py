@@ -15,7 +15,6 @@ from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 import pytest
-from app.api.cookies import session_cookie_name
 from app.jobs.nightly import run_nightly_job
 from app.models.audit import AuditEvent
 from app.models.base import utcnow
@@ -28,9 +27,7 @@ from app.models.check import (
     RiskyNumber,
     ScamType,
 )
-from app.models.session import Session as UserSession
 from app.models.user import User, UserRole
-from app.security.tokens import hash_token, new_token
 from httpx import AsyncClient
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -42,6 +39,7 @@ async def reviewer_client(
 ) -> tuple[AsyncClient, User]:
     """Create a reviewer user and log them in via the standard login endpoint."""
     from app.security.passwords import hash_password
+
     from tests.helpers import login
 
     email = f"reviewer-{uuid4().hex[:8]}@prohori.local"
@@ -435,7 +433,9 @@ async def test_campaigns_list_and_patch(
     assert merge_res.json()["id"] == str(camp.id)
 
     # Camp2 should be gone
-    deleted_camp2 = await db.get(Campaign, camp2.id)
+    camp2_id = camp2.id
+    db.expire_all()
+    deleted_camp2 = await db.get(Campaign, camp2_id)
     assert deleted_camp2 is None
 
 

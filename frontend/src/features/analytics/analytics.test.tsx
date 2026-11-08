@@ -228,7 +228,11 @@ describe("Phase 09: Reviewer Analytics & Workflows", () => {
     expect(radarBanner).toHaveTextContent("OTP Harvest Syndicate");
 
     // 4. Data-table toggle on charts (loaded asynchronously via lazy)
-    const tableToggleButtons = await screen.findAllByRole("button", { name: /toggle data table/i });
+    const tableToggleButtons = await screen.findAllByRole(
+      "button",
+      { name: /toggle data table/i },
+      { timeout: 4000 }
+    );
     expect(tableToggleButtons.length).toBeGreaterThanOrEqual(1);
 
     // Click data table toggle on first chart

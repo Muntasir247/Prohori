@@ -4,8 +4,10 @@ import type {
   CheckMessageRequest,
   CheckPaymentRequest,
   CheckResultResponse,
+  CreateShareResponse,
   SafeActionResponse,
   SampleItem,
+  SharedResultResponse,
   TipItem,
 } from "./types";
 
@@ -62,5 +64,24 @@ export const checksApi = {
     const qs = q.toString();
     return apiFetch<SafeActionResponse[]>(`/safe-actions${qs ? `?${qs}` : ""}`);
   },
+
+  createShareLink: (checkId: string) =>
+    apiFetch<CreateShareResponse>(`/checks/${checkId}/share`, {
+      method: "POST",
+    }),
+
+  revokeShareLink: (checkId: string) =>
+    apiFetch<void>(`/checks/${checkId}/share`, {
+      method: "DELETE",
+    }),
+
+  getSharedResult: (token: string) =>
+    apiFetch<SharedResultResponse>(`/shares/${token}`),
+
+  acknowledgePause: (checkId: string, outcome: "finished" | "skipped") =>
+    apiFetch<{ ok: boolean; outcome: string }>(`/checks/${checkId}/pause-ack`, {
+      method: "POST",
+      body: JSON.stringify({ outcome }),
+    }),
 };
 

@@ -25,12 +25,15 @@ from app.api.deps import (
 )
 from app.errors import AppError
 from app.models.api_key import ApiKey
+from app.models.check import Check
 from app.models.user import User
 from app.schemas.checks import (
     CheckHistoryResponse,
     CheckMessageRequest,
     CheckPaymentRequest,
     CheckResultResponse,
+    PauseAckRequest,
+    PauseAckResponse,
     ReportCheckRequest,
     ReportCheckResponse,
 )
@@ -232,3 +235,35 @@ async def report_check(
         guest_hash=guest_hash,
     )
     return ReportCheckResponse(reference=ref)
+
+
+@router.post(
+    "/checks/{id}/pause-ack",
+    response_model=PauseAckResponse,
+    dependencies=[Depends(enforce_csrf)],
+)
+async def acknowledge_pause(
+    id: UUID,
+    body: PauseAckRequest,
+    request: Request,
+    response: Response,
+    session: DbSession,
+) -> PauseAckResponse:
+    """Record whether Pressure Pause was finished or skipped (Doc 02 Feature F32)."""
+    user = await get_optional_user(request, response, session)
+    guest_hash = await get_guest_hash(request, response)
+
+    check = await session.get(Check, id)
+    if not check or check.deleted_at is not None:
+        raise AppError("not_found", status=404, message_key="errors.not_found")
+
+    is_reviewer = user and user.role in ("reviewer", "admin")
+    is_owner = (user and check.user_id == user.id) or (
+        guest_hash and check.guest_hash == guest_hash
+    )
+    if not (is_owner or is_reviewer):
+        raise AppError("forbidden", status=403, message_key="errors.forbidden")
+
+    check.pause_outcome = body.outcome
+    await session.flush()
+    return PauseAckResponse(ok=True, outcome=body.outcome)

@@ -146,3 +146,27 @@ class TipResponse(BaseModel):
     body_en: str
     body_bn: str
     active_from: date
+
+
+class PauseAckRequest(BaseModel):
+    outcome: str = Field(..., pattern="^(finished|skipped)$")
+
+
+class PauseAckResponse(BaseModel):
+    ok: bool = True
+    outcome: str
+
+
+class CreateShareResponse(BaseModel):
+    share_url: str
+    token: str
+    expires_at: datetime
+
+
+class SharedResultResponse(BaseModel):
+    level: str | None = None
+    masked_text: str | None = None
+    reasons: list[str] = Field(default_factory=list)
+    scam_type: str | None = None
+    safe_actions: list[SafeActionItem] = Field(default_factory=list)
+    expires_at: datetime
