@@ -1,0 +1,78 @@
+# Render Infrastructure Blueprint for Prohori (Production)
+# Doc 02 Section 14: Docker service with pre-deploy migrations, health check, 1GB RAM minimum, and nightly cron.
+# Plan 'starter' provides 1 GB RAM and always-on CPU (avoids free-tier sleep / cold starts).
+
+services:
+  - type: web
+    name: prohori-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter # 1 GB RAM, 1 CPU, always-on (no sleeping)
+    region: singapore # Closest region to Bangladesh for optimal latency
+    preDeployCommand: alembic upgrade head
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: APP_ORIGIN
+        sync: false # e.g. https://prohori.vercel.app
+      - key: DATABASE_URL
+        sync: false # PostgreSQL connection string (Neon or Supabase with pgvector)
+      - key: ANTHROPIC_API_KEY
+        sync: false # Anthropic Claude API Key
+      - key: VOYAGE_API_KEY
+        sync: false # Voyage AI Embedding API Key
+      - key: NUMBER_HMAC_KEY
+        generateValue: true # 256-bit cryptographically secure key for phone HMACs
+      - key: SESSION_SECRET
+        generateValue: true # 256-bit secret for session encryption and signing
+      - key: RESEND_API_KEY
+        sync: false # Optional email delivery service
+      - key: EMAIL_DRIVER
+        value: console # console or resend
+      - key: SENTRY_DSN
+        sync: false # Sentry error reporting with PII scrubber
+      - key: DAILY_LLM_SPEND_CAP_USD
+        value: "25.0"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: CORS_ORIGINS
+        sync: false # e.g. https://prohori.vercel.app
+
+  - type: cron
+    name: prohori-nightly
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: starter # 1 GB RAM
+    region: singapore
+    schedule: "0 20 * * *" # Daily at 20:00 UTC (02:00 AM BST Bangladesh Time)
+    dockerCommand: python -m app.jobs.nightly
+    envVars:
+      - fromService:
+          type: web
+          name: prohori-backend
+          envVarKey: DATABASE_URL
+      - fromService:
+          type: web
+          name: prohori-backend
+          envVarKey: NUMBER_HMAC_KEY
+      - fromService:
+          type: web
+          name: prohori-backend
+          envVarKey: ANTHROPIC_API_KEY
+      - fromService:
+          type: web
+          name: prohori-backend
+          envVarKey: VOYAGE_API_KEY
+      - fromService:
+          type: web
+          name: prohori-backend
+          envVarKey: SENTRY_DSN
+      - fromService:
+          type: web
+          name: prohori-backend
+          envVarKey: ENVIRONMENT
+

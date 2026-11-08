@@ -99,6 +99,11 @@ def create_app() -> FastAPI:
 
     _register_error_handlers(app)
     app.include_router(api_router)
+
+    # Root health probe alias so load balancers / cloud platforms can probe either /health or /api/v1/health
+    from app.api.v1.health import health as _health_probe
+    app.add_api_route("/health", _health_probe, methods=["GET"], include_in_schema=False)
+
     return app
 
 
