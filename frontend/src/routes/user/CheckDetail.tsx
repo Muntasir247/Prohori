@@ -222,7 +222,7 @@ export default function CheckDetail() {
         {/* Delete Confirmation Modal */}
         {deleteModalOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/75 backdrop-blur-sm p-4"
+            className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-raat/75 backdrop-blur-sm p-4"
             role="dialog"
             aria-modal="true"
           >

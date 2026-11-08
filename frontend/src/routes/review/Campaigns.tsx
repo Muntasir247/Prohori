@@ -413,7 +413,7 @@ export default function Campaigns() {
           <div
             role="dialog"
             aria-modal="true"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
+            className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
           >
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-start justify-between">
@@ -477,7 +477,7 @@ export default function Campaigns() {
           <div
             role="dialog"
             aria-modal="true"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
+            className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
           >
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-start justify-between">

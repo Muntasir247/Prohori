@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { type ReactNode, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
@@ -20,28 +21,29 @@ export default function History() {
   const lang = i18n.language === "bn" ? "bn" : "en";
   const { data: user, isLoading: authLoading } = useSession();
 
-  const [items, setItems] = useState<CheckHistoryItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [failed, setFailed] = useState(false);
   const [levelFilter, setLevelFilter] = useState<string>("");
   const [kindFilter, setKindFilter] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const load = useCallback(() => {
-    if (!user) return;
-    setLoading(true);
-    setFailed(false);
-    checksApi
-      .listChecks({ level: levelFilter || undefined, kind: kindFilter || undefined, limit: 50 })
-      .then((res) => setItems(res.items))
-      .catch(() => {
-        setItems([]);
-        setFailed(true);
-      })
-      .finally(() => setLoading(false));
-  }, [user, levelFilter, kindFilter]);
+  // Cached per filter, so returning to History (or re-picking a filter) shows
+  // the last list at once instead of flashing the skeleton again.
+  const query = useQuery({
+    queryKey: ["checks", "history", levelFilter, kindFilter],
+    queryFn: () =>
+      checksApi.listChecks({
+        level: levelFilter || undefined,
+        kind: kindFilter || undefined,
+        limit: 50,
+      }),
+    enabled: Boolean(user),
+    placeholderData: keepPreviousData,
+    staleTime: 0, // cached list shows instantly; a background refetch adds new checks
 
-  useEffect(load, [load]);
+  });
+  const items = useMemo(() => query.data?.items ?? [], [query.data]);
+  const loading = query.isPending && Boolean(user);
+  const failed = query.isError;
+  const load = () => void query.refetch();
 
   const filteredItems = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
@@ -204,7 +206,11 @@ export default function History() {
           </div>
         ) : groups.length > 0 ? (
           groups.map((group) => (
-            <div key={group.key} className="flex flex-col gap-2">
+            <div
+              key={group.key}
+              aria-busy={query.isPlaceholderData || undefined}
+              className={`flex flex-col gap-2 transition-opacity duration-150 ${query.isPlaceholderData ? "opacity-60" : ""}`}
+            >
               <h3 className="px-1 text-sm font-semibold text-text-2">{group.label}</h3>
               <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-surface">
                 {group.items.map((item) => (

@@ -417,7 +417,7 @@ export default function RepeatNumbers() {
             aria-modal="true"
             aria-labelledby="status-modal-title"
             data-testid="status-modal"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
+            className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
           >
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-start justify-between">

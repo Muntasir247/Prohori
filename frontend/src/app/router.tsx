@@ -1,6 +1,8 @@
-import { lazy, Suspense } from "react";
+import { lazy, type ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
+import { ShellLayout } from "@/components/AppShell";
+import { RootLayout } from "@/components/RootLayout";
 import { RequireAuth } from "@/components/RequireAuth";
 import { RequireRole } from "@/components/RequireRole";
 import AcceptInvite from "@/routes/public/AcceptInvite";
@@ -41,171 +43,69 @@ const AdminAuditLog = lazy(() => import("@/routes/admin/AuditLog"));
 // Route groups (public/user/review/admin/system) from Doc 02 Section 6. Phase 04
 // adds the auth and account screens (S03–S08, S22), the invite acceptance page,
 // and the role-gated reviewer landing. Later phases fill /check and /review.
+const staff = (roles: Array<"reviewer" | "admin">, page: ReactNode) => (
+  <RequireRole roles={roles}>{page}</RequireRole>
+);
+
+// Route groups (public/user/review/admin/system) from Doc 02 Section 6.
+// Screens drawn inside the app frame sit under ShellLayout, so the header,
+// nav and footer stay mounted while only the page content changes.
 export const router = createBrowserRouter([
-  { path: "/", element: <Landing /> },
+  {
+    element: <RootLayout />,
+    children: [
+      { path: "/", element: <Landing /> },
 
-  // Public auth screens (S03–S07) and reviewer invite acceptance.
-  { path: "/login", element: <Login /> },
-  { path: "/register", element: <Register /> },
-  { path: "/verify-email", element: <VerifyEmail /> },
-  { path: "/forgot-password", element: <ForgotPassword /> },
-  { path: "/reset-password", element: <ResetPassword /> },
-  { path: "/accept-invite", element: <AcceptInvite /> },
+      // Public auth screens (S03–S07) and reviewer invite acceptance.
+      { path: "/login", element: <Login /> },
+      { path: "/register", element: <Register /> },
+      { path: "/verify-email", element: <VerifyEmail /> },
+      { path: "/forgot-password", element: <ForgotPassword /> },
+      { path: "/reset-password", element: <ResetPassword /> },
+      { path: "/accept-invite", element: <AcceptInvite /> },
+      { path: "/s/:token", element: <SharedResult /> },
+      {
+        path: "/onboarding",
+        element: (
+          <RequireAuth>
+            <Onboarding />
+          </RequireAuth>
+        ),
+      },
 
-  // S09 is open to guests: no account is needed to check a message.
-  { path: "/check", element: <CheckHome /> },
-  { path: "/check/message", element: <MessageCheck /> },
-  { path: "/check/payment", element: <PaymentCheck /> },
-  { path: "/result/:id", element: <Result /> },
-  { path: "/already-sent", element: <AlreadySent /> },
-  { path: "/s/:token", element: <SharedResult /> },
-  { path: "/history", element: <History /> },
-  { path: "/history/:id", element: <CheckDetail /> },
+      {
+        element: <ShellLayout />,
+        children: [
+          // S09 is open to guests: no account is needed to check a message.
+          { path: "/check", element: <CheckHome /> },
+          { path: "/check/message", element: <MessageCheck /> },
+          { path: "/check/payment", element: <PaymentCheck /> },
+          { path: "/result/:id", element: <Result /> },
+          { path: "/already-sent", element: <AlreadySent /> },
+          { path: "/history", element: <History /> },
+          { path: "/history/:id", element: <CheckDetail /> },
+          { path: "/settings", element: <Settings /> },
 
-  // Signed-in account screens (S08, S22).
-  {
-    path: "/onboarding",
-    element: (
-      <RequireAuth>
-        <Onboarding />
-      </RequireAuth>
-    ),
-  },
-  { path: "/settings", element: <Settings /> },
+          // Reviewer group (S24+). RequireRole is UX only; the API enforces roles.
+          { path: "/review", element: staff(["reviewer", "admin"], <ReviewOverview />) },
+          { path: "/review/cases", element: staff(["reviewer", "admin"], <CaseQueue />) },
+          { path: "/review/numbers", element: staff(["reviewer", "admin"], <RepeatNumbers />) },
+          { path: "/review/campaigns", element: staff(["reviewer", "admin"], <Campaigns />) },
+          { path: "/review/reports", element: staff(["reviewer", "admin"], <Reports />) },
+          { path: "/review/cases/:id", element: staff(["reviewer", "admin"], <CaseDetail />) },
 
-  // Reviewer group (S24+). RequireRole is UX only; the API enforces roles.
-  {
-    path: "/review",
-    element: (
-      <RequireRole roles={["reviewer", "admin"]}>
-        <Suspense fallback={null}>
-          <ReviewOverview />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/review/cases",
-    element: (
-      <RequireRole roles={["reviewer", "admin"]}>
-        <Suspense fallback={null}>
-          <CaseQueue />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/review/numbers",
-    element: (
-      <RequireRole roles={["reviewer", "admin"]}>
-        <Suspense fallback={null}>
-          <RepeatNumbers />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/review/campaigns",
-    element: (
-      <RequireRole roles={["reviewer", "admin"]}>
-        <Suspense fallback={null}>
-          <Campaigns />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/review/reports",
-    element: (
-      <RequireRole roles={["reviewer", "admin"]}>
-        <Suspense fallback={null}>
-          <Reports />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/review/cases/:id",
-    element: (
-      <RequireRole roles={["reviewer", "admin"]}>
-        <Suspense fallback={null}>
-          <CaseDetail />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
+          // Admin group (S30–S35). Role-gated for admins only.
+          { path: "/admin", element: staff(["admin"], <AdminKnowledge />) },
+          { path: "/admin/knowledge", element: staff(["admin"], <AdminKnowledge />) },
+          { path: "/admin/safe-actions", element: staff(["admin"], <AdminSafeActions />) },
+          { path: "/admin/quality", element: staff(["admin"], <AdminQuality />) },
+          { path: "/admin/users", element: staff(["admin"], <AdminUsers />) },
+          { path: "/admin/api-keys", element: staff(["admin"], <AdminApiKeys />) },
+          { path: "/admin/audit", element: staff(["admin"], <AdminAuditLog />) },
+        ],
+      },
 
-  // Admin group (S30–S35). Role-gated for admins only.
-  {
-    path: "/admin",
-    element: (
-      <RequireRole roles={["admin"]}>
-        <Suspense fallback={null}>
-          <AdminKnowledge />
-        </Suspense>
-      </RequireRole>
-    ),
+      { path: "*", element: <NotFound /> },
+    ],
   },
-  {
-    path: "/admin/knowledge",
-    element: (
-      <RequireRole roles={["admin"]}>
-        <Suspense fallback={null}>
-          <AdminKnowledge />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/admin/safe-actions",
-    element: (
-      <RequireRole roles={["admin"]}>
-        <Suspense fallback={null}>
-          <AdminSafeActions />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/admin/quality",
-    element: (
-      <RequireRole roles={["admin"]}>
-        <Suspense fallback={null}>
-          <AdminQuality />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/admin/users",
-    element: (
-      <RequireRole roles={["admin"]}>
-        <Suspense fallback={null}>
-          <AdminUsers />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/admin/api-keys",
-    element: (
-      <RequireRole roles={["admin"]}>
-        <Suspense fallback={null}>
-          <AdminApiKeys />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-  {
-    path: "/admin/audit",
-    element: (
-      <RequireRole roles={["admin"]}>
-        <Suspense fallback={null}>
-          <AdminAuditLog />
-        </Suspense>
-      </RequireRole>
-    ),
-  },
-
-  { path: "*", element: <NotFound /> },
 ]);

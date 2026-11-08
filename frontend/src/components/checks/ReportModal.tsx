@@ -63,13 +63,13 @@ export function ReportModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-raat/60 backdrop-blur-sm p-4"
+      className="modal-overlay fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-raat/60 backdrop-blur-sm p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="report-modal-title"
     >
       <div
-        className="w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-xl flex flex-col gap-4 animate-scaleUp"
+        className="w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-xl flex flex-col gap-4"
         data-testid="report-modal"
       >
         <div className="flex items-center justify-between border-b border-border pb-3">

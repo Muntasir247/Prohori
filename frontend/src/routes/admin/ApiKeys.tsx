@@ -256,7 +256,7 @@ export default function AdminApiKeys() {
 
         {/* Create Key Modal */}
         {isCreateOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
+          <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <h3 className="text-lg font-bold text-text">Generate Partner API Key</h3>
@@ -381,7 +381,7 @@ export default function AdminApiKeys() {
 
         {/* Key Shown Once Modal */}
         {newKeyResult && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
+          <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center gap-3 border-b border-border pb-4 text-success">
                 <Icon icon="ph:key" className="h-6 w-6" />

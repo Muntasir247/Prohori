@@ -7,6 +7,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -29,6 +30,7 @@ import { SESSION_KEY, useLogout, useSession, useSignedOut } from "@/features/aut
 import { ApiError } from "@/lib/api";
 import { parseApiError, type ParsedError } from "@/lib/apiError";
 import { formatDate } from "@/lib/format";
+import { vtName, withViewTransition } from "@/lib/viewTransition";
 
 type Tab = "profile" | "preferences" | "security" | "data";
 const TABS: Array<{ id: Tab; icon: string }> = [
@@ -50,8 +52,35 @@ export default function Settings() {
   // must never swap the page out, or the open tab would unmount mid-use.
   const settled = useRef(false);
   if (!isLoading) settled.current = true;
+  const { i18n } = useTranslation();
   const [tab, setTab] = useState<Tab>("profile");
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  // One underline that slides between tabs. Measured from the active tab, so it
+  // follows label width (Bangla and English differ) and window resizes.
+  const [indicator, setIndicator] = useState<{ x: number; w: number } | null>(null);
+  const [indicatorReady, setIndicatorReady] = useState(false);
+  const activeIndex = TABS.findIndex((x) => x.id === tab);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = tabRefs.current[activeIndex];
+      if (el) setIndicator({ x: el.offsetLeft + 8, w: el.offsetWidth - 16 });
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [activeIndex, i18n.language, isLoading]);
+
+  // Enable the slide only after the first placement has been committed (layout
+  // effect above), so the underline never sweeps in from the left edge.
+  useEffect(() => {
+    if (indicator && !indicatorReady) setIndicatorReady(true);
+  }, [indicator, indicatorReady]);
+
+  const selectTab = (next: Tab, index: number) => {
+    setTab(next);
+    tabRefs.current[index]?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+  };
 
   const onLogout = async () => {
     await logout.mutateAsync().catch(() => undefined);
@@ -69,7 +98,7 @@ export default function Settings() {
       : null;
     if (next === null) return;
     e.preventDefault();
-    setTab(TABS[next].id);
+    selectTab(TABS[next].id, next);
     tabRefs.current[next]?.focus();
   };
 
@@ -117,8 +146,21 @@ export default function Settings() {
         <div
           role="tablist"
           aria-label={t("settings.title")}
-          className="-mx-4 flex overflow-x-auto overflow-y-hidden border-b border-border px-4 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+          className="relative -mx-4 flex overflow-x-auto overflow-y-hidden border-b border-border px-4 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
         >
+          {indicator && (
+            <span
+              aria-hidden
+              style={{
+                width: indicator.w,
+                transform: `translateX(${indicator.x}px)`,
+                viewTransitionName: "settings-tab-indicator",
+              }}
+              className={`pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-accent ${
+                indicatorReady ? "transition-[transform,width] duration-[240ms] ease-out" : ""
+              }`}
+            />
+          )}
           {TABS.map(({ id, icon }, i) => {
             const selected = tab === id;
             return (
@@ -133,12 +175,10 @@ export default function Settings() {
                 aria-selected={selected}
                 aria-controls={`panel-${id}`}
                 tabIndex={selected ? 0 : -1}
-                onClick={() => setTab(id)}
+                onClick={() => selectTab(id, i)}
                 onKeyDown={(e) => onTabKey(e, i)}
-                className={`relative inline-flex min-h-12 shrink-0 items-center gap-2 whitespace-nowrap px-3 text-[15px] font-medium transition-colors duration-[120ms] sm:px-4 ${
-                  selected
-                    ? "text-text after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-accent"
-                    : "text-text-2 hover:text-text"
+                className={`relative inline-flex min-h-12 shrink-0 items-center gap-2 whitespace-nowrap px-3 text-[15px] font-medium transition-colors duration-200 sm:px-4 ${
+                  selected ? "text-text" : "text-text-2 hover:text-text"
                 }`}
               >
                 <Icon icon={icon} className="hidden text-lg sm:inline" aria-hidden />
@@ -153,7 +193,8 @@ export default function Settings() {
           id={`panel-${tab}`}
           aria-labelledby={`tab-${tab}`}
           tabIndex={0}
-          className="flex flex-col gap-8 rounded-md outline-none"
+          key={tab}
+          className="flex animate-panel-in flex-col gap-8 rounded-md outline-none"
         >
           {tab === "profile" &&
             (user ? <ProfileTab /> : <GuestAccountNotice tabName={t("settings.tab_profile")} />)}
@@ -277,7 +318,12 @@ function Status({ ok, children }: { ok: boolean; children: ReactNode }) {
   );
 }
 
-/** Radio group drawn as a segmented control. Native radios keep keyboard support. */
+/**
+ * Radio group drawn as a segmented control. Native radios keep keyboard support.
+ * One thumb slides under the options (equal-width columns, so its offset is just
+ * index x 100%). It carries a view-transition-name, so during a language or
+ * theme crossfade it still visibly slides instead of fading.
+ */
 function Segmented<T extends string>({
   label,
   value,
@@ -291,6 +337,7 @@ function Segmented<T extends string>({
 }) {
   const labelId = useId();
   const name = useId();
+  const index = Math.max(0, options.findIndex((o) => o.value === value));
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <span id={labelId} className="text-[15px] font-medium text-text">
@@ -299,15 +346,25 @@ function Segmented<T extends string>({
       <div
         role="radiogroup"
         aria-labelledby={labelId}
-        className="grid auto-cols-fr grid-flow-col gap-1 rounded-md border border-border bg-surface-2 p-1 sm:min-w-[280px]"
+        className="relative grid auto-cols-fr grid-flow-col rounded-md border border-border bg-surface-2 p-1 sm:min-w-[280px]"
       >
+        <span
+          aria-hidden
+          style={{
+            width: `calc((100% - 0.5rem) / ${options.length})`,
+            transform: `translateX(${index * 100}%)`,
+            viewTransitionName: vtName("seg-thumb", name),
+          }}
+          className="pointer-events-none absolute bottom-1 left-1 top-1 rounded-sm bg-surface shadow-sm ring-1 ring-border-strong transition-transform duration-[240ms] ease-out"
+        />
         {options.map((o) => {
           const checked = o.value === value;
           return (
             <label
               key={o.value}
-              className={`relative flex min-h-10 cursor-pointer items-center justify-center gap-1.5 rounded-sm px-3 text-sm font-medium transition-colors duration-[120ms] has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-focus ${
-                checked ? "bg-surface text-text shadow-sm ring-1 ring-border-strong" : "text-text-2 hover:text-text"
+              style={{ viewTransitionName: vtName("seg", name, o.value) }}
+              className={`relative z-[1] flex min-h-10 cursor-pointer items-center justify-center gap-1.5 rounded-sm px-3 text-sm font-medium transition-colors duration-200 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-focus ${
+                checked ? "text-text" : "text-text-2 hover:text-text"
               }`}
             >
               <input
@@ -441,12 +498,14 @@ function PreferencesTab() {
 
   const update = async (data: { language?: "bn" | "en"; theme?: string }) => {
     setError(null);
-    // Apply locally first so the UI changes at once, then save to the account.
-    if (data.language) void i18n.changeLanguage(data.language);
-    if (data.theme) {
-      setTheme(data.theme);
-      applyTheme(data.theme);
-    }
+    // Apply locally first (crossfading the page), then save to the account.
+    withViewTransition(() => {
+      if (data.language) void i18n.changeLanguage(data.language);
+      if (data.theme) {
+        setTheme(data.theme);
+        applyTheme(data.theme);
+      }
+    });
     if (!user) {
       flashDisplay();
       return;

@@ -540,7 +540,7 @@ export default function CaseDetail() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-title"
-            className="fixed inset-0 z-50 bg-raat/75 backdrop-blur-sm flex items-center justify-center p-4"
+            className="modal-overlay fixed inset-0 z-50 bg-raat/75 backdrop-blur-sm flex items-center justify-center p-4"
           >
             <div
               ref={modalRef}

@@ -1,5 +1,5 @@
 ﻿import { Icon } from "@iconify/react";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { AppShell } from "@/components/AppShell";
@@ -14,16 +14,25 @@ export default function CheckHome() {
   const { data: user } = useSession();
   useSyncLanguage(user);
 
-  const [recentChecks, setRecentChecks] = useState<CheckHistoryItem[]>([]);
-  const [tip, setTip] = useState<TipItem | null>(null);
   const isBn = i18n.language === "bn";
 
-  useEffect(() => {
-    if (user) {
-      checksApi.listChecks({ limit: 3 }).then((res) => setRecentChecks(res.items)).catch(() => {});
-    }
-    checksApi.getCurrentTip().then(setTip).catch(() => {});
-  }, [user]);
+  // Cached, so coming back to this screen renders the tip and recent checks
+  // immediately instead of popping them in and shifting the layout.
+  const recent = useQuery({
+    queryKey: ["checks", "recent"],
+    queryFn: () => checksApi.listChecks({ limit: 3 }),
+    enabled: Boolean(user),
+    // Show the cached list at once, but always refresh it in the background:
+    // a check made a moment ago must appear.
+    staleTime: 0,
+  });
+  const tipQuery = useQuery({
+    queryKey: ["tips", "current"],
+    queryFn: () => checksApi.getCurrentTip(),
+    staleTime: 10 * 60_000,
+  });
+  const recentChecks: CheckHistoryItem[] = recent.data?.items ?? [];
+  const tip: TipItem | null = tipQuery.data ?? null;
 
   const actions = [
     {
@@ -137,7 +146,9 @@ export default function CheckHome() {
             </Link>
           </div>
 
-          {recentChecks.length > 0 ? (
+          {recent.isPending ? (
+            <div aria-hidden className="skeleton h-[160px] w-full animate-delayed-in" />
+          ) : recentChecks.length > 0 ? (
             <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-surface">
               {recentChecks.map((item) => (
                 <li key={item.id}>

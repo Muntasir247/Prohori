@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { authApi } from "@/features/auth/api";
 import { clearPendingOnboarding, queueOnboarding } from "@/features/auth/preferences";
 import { homeFor, SESSION_KEY, useSession } from "@/features/auth/useSession";
+import { withViewTransition } from "@/lib/viewTransition";
 
 type Lang = "bn" | "en";
 
@@ -22,8 +23,10 @@ export default function Onboarding() {
   );
 
   const chooseLang = (value: Lang) => {
-    setLang(value);
-    void i18n.changeLanguage(value);
+    withViewTransition(() => {
+      setLang(value);
+      void i18n.changeLanguage(value);
+    });
   };
 
   const [saving, setSaving] = useState(false);

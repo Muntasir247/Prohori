@@ -22,17 +22,19 @@
     color: var(--color-text);
     font-family: var(--font-sans);
     font-size: 1rem;
-    line-height: 1.5;
+    /* Same in both languages: switching language must not reflow the page. */
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
-  /* Bangla: body in Noto Sans Bengali, more line height, tracking always 0 */
+  /* Bangla: body in Noto Sans Bengali, tracking always 0. Only the font family
+     changes with language; sizes and line heights are shared (set for Bangla's
+     taller glyph stacks) so a language switch never moves or resizes text. */
   html[lang="bn"] body,
   [lang="bn"] {
     font-family: var(--font-bangla);
-    line-height: 1.65;
   }
   html[lang="bn"] *,
   [lang="bn"] * {
@@ -64,25 +66,18 @@
   h1 {
     font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.25rem);
     font-weight: 700;
-    line-height: 1.22;
+    line-height: 1.38;
     letter-spacing: -0.01em;
   }
   h2 {
     font-size: clamp(1.375rem, 1.1rem + 1.2vw, 1.75rem);
     font-weight: 600;
-    line-height: 1.28;
+    line-height: 1.45;
     letter-spacing: -0.01em;
   }
   h3 {
     font-size: 1.125rem;
     font-weight: 600;
-    line-height: 1.4;
-  }
-  html[lang="bn"] h1 {
-    line-height: 1.38;
-  }
-  html[lang="bn"] h2,
-  html[lang="bn"] h3 {
     line-height: 1.45;
   }
 
@@ -120,11 +115,12 @@
     outline: none;
   }
 
-  /* Bangla must never fall below 13 px: lift tiny captions */
-  html[lang="bn"] .text-xs,
-  html[lang="bn"] .text-2xs,
-  html[lang="bn"] .text-\[10px\],
-  html[lang="bn"] .text-\[11px\] {
+  /* Bangla must never fall below 13 px, so tiny captions are 13 px. Applied in
+     both languages, or English labels would shrink on a language switch. */
+  html .text-xs,
+  html .text-2xs,
+  html .text-\[10px\],
+  html .text-\[11px\] {
     font-size: 0.8125rem;
     line-height: 1.25rem;
   }
@@ -193,6 +189,15 @@
     animation: shimmer 1.6s linear infinite;
   }
 
+  /* Modal entry (Doc 01 motion: 200 ms panels). The overlay fades; the dialog
+     panel (its first child) rises slightly and scales from 0.96, centred. */
+  .modal-overlay {
+    animation: modal-fade 160ms ease-out both;
+  }
+  .modal-overlay > :first-child {
+    animation: modal-panel 200ms var(--ease-out) both;
+  }
+
   .skip-link {
     position: absolute;
     left: 16px;
@@ -223,6 +228,44 @@
   .backdrop-blur-xl,
   .backdrop-blur-2xl {
     backdrop-filter: none !important;
+  }
+}
+
+@keyframes modal-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes modal-panel {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* View Transitions (language and theme switches).
+   The page crossfades quickly; named pills move with a strong ease-out. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+  animation-timing-function: ease-out;
+}
+::view-transition-group(*) {
+  animation-duration: 240ms;
+  animation-timing-function: var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 

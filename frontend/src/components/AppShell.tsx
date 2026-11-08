@@ -1,23 +1,57 @@
 import { Icon } from "@iconify/react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { createContext, type ReactNode, Suspense, useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ProhoriLogo } from "@/components/brand/ProhoriLogo";
 import { homeFor, useLogout, useSession } from "@/features/auth/useSession";
 
+// True inside ShellLayout. A page's own <AppShell> then renders only its
+// children, so the header, nav and footer stay mounted across navigation.
+const InShell = createContext(false);
+
+/**
+ * Router layout for every screen that uses the app frame. The frame mounts once;
+ * only <main> is swapped (keyed by path) so each page fades in and starts at the top.
+ */
+export function ShellLayout() {
+  return (
+    <InShell.Provider value={true}>
+      <Frame>
+        <Suspense fallback={<PageFallback />}>
+          <Outlet />
+        </Suspense>
+      </Frame>
+    </InShell.Provider>
+  );
+}
+
+/**
+ * Pages wrap themselves in <AppShell>. Under ShellLayout this is a passthrough;
+ * rendered on its own (unit tests, isolated previews) it draws the full frame.
+ */
+export function AppShell({ children, wide }: { children: ReactNode; wide?: boolean }) {
+  const inShell = useContext(InShell);
+  if (inShell) return <>{children}</>;
+  return <Frame wide={wide}>{children}</Frame>;
+}
+
+/** Quiet lazy-route fallback: invisible for 150 ms so fast loads never flash. */
+function PageFallback() {
+  return (
+    <div aria-hidden className="flex animate-delayed-in flex-col gap-6">
+      <div className="skeleton h-9 w-48" />
+      <div className="skeleton h-40 w-full" />
+    </div>
+  );
+}
+
 // App frame (Doc 01 §7 Navbar + BottomNav, §5 containers).
 // - 64 px sticky header, Surface 1 with a bottom border. No floating glass bar.
 // - User flows: 640 px reader column, BottomNav below 1024 px.
 // - Reviewer and admin: 1320 px workbench.
-export function AppShell({
-  children,
-  wide,
-}: {
-  children: ReactNode;
-  wide?: boolean;
-}) {
+function Frame({ children, wide }: { children: ReactNode; wide?: boolean }) {
   const { t } = useTranslation();
   const { data: user } = useSession();
   const { pathname } = useLocation();
@@ -61,9 +95,10 @@ export function AppShell({
       </header>
 
       <main
+        key={pathname}
         id="main"
         tabIndex={-1}
-        className={`mx-auto flex w-full flex-1 flex-col gap-8 px-4 py-8 outline-none md:px-6 md:py-10 lg:px-8 ${
+        className={`mx-auto flex w-full flex-1 animate-page-in flex-col gap-8 px-4 py-8 outline-none md:px-6 md:py-10 lg:px-8 ${
           isWorkbench ? "max-w-[1320px]" : "max-w-[640px] pb-28 lg:pb-12"
         }`}
       >
@@ -226,7 +261,7 @@ export function AccountMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-dropdown mt-2 w-60 origin-top-right animate-fade-up rounded-lg border border-border bg-surface p-1.5 shadow-modal"
+          className="absolute right-0 z-dropdown mt-2 w-60 origin-top-right animate-pop-in rounded-lg border border-border bg-surface p-1.5 shadow-modal"
         >
           <div className="mb-1 border-b border-border px-3 pb-3 pt-2">
             <p className="truncate text-sm font-semibold text-text">{user.display_name}</p>

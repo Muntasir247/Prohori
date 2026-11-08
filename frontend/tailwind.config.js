@@ -87,8 +87,8 @@ export default {
         toast: "50",
       },
       transitionTimingFunction: {
-        DEFAULT: "cubic-bezier(0.2, 0.8, 0.2, 1)",
-        out: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        DEFAULT: "cubic-bezier(0.23, 1, 0.32, 1)",
+        out: "cubic-bezier(0.23, 1, 0.32, 1)",
       },
       transitionDuration: {
         DEFAULT: "120ms",
@@ -102,9 +102,30 @@ export default {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
+        // Page content entering after navigation: short rise plus fade.
+        "page-in": {
+          "0%": { opacity: "0", transform: "translateY(4px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        // Dropdowns and popovers: scale from their origin, never from 0.
+        "pop-in": {
+          "0%": { opacity: "0", transform: "scale(0.96)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
       },
       animation: {
-        "fade-up": "fade-up 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both",
+        "fade-up": "fade-up 240ms cubic-bezier(0.23, 1, 0.32, 1) both",
+        "page-in": "page-in 220ms cubic-bezier(0.23, 1, 0.32, 1) both",
+        // Settings tab panels: frequent, so short and nearly still.
+        "panel-in": "page-in 180ms cubic-bezier(0.23, 1, 0.32, 1) both",
+        "pop-in": "pop-in 160ms cubic-bezier(0.23, 1, 0.32, 1) both",
+        "fade-in": "fade-in 160ms ease-out both",
+        // Loading placeholders stay invisible for 150 ms so quick loads never flash.
+        "delayed-in": "fade-in 200ms ease-out 150ms both",
         shimmer: "shimmer 1.6s linear infinite",
         // Doc 01: no looping decorative animation. Old names kept as no-ops.
         "pulse-slow": "none",

@@ -458,7 +458,7 @@ export default function Result() {
         {/* Share Modal (F33, S21) */}
         {shareModalOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4"
+            className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4"
             role="dialog"
             aria-modal="true"
             aria-labelledby="share-modal-title"
