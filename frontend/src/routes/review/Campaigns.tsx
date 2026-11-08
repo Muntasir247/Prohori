@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
@@ -9,6 +9,7 @@ import { ReviewNav } from "@/components/review/ReviewNav";
 import { analyticsApi } from "@/features/analytics/api";
 import type { CampaignItem } from "@/features/analytics/types";
 import { useSession } from "@/features/auth/useSession";
+import { useDebounce } from "@/lib/useDebounce";
 
 export default function Campaigns() {
   const { t, i18n } = useTranslation();
@@ -19,12 +20,32 @@ export default function Campaigns() {
   const isSurgingFilter = searchParams.get("is_surging") === "true";
   const searchFilter = searchParams.get("search") || "";
 
+  const [searchQuery, setSearchQuery] = useState(searchFilter);
+  const debouncedSearch = useDebounce(searchQuery, 250);
+
   const [selectedCampaign, setSelectedCampaign] = useState<CampaignItem | null>(null);
   const [isRenameOpen, setIsRenameOpen] = useState(false);
   const [newLabel, setNewLabel] = useState("");
   const [isMergeOpen, setIsMergeOpen] = useState(false);
   const [targetMergeId, setTargetMergeId] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
+
+  // Sync debounced search to URL
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams);
+    if (!debouncedSearch.trim()) {
+      next.delete("search");
+    } else {
+      next.set("search", debouncedSearch.trim());
+    }
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [debouncedSearch, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    setSearchQuery(searchFilter);
+  }, [searchFilter]);
 
   const {
     data: response,
@@ -33,11 +54,11 @@ export default function Campaigns() {
     refetch,
     dataUpdatedAt,
   } = useQuery({
-    queryKey: ["campaigns", isSurgingFilter, searchFilter],
+    queryKey: ["campaigns", isSurgingFilter, debouncedSearch],
     queryFn: () =>
       analyticsApi.listCampaigns({
         is_surging: isSurgingFilter ? true : undefined,
-        search: searchFilter,
+        search: debouncedSearch,
       }),
     refetchInterval: 60_000,
   });
@@ -58,6 +79,18 @@ export default function Campaigns() {
       setActionError(msg);
     },
   });
+
+  const campaigns = useMemo(() => response?.items || [], [response?.items]);
+  const filteredCampaigns = useMemo(() => {
+    if (!searchQuery.trim()) return campaigns;
+    const q = searchQuery.toLowerCase().trim();
+    return campaigns.filter(
+      (c) =>
+        c.label.toLowerCase().includes(q) ||
+        (c.scam_type_name || "").toLowerCase().includes(q) ||
+        (c.scam_type_name_bn || "").toLowerCase().includes(q),
+    );
+  }, [campaigns, searchQuery]);
 
   if (!user) return null;
 
@@ -100,17 +133,16 @@ export default function Campaigns() {
     });
   };
 
-  const campaigns = response?.items || [];
-  const otherCampaigns = campaigns.filter((c) => c.id !== selectedCampaign?.id);
+  const otherCampaigns = filteredCampaigns.filter((c) => c.id !== selectedCampaign?.id);
 
   return (
     <AppShell wide>
       <div className="flex flex-col gap-6">
         <header className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold tracking-tight text-text">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-text">
             {t("review.campaigns_title", "Scam Campaigns & Clusters")}
           </h1>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-text-2">
             {t(
               "review.campaigns_subtitle",
               "Automated HDBSCAN clustering of semantic message embeddings into syndicate campaigns."
@@ -125,18 +157,18 @@ export default function Campaigns() {
         />
 
         {/* Filter Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-surface/80 p-3.5 text-xs backdrop-blur-md">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => updateParam("is_surging", isSurgingFilter ? "false" : "true")}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 font-medium transition-colors ${
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 font-bold transition-all ${
                 isSurgingFilter
-                  ? "border-rose-500 bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                  : "border-border bg-surface text-muted hover:bg-bg hover:text-text"
+                  ? "border-risk-high/40 bg-risk-high/15 text-risk-high"
+                  : "border-border/70 bg-surface-2 text-muted hover:bg-surface hover:text-text"
               }`}
             >
-              <Icon icon="ph:trend-up" className="h-4 w-4 text-rose-500" />
+              <Icon icon="ph:trend-up" className="h-4 w-4 text-risk-high" />
               <span>Surging campaigns only</span>
             </button>
           </div>
@@ -145,21 +177,24 @@ export default function Campaigns() {
             <div className="relative">
               <Icon
                 icon="ph:magnifying-glass"
-                className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-xs pointer-events-none"
               />
               <input
-                type="text"
-                placeholder="Search campaigns…"
-                value={searchFilter}
-                onChange={(e) => updateParam("search", e.target.value)}
-                className="rounded-lg border border-border bg-bg pl-8 pr-3 py-1.5 text-xs text-text placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-brand"
+                type="search"
+                placeholder="Live search campaigns..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="rounded-xl border border-border/80 bg-surface-2/70 pl-8 pr-3 py-1.5 text-xs text-text placeholder:text-faint focus:outline-none focus:border-brand font-mono transition-all"
               />
             </div>
-            {(isSurgingFilter || searchFilter) && (
+            {(isSurgingFilter || searchQuery) && (
               <button
                 type="button"
-                onClick={() => setSearchParams(new URLSearchParams())}
-                className="text-xs text-brand hover:underline"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSearchParams(new URLSearchParams());
+                }}
+                className="text-xs font-semibold text-brand hover:underline"
               >
                 Clear
               </button>
@@ -169,18 +204,18 @@ export default function Campaigns() {
 
         {/* Campaign Cards Grid */}
         {isLoading ? (
-          <div className="flex h-64 items-center justify-center rounded-xl border border-border bg-surface text-sm text-muted">
+          <div className="flex h-64 items-center justify-center rounded-2xl border border-border/80 bg-surface/80 text-sm text-muted">
             <div className="flex items-center gap-2">
-              <Icon icon="ph:spinner" className="h-5 w-5 animate-spin text-brand" />
+              <Icon icon="ph:spinner-gap" className="h-5 w-5 animate-spin text-brand" />
               <span>Clustering and loading campaigns…</span>
             </div>
           </div>
-        ) : campaigns.length === 0 ? (
+        ) : filteredCampaigns.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface/50 py-16 text-center">
             <div className="mb-3 rounded-full bg-border/40 p-4 text-muted">
               <Icon icon="ph:users-three" className="h-8 w-8" />
             </div>
-            <h3 className="text-base font-semibold text-text">
+            <h3 className="font-display text-sm font-bold text-text">
               {t("review.no_campaigns", "Not enough reports to form a campaign yet.")}
             </h3>
             <p className="mt-1 max-w-sm text-xs text-muted">
@@ -192,7 +227,7 @@ export default function Campaigns() {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {campaigns.map((camp) => (
+            {filteredCampaigns.map((camp) => (
               <div
                 key={camp.id}
                 onClick={() => setSelectedCampaign(camp)}
@@ -204,7 +239,7 @@ export default function Campaigns() {
                       {camp.label}
                     </h3>
                     {camp.is_surging && (
-                      <span className="inline-flex items-center gap-1 rounded bg-rose-500/15 border border-rose-500/25 px-2 py-0.5 text-2xs font-bold uppercase text-rose-600 dark:text-rose-400">
+                      <span className="inline-flex items-center gap-1 rounded bg-risk-high/15 border border-risk-high/25 px-2 py-0.5 text-2xs font-bold uppercase text-risk-high">
                         <Icon icon="ph:fire" className="h-3 w-3" />
                         <span>Surging</span>
                       </span>
@@ -232,7 +267,7 @@ export default function Campaigns() {
                       <div
                         className={`text-sm font-bold ${
                           camp.is_surging
-                            ? "text-rose-600 dark:text-rose-400"
+                            ? "text-risk-high"
                             : "text-text"
                         }`}
                       >
@@ -268,12 +303,12 @@ export default function Campaigns() {
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-bold text-text">{selectedCampaign.label}</h3>
                   {selectedCampaign.is_surging && (
-                    <span className="rounded bg-rose-500/15 border border-rose-500/25 px-2 py-0.5 text-2xs font-bold text-rose-600">
+                    <span className="rounded bg-risk-high/15 border border-risk-high/25 px-2 py-0.5 text-2xs font-bold text-risk-high">
                       Surging
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-muted mt-0.5">
+                <p className="text-sm text-text-2 mt-0.5">
                   {i18n.language === "bn"
                     ? selectedCampaign.scam_type_name_bn || selectedCampaign.scam_type_name
                     : selectedCampaign.scam_type_name}{" "}
@@ -311,11 +346,11 @@ export default function Campaigns() {
 
               {/* Representative Masked Messages */}
               <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-muted">
+                <h4 className="text-xs text-muted font-semibold">
                   Representative Masked Messages ({selectedCampaign.sample_messages.length})
                 </h4>
                 {selectedCampaign.sample_messages.length === 0 ? (
-                  <p className="text-xs text-muted">No message samples available.</p>
+                  <p className="text-sm text-text-2">No message samples available.</p>
                 ) : (
                   selectedCampaign.sample_messages.map((msg, i) => (
                     <div
@@ -330,11 +365,11 @@ export default function Campaigns() {
 
               {/* Shared Risky Numbers */}
               <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-muted">
+                <h4 className="text-xs text-muted font-semibold">
                   Shared Numbers in Cluster
                 </h4>
                 {selectedCampaign.shared_numbers.length === 0 ? (
-                  <p className="text-xs text-muted">No shared numbers linked yet.</p>
+                  <p className="text-sm text-text-2">No shared numbers linked yet.</p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
                     {selectedCampaign.shared_numbers.map((num, i) => (
@@ -351,11 +386,11 @@ export default function Campaigns() {
 
               {/* Member Case References */}
               <div className="space-y-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-muted">
+                <h4 className="text-xs text-muted font-semibold">
                   Recent Case References
                 </h4>
                 {selectedCampaign.case_references.length === 0 ? (
-                  <p className="text-xs text-muted">No case references found.</p>
+                  <p className="text-sm text-text-2">No case references found.</p>
                 ) : (
                   <div className="flex flex-wrap gap-1.5">
                     {selectedCampaign.case_references.map((ref, i) => (
@@ -378,13 +413,13 @@ export default function Campaigns() {
           <div
             role="dialog"
             aria-modal="true"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
           >
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-text">Rename Campaign</h3>
-                  <p className="text-xs text-muted mt-0.5">Edit reviewer-assigned campaign label</p>
+                  <p className="text-sm text-text-2 mt-0.5">Edit reviewer-assigned campaign label</p>
                 </div>
                 <button
                   type="button"
@@ -397,7 +432,7 @@ export default function Campaigns() {
 
               <form onSubmit={handleRenameSubmit} className="mt-5 flex flex-col gap-4 text-xs">
                 {actionError && (
-                  <div className="rounded-lg bg-rose-500/10 border border-rose-500/30 p-2.5 text-rose-600">
+                  <div className="rounded-lg bg-risk-high/10 border border-risk-high/30 p-2.5 text-risk-high">
                     {actionError}
                   </div>
                 )}
@@ -427,7 +462,7 @@ export default function Campaigns() {
                   <button
                     type="submit"
                     disabled={updateMutation.isPending || !newLabel.trim()}
-                    className="rounded-lg bg-brand px-4 py-2 font-medium text-white hover:bg-brand/90 disabled:opacity-50"
+                    className="rounded-lg bg-accent px-4 py-2 font-medium text-on-accent hover:bg-brand/90 disabled:opacity-50"
                   >
                     {updateMutation.isPending ? "Saving…" : "Save Label"}
                   </button>
@@ -442,13 +477,13 @@ export default function Campaigns() {
           <div
             role="dialog"
             aria-modal="true"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
           >
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-text">Merge Campaign</h3>
-                  <p className="text-xs text-muted mt-0.5">
+                  <p className="text-sm text-text-2 mt-0.5">
                     Merge &ldquo;{selectedCampaign.label}&rdquo; into another campaign
                   </p>
                 </div>
@@ -463,7 +498,7 @@ export default function Campaigns() {
 
               <form onSubmit={handleMergeSubmit} className="mt-5 flex flex-col gap-4 text-xs">
                 {actionError && (
-                  <div className="rounded-lg bg-rose-500/10 border border-rose-500/30 p-2.5 text-rose-600">
+                  <div className="rounded-lg bg-risk-high/10 border border-risk-high/30 p-2.5 text-risk-high">
                     {actionError}
                   </div>
                 )}
@@ -503,7 +538,7 @@ export default function Campaigns() {
                   <button
                     type="submit"
                     disabled={updateMutation.isPending || !targetMergeId}
-                    className="rounded-lg bg-brand px-4 py-2 font-medium text-white hover:bg-brand/90 disabled:opacity-50"
+                    className="rounded-lg bg-accent px-4 py-2 font-medium text-on-accent hover:bg-brand/90 disabled:opacity-50"
                   >
                     {updateMutation.isPending ? "Merging…" : "Merge Campaigns"}
                   </button>

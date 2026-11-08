@@ -79,7 +79,7 @@ export default function AdminQuality() {
       value: quality?.kpi_unsafe_flags != null ? `${quality.kpi_unsafe_flags}` : "0",
       target: "Target = 0 (Strict)",
       isMet: (quality?.kpi_unsafe_flags ?? 0) === 0,
-      icon: "ph:shield-warning",
+      icon: "ph:warning",
     },
   ];
 
@@ -95,10 +95,10 @@ export default function AdminQuality() {
         {/* Top Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">
-              {t("admin.quality_title", "Quality & Evaluation Harness (S32)")}
+            <h1 className="font-display text-2xl font-bold tracking-tight text-text">
+              {t("admin.quality_title", "Quality & Evaluation Harness")}
             </h1>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-text-2">
               {t(
                 "admin.quality_subtitle",
                 "Continuous benchmark metrics, model regression gates, and prompt activation guardrails.",
@@ -124,8 +124,8 @@ export default function AdminQuality() {
               />
             </div>
 
-            <div className="inline-flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-2 text-xs font-semibold text-amber-700 dark:text-amber-400">
-              <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 rounded-xl border border-warning/30 bg-warning/10 px-3.5 py-2 text-xs font-semibold text-warning">
+              <span className="h-2 w-2 rounded-full bg-warning" />
               <span>{quality?.notice || "Measured on simulated data only (simulated-v1)"}</span>
             </div>
           </div>
@@ -133,8 +133,8 @@ export default function AdminQuality() {
 
         {/* Gate Failure Alert Banner */}
         {gateError && (
-          <div className="flex items-start gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-600 dark:text-rose-400">
-            <Icon icon="ph:shield-slash" className="h-5 w-5 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 rounded-xl border border-risk-high/30 bg-risk-high/10 p-4 text-sm text-risk-high">
+            <Icon icon="ph:prohibit" className="h-5 w-5 shrink-0 mt-0.5" />
             <div className="flex-1">
               <span className="font-bold">Prompt Activation Blocked (409 eval_gate_failed):</span>
               <p className="mt-1 text-xs opacity-90">{gateError.message}</p>
@@ -165,13 +165,13 @@ export default function AdminQuality() {
               </div>
               <div className="flex items-center gap-1.5 text-xs">
                 {kpi.isMet === true && (
-                  <span className="inline-flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
+                  <span className="inline-flex items-center gap-1 font-medium text-success">
                     <Icon icon="ph:check-circle" className="h-3.5 w-3.5" />
                     <span>{kpi.target}</span>
                   </span>
                 )}
                 {kpi.isMet === false && (
-                  <span className="inline-flex items-center gap-1 font-medium text-rose-600 dark:text-rose-400">
+                  <span className="inline-flex items-center gap-1 font-medium text-risk-high">
                     <Icon icon="ph:x-circle" className="h-3.5 w-3.5" />
                     <span>{kpi.target} (Failing)</span>
                   </span>
@@ -188,7 +188,7 @@ export default function AdminQuality() {
         <div className="rounded-xl border border-border bg-surface shadow-sm">
           <div className="border-b border-border p-4">
             <h2 className="text-base font-bold text-text">Prompt Versions & Activation Gate</h2>
-            <p className="text-xs text-muted">
+            <p className="text-sm text-text-2">
               Only prompt versions that pass the evaluation regression harness with zero unsafe flags can be activated.
             </p>
           </div>
@@ -229,13 +229,13 @@ export default function AdminQuality() {
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                             p.is_active
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                              ? "bg-success/10 text-success border border-success/20"
                               : "bg-muted/10 text-muted border border-border"
                           }`}
                         >
                           <span
                             className={`h-1.5 w-1.5 rounded-full ${
-                              p.is_active ? "bg-emerald-500" : "bg-muted"
+                              p.is_active ? "bg-success" : "bg-muted"
                             }`}
                           />
                           {p.is_active ? "Active in Production" : "Inactive"}
@@ -246,7 +246,7 @@ export default function AdminQuality() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         {p.is_active ? (
-                          <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                          <span className="text-xs font-semibold text-success">
                             Current Active
                           </span>
                         ) : (
@@ -278,7 +278,7 @@ export default function AdminQuality() {
         <div className="rounded-xl border border-border bg-surface shadow-sm">
           <div className="border-b border-border p-4">
             <h2 className="text-base font-bold text-text">Recent Evaluation Runs</h2>
-            <p className="text-xs text-muted">
+            <p className="text-sm text-text-2">
               Benchmark results evaluated against the labelled regression dataset.
             </p>
           </div>
@@ -335,7 +335,7 @@ export default function AdminQuality() {
                       <td className="px-4 py-3">
                         <span
                           className={`inline-flex items-center gap-1 font-mono text-xs font-semibold ${
-                            r.unsafe_flags === 0 ? "text-emerald-600" : "text-rose-600"
+                            r.unsafe_flags === 0 ? "text-success" : "text-risk-high"
                           }`}
                         >
                           {r.unsafe_flags}
@@ -357,7 +357,7 @@ export default function AdminQuality() {
           {/* Route Mix */}
           <div className="rounded-xl border border-border bg-surface p-4 shadow-sm">
             <h3 className="font-bold text-text">Route Mix & Traffic Distribution</h3>
-            <p className="text-xs text-muted mb-4">Traffic split between message and payment checks</p>
+            <p className="text-sm text-text-2 mb-4">Traffic split between message and payment checks</p>
             <div className="space-y-3">
               {quality?.route_mix.map((rm) => (
                 <div key={rm.route} className="space-y-1">
@@ -369,7 +369,7 @@ export default function AdminQuality() {
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-background">
                     <div
-                      className="h-full bg-brand rounded-full transition-all"
+                      className="h-full bg-accent rounded-full transition-all"
                       style={{ width: `${Math.min(100, rm.percentage)}%` }}
                     />
                   </div>
@@ -381,7 +381,7 @@ export default function AdminQuality() {
           {/* Prompt Cache & Token Efficiency */}
           <div className="rounded-xl border border-border bg-surface p-4 shadow-sm">
             <h3 className="font-bold text-text">Prompt Caching & Token Efficiency</h3>
-            <p className="text-xs text-muted mb-4">Anthropic prompt cache metrics</p>
+            <p className="text-sm text-text-2 mb-4">Anthropic prompt cache metrics</p>
             <div className="grid grid-cols-2 gap-4">
               <div className="rounded-lg border border-border bg-background p-3">
                 <span className="text-xs text-muted">Total Checks</span>
@@ -403,7 +403,7 @@ export default function AdminQuality() {
               </div>
               <div className="rounded-lg border border-border bg-background p-3">
                 <span className="text-xs text-muted">Cache Read Tokens</span>
-                <div className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1">
+                <div className="text-lg font-bold font-mono text-success mt-1">
                   {quality?.total_cache_read_tokens?.toLocaleString() ?? 0}
                 </div>
               </div>

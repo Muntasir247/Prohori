@@ -1,47 +1,116 @@
 /*
- * Design tokens per Doc 01 Section 3 and 5.
- * Night Watch palette: dark-first with pine, bone and lantern yellow.
- * All colours live here as CSS variables.
+ * Prohori design tokens — "Night Watch" (Doc 01, Sections 3–5).
+ * 60% Raat base, 30% Pine/Bone secondary, 10% Lantern accent.
+ * Risk colours are reserved for risk surfaces. Low risk is never green.
+ *
+ * Token names kept from the previous theme so every component re-skins:
+ *   brand  = accent used as text, border or ring (Lantern on dark, deep ochre on light)
+ *   accent = Lantern fill for the one primary action per view, always with on-accent text
  */
-:root {
+:root,
+.force-dark {
+  color-scheme: dark;
+
+  /* Base (60%) */
   --color-bg: #0c1614;
   --color-surface: #13211e;
   --color-surface-2: #1b2d29;
+  --color-surface-3: #233833;
+  --color-glass: #13211e;
+
   --color-border: #2a3f3a;
   --color-border-strong: #4a635b;
-  --color-text: #f3f1e8;
-  --color-text-muted: #7e9088;
-  --color-brand: #3fb8a0;
-  --color-pine: #1f4d43;
-  --color-accent: #f2c14e;
 
-  /* Risk tokens (Doc 01 Section 3) */
+  /* Text */
+  --color-text: #f3f1e8;
+  --color-text-2: #a9b8b2;
+  --color-text-muted: #a9b8b2;
+  --color-text-faint: #7e9088;
+
+  /* Secondary (30%) */
+  --color-pine: #1f4d43;
+  --color-pine-deep: #16382f;
+  --color-pine-hover: #2a6355;
+  --color-bone: #f3f1e8;
+  --color-raat: #0c1614;
+
+  /* Accent (10%) */
+  --color-accent: #f2c14e;
+  --color-accent-hover: #f7d277;
+  --color-on-accent: #0c1614;
+  --color-brand: #f2c14e;
+  --color-brand-hover: #f7d277;
+  --color-brand-glow: rgba(242, 193, 78, 0.14);
+  --color-focus: #f2c14e;
+
+  /* Risk (reserved) */
   --color-risk-high: #ff6b5e;
   --color-risk-high-tint: #3a1714;
   --color-risk-medium: #ff9f45;
   --color-risk-medium-tint: #3a2510;
   --color-risk-low: #9db4c0;
   --color-risk-low-tint: #1d2a30;
-  --color-info: #7cc0ec;
-  --color-info-tint: #14293a;
+  --color-on-risk: #0c1614;
+
+  /* System status */
   --color-success: #4cc38a;
   --color-success-tint: #12301f;
+  --color-warning: #ff9f45;
+  --color-warning-tint: #3a2510;
+  --color-info: #7cc0ec;
+  --color-info-tint: #14293a;
 
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-bangla: "Noto Sans Bengali", system-ui, sans-serif;
+  /* Charts */
+  --chart-1: #5fb7a5;
+  --chart-2: #f2c14e;
+  --chart-3: #7cc0ec;
+  --chart-4: #d99bb0;
+  --chart-5: #a9b8b2;
+  --chart-grid: #2a3f3a;
+  --chart-axis: #a9b8b2;
+
+  /* Elevation: dark avoids shadows except modals */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-modal: 0 16px 40px rgba(0, 0, 0, 0.45);
+
+  /* Typography */
+  --font-display: "Hanken Grotesk", "Anek Bangla", system-ui, sans-serif;
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --font-bangla: "Noto Sans Bengali", "Hanken Grotesk", system-ui, sans-serif;
+  --font-bangla-display: "Anek Bangla", "Noto Sans Bengali", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Motion: 120 hover, 200 panels, 280 page */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
+
   --color-bg: #f7f5ee;
   --color-surface: #ffffff;
   --color-surface-2: #f0eee5;
+  --color-surface-3: #e6e4d9;
+  --color-glass: #ffffff;
+
   --color-border: #d9ddd3;
   --color-border-strong: #9aa89f;
+
   --color-text: #10201c;
+  --color-text-2: #4c5f58;
   --color-text-muted: #4c5f58;
-  --color-brand: #0b6b5a;
-  --color-pine: #1f4d43;
+  --color-text-faint: #5d6f68;
+
   --color-accent: #f2c14e;
+  --color-accent-hover: #e0ae36;
+  --color-on-accent: #0c1614;
+  --color-brand: #7a5a00;
+  --color-brand-hover: #5f4600;
+  --color-brand-glow: rgba(122, 90, 0, 0.1);
+  --color-focus: #1f4d43;
 
   --color-risk-high: #c4291f;
   --color-risk-high-tint: #fbebe9;
@@ -49,8 +118,24 @@
   --color-risk-medium-tint: #fbefe2;
   --color-risk-low: #3f5e6e;
   --color-risk-low-tint: #e9eff2;
-  --color-info: #1f6aa5;
-  --color-info-tint: #e6f0f8;
+  --color-on-risk: #ffffff;
+
   --color-success: #1e7a4c;
   --color-success-tint: #e4f3ea;
+  --color-warning: #a85400;
+  --color-warning-tint: #fbefe2;
+  --color-info: #1f6aa5;
+  --color-info-tint: #e6f0f8;
+
+  --chart-1: #1f6f5f;
+  --chart-2: #8a6700;
+  --chart-3: #1f6aa5;
+  --chart-4: #9a3f60;
+  --chart-5: #4c5f58;
+  --chart-grid: #d9ddd3;
+  --chart-axis: #4c5f58;
+
+  --shadow-sm: 0 1px 2px rgba(16, 32, 28, 0.06);
+  --shadow-md: 0 8px 24px rgba(16, 32, 28, 0.08);
+  --shadow-modal: 0 16px 40px rgba(16, 32, 28, 0.18);
 }

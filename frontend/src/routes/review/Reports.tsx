@@ -96,9 +96,9 @@ export default function Reports() {
               {validationError && (
                 <div
                   role="alert"
-                  className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-rose-600 dark:text-rose-400 font-medium"
+                  className="flex items-center gap-2 rounded-xl border border-risk-high/30 bg-risk-high/10 p-3 text-risk-high font-medium"
                 >
-                  <Icon icon="ph:warning-circle" className="h-4 w-4 shrink-0 text-rose-500" />
+                  <Icon icon="ph:warning-circle" className="h-4 w-4 shrink-0 text-risk-high" />
                   <span>{validationError}</span>
                 </div>
               )}
@@ -184,7 +184,7 @@ export default function Reports() {
                 <button
                   type="submit"
                   disabled={isExporting}
-                  className="inline-flex items-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-brand/90 transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-xs font-semibold text-on-accent shadow-sm hover:bg-brand/90 transition-colors disabled:opacity-50"
                 >
                   <Icon
                     icon={isExporting ? "ph:spinner" : "ph:download-simple"}
@@ -199,31 +199,31 @@ export default function Reports() {
           {/* Security & Audit Guidelines Card */}
           <div className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-6 shadow-sm">
             <h3 className="text-sm font-semibold text-text flex items-center gap-2">
-              <Icon icon="ph:shield-check" className="h-4 w-4 text-emerald-500" />
+              <Icon icon="ph:lock-simple" className="h-4 w-4 text-success" />
               <span>Export Compliance & Safety</span>
             </h3>
 
             <ul className="space-y-3 text-xs text-muted">
               <li className="flex items-start gap-2">
-                <Icon icon="ph:check-circle" className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                <Icon icon="ph:check-circle" className="h-4 w-4 text-success shrink-0 mt-0.5" />
                 <span>
                   <strong className="text-text">PII Masking:</strong> Phone numbers and personal names are masked prior to export. Raw numbers are never included in CSV dumps.
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <Icon icon="ph:check-circle" className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                <Icon icon="ph:check-circle" className="h-4 w-4 text-success shrink-0 mt-0.5" />
                 <span>
                   <strong className="text-text">Excel Bangla Encoding:</strong> Streamed with UTF-8 BOM (<code className="font-mono text-2xs bg-bg px-1 py-0.5 rounded">\xef\xbb\xbf</code>) so Microsoft Excel natively displays Bengali text correctly.
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <Icon icon="ph:check-circle" className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                <Icon icon="ph:check-circle" className="h-4 w-4 text-success shrink-0 mt-0.5" />
                 <span>
                   <strong className="text-text">Formula Injection Defense:</strong> All cells starting with <code className="font-mono text-2xs bg-bg px-1 py-0.5 rounded">=</code>, <code className="font-mono text-2xs bg-bg px-1 py-0.5 rounded">+</code>, <code className="font-mono text-2xs bg-bg px-1 py-0.5 rounded">-</code>, or <code className="font-mono text-2xs bg-bg px-1 py-0.5 rounded">@</code> are sanitized with a leading quote to prevent spreadsheet code execution.
                 </span>
               </li>
               <li className="flex items-start gap-2">
-                <Icon icon="ph:check-circle" className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                <Icon icon="ph:check-circle" className="h-4 w-4 text-success shrink-0 mt-0.5" />
                 <span>
                   <strong className="text-text">Audited Action:</strong> Every CSV generation is written to the immutable <code className="font-mono text-2xs bg-bg px-1 py-0.5 rounded">audit_events</code> table with your user ID and timestamp.
                 </span>

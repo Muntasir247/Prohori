@@ -90,47 +90,61 @@ export default function VerifyEmail() {
     <AuthCard
       title={t("auth.verify_title")}
       footer={
-        <Link to="/login" className="text-brand hover:underline">
+        <Link to="/login" className="text-xs font-semibold text-brand hover:underline">
           {t("auth.back_to_login")}
         </Link>
       }
     >
       <div className="flex flex-col items-center gap-4 text-center">
-        <Icon
-          icon={status === "confirmed" ? "ph:check-circle" : "ph:envelope-simple"}
-          className={`text-4xl ${status === "confirmed" ? "text-brand" : "text-muted"}`}
-          aria-hidden
-        />
+        <div
+          className={`flex h-14 w-14 items-center justify-center rounded-2xl border transition-all ${
+            status === "confirmed"
+              ? "border-brand/30 bg-brand/10 text-brand"
+              : "border-border/80 bg-surface-2/60 text-muted"
+          }`}
+        >
+          <Icon
+            icon={status === "confirmed" ? "ph:check-circle" : "ph:envelope-simple"}
+            className="text-2xl"
+            aria-hidden
+          />
+        </div>
 
-        {status === "verifying" && <p className="text-sm">{t("auth.verifying")}</p>}
+        {status === "verifying" && (
+          <div className="flex items-center gap-2 text-xs font-medium text-muted">
+            <Icon icon="ph:spinner" className="animate-spin text-base text-brand" />
+            <span>{t("auth.verifying")}</span>
+          </div>
+        )}
 
         {status === "confirmed" && (
-          <p className="font-medium text-brand">{t("auth.email_confirmed")}</p>
+          <p className="font-display text-sm font-bold text-brand">{t("auth.email_confirmed")}</p>
         )}
 
         {(status === "waiting" || status === "expired") && (
-          <div className="flex w-full flex-col gap-3">
-            <p className="text-sm text-muted">
+          <div className="flex w-full flex-col items-center gap-3">
+            <p className="text-sm text-text-2 leading-relaxed max-w-xs">
               {status === "expired"
                 ? t("auth.verify_expired")
                 : t("auth.verify_instruction")}
             </p>
             {email && (
-              <p className="text-sm font-medium" data-testid="masked-email">
+              <p className="font-mono text-xs font-semibold text-text px-3.5 py-1.5 rounded-xl border border-border/70 bg-surface-2/50" data-testid="masked-email">
                 {maskEmail(email)}
               </p>
             )}
             {resendError && (
-              <p className="text-xs text-red-600" role="alert">
+              <p className="rounded-xl border border-risk-high/30 bg-risk-high/10 px-3 py-2 text-xs font-medium text-risk-high" role="alert">
                 {resendError}
               </p>
             )}
             {email && (
               <Button
-                variant="ghost"
+                variant="secondary"
                 onClick={resend}
                 disabled={cooldown > 0}
                 type="button"
+                className="mt-2 w-full"
               >
                 {cooldown > 0
                   ? t("auth.resend_in", { wait: waitText(cooldown) })

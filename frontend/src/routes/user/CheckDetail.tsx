@@ -64,7 +64,7 @@ export default function CheckDetail() {
     return (
       <AppShell>
         <div className="mx-auto max-w-xl py-12 text-center text-muted">
-          <Icon icon="ph:spinner-bold" className="animate-spin text-3xl mx-auto" />
+          <Icon icon="ph:spinner" className="animate-spin text-3xl mx-auto" />
         </div>
       </AppShell>
     );
@@ -76,7 +76,7 @@ export default function CheckDetail() {
         <div className="mx-auto max-w-xl py-8 flex flex-col gap-4">
           <div className="rounded-2xl border border-risk-high/30 bg-risk-high-tint p-5 text-text">
             <h2 className="font-bold text-base text-risk-high">{t("errors.not_found")}</h2>
-            <p className="text-xs text-muted mt-1">{error}</p>
+            <p className="text-sm text-text-2 mt-1">{error}</p>
           </div>
           <Link to="/history" className="text-xs font-semibold text-accent hover:underline">
             ← {t("history.back_to_history")}
@@ -92,14 +92,17 @@ export default function CheckDetail() {
 
   return (
     <AppShell>
-      <div className="mx-auto max-w-xl py-4 flex flex-col gap-6">
+      <div className="mx-auto max-w-xl py-6 flex flex-col gap-6">
         {/* Navigation */}
         <div className="flex items-center justify-between text-xs font-semibold text-muted">
-          <Link to="/history" className="flex items-center gap-1 hover:text-text">
-            <Icon icon="ph:arrow-left-bold" />
+          <Link
+            to="/history"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 transition-colors hover:bg-surface-2 hover:text-text"
+          >
+            <Icon icon="ph:arrow-left" />
             <span>{t("history.back_to_history")}</span>
           </Link>
-          <span className="font-mono text-muted text-xs">
+          <span className="font-mono text-2xs text-muted px-2.5 py-1 rounded-full border border-border/80 bg-surface/50">
             {new Date(result.created_at).toLocaleDateString()}
           </span>
         </div>
@@ -110,14 +113,16 @@ export default function CheckDetail() {
 
         {/* Reasons */}
         {result.reasons.length > 0 && (
-          <section className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-muted">
+          <section className="rounded-2xl border border-border/80 bg-surface/80 p-5 backdrop-blur-md">
+            <h2 className="text-2xs text-muted mb-3 font-semibold">
               {t("result.why_this_looks_risky")}
             </h2>
-            <ul className="flex flex-col gap-2 text-xs sm:text-sm text-text leading-relaxed">
+            <ul className="flex flex-col gap-2.5 text-xs text-text leading-relaxed">
               {result.reasons.map((reason, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="text-accent font-bold mt-0.5">•</span>
+                <li key={idx} className="flex items-start gap-2.5">
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand text-2xs font-bold mt-0.5">
+                    •
+                  </span>
                   <span>{reason}</span>
                 </li>
               ))}
@@ -127,7 +132,7 @@ export default function CheckDetail() {
 
         {/* Masked text with highlights */}
         {result.masked_text && (
-          <section className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5">
+          <section className="rounded-2xl border border-border/80 bg-surface/80 p-5 backdrop-blur-md">
             <HighlightedMessage
               maskedText={result.masked_text}
               highlights={result.highlights || []}
@@ -137,7 +142,7 @@ export default function CheckDetail() {
 
         {/* Safe Actions */}
         <section className="flex flex-col gap-3">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-muted">
+          <h2 className="text-2xs text-muted px-1 font-semibold">
             {t("result.what_to_do_now")}
           </h2>
 
@@ -145,16 +150,20 @@ export default function CheckDetail() {
             {helplineAction?.phone ? (
               <a
                 href={`tel:${helplineAction.phone}`}
-                className="flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-bold text-bg shadow hover:bg-accent/90"
+                className="group relative flex items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-accent px-5 py-3.5 text-xs font-bold text-on-accent transition-all hover:bg-brand/90 hover:scale-[1.01] active:scale-[0.99]"
               >
-                <Icon icon="ph:phone-call-bold" className="text-lg" />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                />
+                <Icon icon="ph:phone-call" className="text-base" />
                 <span>
                   {helplineAction.label} ({helplineAction.phone})
                 </span>
               </a>
             ) : helplineAction ? (
-              <div className="rounded-xl border border-border bg-surface p-3.5 text-xs text-text font-medium flex items-center gap-2">
-                <Icon icon="ph:info-bold" className="text-base text-accent shrink-0" />
+              <div className="rounded-xl border border-brand/20 bg-brand/5 p-3.5 text-xs text-brand font-medium flex items-center gap-2.5">
+                <Icon icon="ph:info" className="text-base text-brand shrink-0" />
                 <span>{t("result.official_app_helpline_notice")}</span>
               </div>
             ) : null}
@@ -164,25 +173,27 @@ export default function CheckDetail() {
               .map((action) => (
                 <div
                   key={action.id}
-                  className="rounded-xl border border-border bg-surface p-3.5"
+                  className="rounded-xl border border-border/70 bg-surface/80 p-4"
                 >
                   <strong className="text-xs font-bold text-text block">{action.label}</strong>
-                  {action.body && <p className="text-xs text-muted mt-1">{action.body}</p>}
+                  {action.body && <p className="text-sm text-text-2 mt-1 leading-relaxed">{action.body}</p>}
                 </div>
               ))}
           </div>
         </section>
 
         {/* Report status or Report button */}
-        <section className="flex flex-col gap-2 pt-2">
+        <section className="flex flex-col gap-2.5 pt-2">
           {result.has_reported ? (
-            <div className="flex items-center justify-between rounded-xl border border-success/30 bg-success-tint p-3 text-xs text-success">
+            <div className="flex items-center justify-between rounded-xl border border-success/30 bg-success/10 p-3.5 text-xs text-success font-medium">
               <span className="flex items-center gap-2 font-semibold">
-                <Icon icon="ph:check-circle-bold" />
+                <Icon icon="ph:check-circle" className="text-base" />
                 {t("result.reported_status")}
               </span>
               {result.report_reference && (
-                <span className="font-mono font-bold text-text">{result.report_reference}</span>
+                <span className="font-mono font-bold text-text bg-surface px-2.5 py-1 rounded-lg border border-border/60">
+                  {result.report_reference}
+                </span>
               )}
             </div>
           ) : (
@@ -191,7 +202,7 @@ export default function CheckDetail() {
               onClick={() => setReportModalOpen(true)}
               className="w-full py-2.5 text-xs font-bold"
             >
-              <Icon icon="ph:flag-bold" className="mr-1.5 text-base" />
+              <Icon icon="ph:flag" className="mr-1.5 text-base" />
               {t("result.report_this_message")}
             </Button>
           )}
@@ -200,10 +211,10 @@ export default function CheckDetail() {
           <button
             type="button"
             onClick={() => setDeleteModalOpen(true)}
-            className="flex items-center justify-center gap-2 rounded-xl border border-risk-high/30 bg-risk-high-tint/20 py-2.5 text-xs font-bold text-risk-high hover:bg-risk-high-tint/40 transition-colors"
+            className="flex items-center justify-center gap-2 rounded-xl border border-risk-high/30 bg-risk-high/10 py-2.5 text-xs font-bold text-risk-high hover:bg-risk-high/20 transition-all active:scale-[0.99]"
             data-testid="open-delete-modal-btn"
           >
-            <Icon icon="ph:trash-bold" />
+            <Icon icon="ph:trash" />
             <span>{t("history.delete_check")}</span>
           </button>
         </section>
@@ -211,35 +222,40 @@ export default function CheckDetail() {
         {/* Delete Confirmation Modal */}
         {deleteModalOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/75 backdrop-blur-sm p-4"
             role="dialog"
             aria-modal="true"
           >
-            <div className="w-full max-w-sm rounded-2xl border border-border bg-surface p-6 shadow-xl flex flex-col gap-4">
-              <h3 className="text-base font-bold text-text">{t("history.delete_confirm_title")}</h3>
-              <p className="text-xs text-muted leading-relaxed">
-                {t("history.delete_confirm_desc")}
-              </p>
+            <div className="w-full max-w-sm rounded-3xl border border-border/80 bg-surface/90 p-6 shadow-2xl backdrop-blur-xl flex flex-col gap-4">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-risk-high/30 bg-risk-high/10 text-risk-high">
+                <Icon icon="ph:warning" className="text-xl" />
+              </div>
+              <div>
+                <h3 className="font-display text-base font-bold text-text">{t("history.delete_confirm_title")}</h3>
+                <p className="text-sm text-text-2 leading-relaxed mt-1">
+                  {t("history.delete_confirm_desc")}
+                </p>
+              </div>
 
               {deleteError && (
-                <p className="text-xs text-risk-high font-medium" role="alert">
+                <p className="rounded-xl border border-risk-high/30 bg-risk-high/10 px-3 py-2 text-xs text-risk-high font-medium" role="alert">
                   {deleteError}
                 </p>
               )}
 
-              <div className="flex items-center justify-end gap-3 pt-2">
+              <div className="flex items-center justify-end gap-2.5 pt-2">
                 <Button variant="ghost" onClick={() => setDeleteModalOpen(false)}>
                   {t("common.cancel")}
                 </Button>
-                <Button
-                  variant="primary"
+                <button
+                  type="button"
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="bg-risk-high text-bg hover:bg-risk-high/90"
+                  className="inline-flex min-h-10 items-center justify-center rounded-xl bg-risk-high px-4 text-xs font-bold text-on-risk transition-all hover:bg-risk-high/90 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
                   data-testid="confirm-delete-button"
                 >
                   {isDeleting ? t("common.deleting") : t("common.delete")}
-                </Button>
+                </button>
               </div>
             </div>
           </div>

@@ -56,7 +56,12 @@ export function applyTheme(theme: string | undefined): void {
   if (theme === "light" || theme === "dark") {
     document.documentElement.dataset.theme = theme;
   } else {
-    delete document.documentElement.dataset.theme;
+    // "system" theme: check OS preference
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: light)").matches) {
+      document.documentElement.dataset.theme = "light";
+    } else {
+      delete document.documentElement.dataset.theme;
+    }
   }
 }
 

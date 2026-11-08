@@ -94,10 +94,10 @@ export default function ReviewOverview() {
     <AppShell wide>
       <div className="flex flex-col gap-6">
         <header className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold tracking-tight text-text">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-text">
             {t("review.overview_title", "Reviewer Analytics & Overview")}
           </h1>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-text-2">
             {t("review.overview_subtitle", "Live queue pressure, risk series, recurring numbers, and scam intelligence.")}
           </p>
         </header>
@@ -112,16 +112,16 @@ export default function ReviewOverview() {
         {surgingCampaigns.length > 0 && (
           <div
             data-testid="campaign-radar-banner"
-            className="flex flex-col gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-700 dark:text-rose-300"
+            className="flex flex-col gap-2 rounded-xl border border-risk-high/30 bg-risk-high/10 p-4 text-sm text-risk-high"
           >
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 font-semibold">
-                <Icon icon="ph:warning-circle" className="h-5 w-5 text-rose-500" />
+                <Icon icon="ph:warning-circle" className="h-5 w-5 text-risk-high" />
                 <span>Campaign Radar: {surgingCampaigns.length} Surging Campaign{surgingCampaigns.length > 1 ? "s" : ""}</span>
               </div>
               <Link
                 to="/review/campaigns?is_surging=true"
-                className="inline-flex items-center gap-1 font-medium text-rose-600 dark:text-rose-400 hover:underline"
+                className="inline-flex items-center gap-1 font-medium text-risk-high hover:underline"
               >
                 <span>View campaigns</span>
                 <Icon icon="ph:arrow-right" className="h-4 w-4" />
@@ -131,7 +131,7 @@ export default function ReviewOverview() {
               {surgingCampaigns.map((camp) => (
                 <li
                   key={camp.id}
-                  className="rounded-md border border-rose-500/20 bg-surface/80 px-2.5 py-1 text-text shadow-sm"
+                  className="rounded-md border border-risk-high/20 bg-surface/80 px-2.5 py-1 text-text shadow-sm"
                 >
                   <span className="font-semibold">{camp.label}</span>: {camp.count_7d} reports in 7d (previously {camp.prev_count_7d})
                 </li>
@@ -154,7 +154,7 @@ export default function ReviewOverview() {
                 onClick={() => setRangePreset(p)}
                 className={`rounded-lg px-2.5 py-1 font-medium transition-colors ${
                   range === p
-                    ? "bg-brand text-white shadow-sm"
+                    ? "bg-accent text-on-accent shadow-sm"
                     : "border border-border bg-surface text-muted hover:bg-bg hover:text-text"
                 }`}
               >
@@ -166,7 +166,7 @@ export default function ReviewOverview() {
               onClick={() => setRangePreset("custom")}
               className={`rounded-lg px-2.5 py-1 font-medium transition-colors ${
                 range === "custom"
-                  ? "bg-brand text-white shadow-sm"
+                  ? "bg-accent text-on-accent shadow-sm"
                   : "border border-border bg-surface text-muted hover:bg-bg hover:text-text"
               }`}
             >
@@ -249,7 +249,7 @@ export default function ReviewOverview() {
           <div className="flex flex-col gap-1 rounded-xl border border-border bg-surface p-4 shadow-sm">
             <div className="flex items-center justify-between text-muted">
               <span className="text-xs font-medium">{t("review.kpi_open_cases", "Open Cases")}</span>
-              <Icon icon="ph:folder-open" className="h-4 w-4 text-blue-500" />
+              <Icon icon="ph:folder-open" className="h-4 w-4 text-info" />
             </div>
             <div className="text-2xl font-bold text-text">
               {isLoading ? "—" : kpis?.open_cases ?? 0}
@@ -261,9 +261,9 @@ export default function ReviewOverview() {
           <div className="flex flex-col gap-1 rounded-xl border border-border bg-surface p-4 shadow-sm">
             <div className="flex items-center justify-between text-muted">
               <span className="text-xs font-medium">{t("review.kpi_high_today", "High Risk Today")}</span>
-              <Icon icon="ph:shield-warning" className="h-4 w-4 text-rose-500" />
+              <Icon icon="ph:warning" className="h-4 w-4 text-risk-high" />
             </div>
-            <div className="text-2xl font-bold text-rose-600 dark:text-rose-400">
+            <div className="text-2xl font-bold text-risk-high">
               {isLoading ? "—" : kpis?.high_today ?? 0}
             </div>
             <span className="text-xs text-muted">Flagged by rules & fusion</span>
@@ -273,7 +273,7 @@ export default function ReviewOverview() {
           <div className="flex flex-col gap-1 rounded-xl border border-border bg-surface p-4 shadow-sm">
             <div className="flex items-center justify-between text-muted">
               <span className="text-xs font-medium">{t("review.kpi_median_time", "Median Decision Time")}</span>
-              <Icon icon="ph:clock" className="h-4 w-4 text-amber-500" />
+              <Icon icon="ph:clock" className="h-4 w-4 text-warning" />
             </div>
             <div className="text-2xl font-bold text-text">
               {isLoading ? "—" : `${kpis?.median_time_to_decision ?? 0}m`}
@@ -285,9 +285,9 @@ export default function ReviewOverview() {
           <div className="flex flex-col gap-1 rounded-xl border border-border bg-surface p-4 shadow-sm">
             <div className="flex items-center justify-between text-muted">
               <span className="text-xs font-medium">{t("review.kpi_agreement", "Reviewer Agreement")}</span>
-              <Icon icon="ph:handshake" className="h-4 w-4 text-emerald-500" />
+              <Icon icon="ph:handshake" className="h-4 w-4 text-success" />
             </div>
-            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+            <div className="text-2xl font-bold text-success">
               {isLoading ? "—" : `${Math.round((kpis?.reviewer_agreement ?? 0) * 100)}%`}
             </div>
             <span className="text-xs text-muted">Alignment with Prohori score</span>

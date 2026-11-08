@@ -17,7 +17,7 @@ export interface TopScamTypesChartProps {
   simulated?: boolean;
 }
 
-const BAR_COLORS = ["#2563EB", "#0D9488", "#D97706", "#7C3AED", "#DB2777", "#64748B"];
+const BAR_COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
 
 export function TopScamTypesChart({ data, simulated = true }: TopScamTypesChartProps) {
   const { t, i18n } = useTranslation();
@@ -65,20 +65,20 @@ export function TopScamTypesChart({ data, simulated = true }: TopScamTypesChartP
             layout="vertical"
             margin={{ top: 10, right: 30, left: 20, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" opacity={0.2} horizontal={false} />
-            <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} tickLine={false} />
+            <CartesianGrid stroke="var(--chart-grid)" horizontal={false} />
+            <XAxis type="number" tick={{ fontSize: 12, fill: "var(--chart-axis)" }} axisLine={{ stroke: "var(--chart-grid)" }} allowDecimals={false} tickLine={false} />
             <YAxis
               type="category"
               dataKey="displayName"
-              tick={{ fontSize: 11 }}
+              tick={{ fontSize: 12, fill: "var(--chart-axis)" }} axisLine={{ stroke: "var(--chart-grid)" }}
               width={110}
               tickLine={false}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "var(--color-surface, #13211E)",
-                borderColor: "var(--color-border, #243E36)",
-                borderRadius: "0.5rem",
+                backgroundColor: "var(--color-surface)",
+                borderColor: "var(--color-border)",
+                borderRadius: "8px", color: "var(--color-text)",
                 fontSize: "0.75rem",
               }}
               formatter={(value, _name, entry) => [

@@ -59,175 +59,197 @@ export default function PaymentCheck() {
 
   return (
     <AppShell>
-      <div className="mx-auto max-w-xl py-4 flex flex-col gap-6">
+      <div className="mx-auto max-w-xl py-2 flex flex-col gap-6 w-full">
+        {/* Back Link */}
         <div className="flex items-center gap-2 text-xs font-semibold text-muted">
-          <Link to="/check" className="flex items-center gap-1 hover:text-text">
-            <Icon icon="ph:arrow-left-bold" />
+          <Link
+            to="/check"
+            className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-surface px-3 py-1 text-muted hover:text-text hover:border-info/40 transition-colors"
+          >
+            <Icon icon="ph:arrow-left" />
             <span>{t("common.back")}</span>
           </Link>
         </div>
 
         {isSubmitting ? (
-          <PipelineSteps />
+          <div className="double-bezel">
+            <div className="double-bezel-inner p-6 sm:p-8">
+              <PipelineSteps />
+            </div>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <header className="flex flex-col gap-1">
-              <h1 className="text-2xl font-bold tracking-tight text-text">
+            <header className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-info" />
+                <span className="text-xs text-info font-semibold">
+                  PAYMENT FRAUD MODEL
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
                 {t("payment_check.title")}
               </h1>
-              <p className="text-xs text-muted leading-relaxed">
+              <p className="text-xs sm:text-sm text-muted leading-relaxed font-normal">
                 {t("payment_check.subtitle")}
               </p>
             </header>
 
             {/* Question 1: Amount */}
-            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5">
-              <label htmlFor="payment-amount" className="text-sm font-bold text-text">
-                {t("payment_check.amount_label")} (BDT)
-              </label>
-              <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-muted text-base">
-                  ৳
-                </span>
-                <input
-                  id="payment-amount"
-                  type="text"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="5000"
-                  className="w-full rounded-xl border border-border bg-surface-2 py-3 pl-9 pr-4 text-base font-bold text-text placeholder:text-muted focus:border-brand focus:outline-none"
-                  data-testid="payment-amount-input"
-                  required
-                />
+            <div className="double-bezel">
+              <div className="double-bezel-inner p-5 flex flex-col gap-2.5">
+                <label htmlFor="payment-amount" className="text-xs text-muted font-semibold">
+                  {t("payment_check.amount_label")} (BDT)
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-info text-xl font-mono">
+                    ৳
+                  </span>
+                  <input
+                    id="payment-amount"
+                    type="text"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="5000"
+                    className="w-full rounded-xl border border-border bg-bg/90 py-3.5 pl-10 pr-4 text-xl font-black text-text placeholder:text-muted focus:border-info focus:outline-none font-mono shadow-inner"
+                    data-testid="payment-amount-input"
+                    required
+                  />
+                </div>
               </div>
             </div>
 
             {/* Question 2: Recipient Status (SegmentedControl) */}
-            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5">
-              <span className="text-sm font-bold text-text">
-                {t("payment_check.recipient_label")}
-              </span>
-              <div className="grid grid-cols-3 gap-1 rounded-xl bg-surface-2 p-1 border border-border">
-                {(["known", "new", "not_sure"] as const).map((status) => (
-                  <button
-                    key={status}
-                    type="button"
-                    onClick={() => setRecipientStatus(status)}
-                    className={`py-2 text-xs font-semibold rounded-lg transition-colors ${
-                      recipientStatus === status
-                        ? "bg-accent text-bg shadow"
-                        : "text-muted hover:text-text"
-                    }`}
-                    data-testid={`recipient-status-${status}`}
-                  >
-                    {t(`payment_check.status_${status}`)}
-                  </button>
-                ))}
-              </div>
+            <div className="double-bezel">
+              <div className="double-bezel-inner p-5 flex flex-col gap-3.5">
+                <span className="text-xs text-muted font-semibold">
+                  {t("payment_check.recipient_label")}
+                </span>
+                <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-bg/80 p-1.5 border border-border">
+                  {(["known", "new", "not_sure"] as const).map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => setRecipientStatus(status)}
+                      className={`py-2.5 text-xs font-bold rounded-lg transition-all ${
+                        recipientStatus === status
+                          ? "bg-info text-on-risk shadow-sm"
+                          : "text-muted hover:text-text"
+                      }`}
+                      data-testid={`recipient-status-${status}`}
+                    >
+                      {t(`payment_check.status_${status}`)}
+                    </button>
+                  ))}
+                </div>
 
-              {/* Recipient Number & Provider */}
-              <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <label className="flex flex-col gap-1 text-xs">
-                  <span className="text-muted font-medium">
-                    {t("payment_check.number_label")} ({t("payment_check.optional")})
-                  </span>
-                  <input
-                    type="text"
-                    value={recipientNumber}
-                    onChange={(e) => setRecipientNumber(e.target.value)}
-                    placeholder="01712345678"
-                    className="rounded-xl border border-border bg-surface-2 p-2.5 text-xs text-text focus:border-brand focus:outline-none"
-                    data-testid="recipient-number-input"
-                  />
-                </label>
+                {/* Recipient Number & Provider */}
+                <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <label className="flex flex-col gap-1.5 text-xs">
+                    <span className="text-muted font-semibold">
+                      {t("payment_check.number_label")} ({t("payment_check.optional")})
+                    </span>
+                    <input
+                      type="text"
+                      value={recipientNumber}
+                      onChange={(e) => setRecipientNumber(e.target.value)}
+                      placeholder="01712345678"
+                      className="rounded-xl border border-border bg-surface-2 p-3 text-xs text-text placeholder:text-muted focus:border-info focus:outline-none font-mono"
+                      data-testid="recipient-number-input"
+                    />
+                  </label>
 
-                <label className="flex flex-col gap-1 text-xs">
-                  <span className="text-muted font-medium">{t("payment_check.provider_label")}</span>
-                  <select
-                    value={provider}
-                    onChange={(e) =>
-                      setProvider(
-                        e.target.value as
-                          | "bkash"
-                          | "nagad"
-                          | "rocket"
-                          | "upay"
-                          | "other"
-                      )
-                    }
-                    className="rounded-xl border border-border bg-surface-2 p-2.5 text-xs text-text focus:border-brand focus:outline-none"
-                    data-testid="payment-provider-select"
-                  >
-                    <option value="bkash">bKash (বিকাশ)</option>
-                    <option value="nagad">Nagad (নগদ)</option>
-                    <option value="rocket">Rocket (রকেট)</option>
-                    <option value="upay">Upay (উপায়)</option>
-                    <option value="other">{t("payment_check.provider_other")}</option>
-                  </select>
-                </label>
+                  <label className="flex flex-col gap-1.5 text-xs">
+                    <span className="text-muted font-semibold">{t("payment_check.provider_label")}</span>
+                    <select
+                      value={provider}
+                      onChange={(e) =>
+                        setProvider(
+                          e.target.value as
+                            | "bkash"
+                            | "nagad"
+                            | "rocket"
+                            | "upay"
+                            | "other"
+                        )
+                      }
+                      className="rounded-xl border border-border bg-surface-2 p-3 text-xs text-text focus:border-info focus:outline-none"
+                      data-testid="payment-provider-select"
+                    >
+                      <option value="bkash">bKash (বিকাশ)</option>
+                      <option value="nagad">Nagad (নগদ)</option>
+                      <option value="rocket">Rocket (রকেট)</option>
+                      <option value="upay">Upay (উপায়)</option>
+                      <option value="other">{t("payment_check.provider_other")}</option>
+                    </select>
+                  </label>
+                </div>
               </div>
             </div>
 
             {/* Question 3: Channel (ChoiceChips) */}
-            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5">
-              <span className="text-sm font-bold text-text">
-                {t("payment_check.channel_label")}
-              </span>
-              <div className="flex flex-wrap gap-2 pt-1">
-                {(
-                  [
-                    "phone_call",
-                    "sms",
-                    "whatsapp",
-                    "in_person",
-                    "online_shop",
-                    "other",
-                  ] as const
-                ).map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setChannel(c)}
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-semibold border transition-colors ${
-                      channel === c
-                        ? "border-accent bg-accent text-bg"
-                        : "border-border bg-surface-2 text-muted hover:text-text"
-                    }`}
-                    data-testid={`channel-chip-${c}`}
-                  >
-                    {t(`payment_check.channel_${c}`)}
-                  </button>
-                ))}
+            <div className="double-bezel">
+              <div className="double-bezel-inner p-5 flex flex-col gap-3">
+                <span className="text-xs text-muted font-semibold">
+                  {t("payment_check.channel_label")}
+                </span>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {(
+                    [
+                      "phone_call",
+                      "sms",
+                      "whatsapp",
+                      "in_person",
+                      "online_shop",
+                      "other",
+                    ] as const
+                  ).map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setChannel(c)}
+                      className={`rounded-full px-4 py-2 text-xs font-bold border transition-all ${
+                        channel === c
+                          ? "border-info bg-info text-on-risk"
+                          : "border-border bg-surface-2 text-muted hover:text-text hover:border-border-strong"
+                      }`}
+                      data-testid={`channel-chip-${c}`}
+                    >
+                      {t(`payment_check.channel_${c}`)}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* Question 4: Are you being rushed? */}
-            <div className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5">
-              <span className="text-sm font-bold text-text">
-                {t("payment_check.rushed_label")}
-              </span>
-              <div className="grid grid-cols-3 gap-2">
-                {(["yes", "no", "not_sure"] as const).map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setRushed(r)}
-                    className={`py-2 text-xs font-semibold rounded-xl border transition-colors ${
-                      rushed === r
-                        ? "border-accent bg-accent/15 text-accent font-bold"
-                        : "border-border bg-surface-2 text-muted hover:text-text"
-                    }`}
-                    data-testid={r === "yes" ? "rushed-yes-button" : `rushed-${r}`}
-                  >
-                    {t(`payment_check.rushed_${r}`)}
-                  </button>
-                ))}
+            <div className="double-bezel">
+              <div className="double-bezel-inner p-5 flex flex-col gap-3">
+                <span className="text-xs text-muted font-semibold">
+                  {t("payment_check.rushed_label")}
+                </span>
+                <div className="grid grid-cols-3 gap-2.5">
+                  {(["yes", "no", "not_sure"] as const).map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRushed(r)}
+                      className={`py-3 text-xs font-bold rounded-xl border transition-all ${
+                        rushed === r
+                          ? "border-warning bg-warning/15 text-warning font-bold"
+                          : "border-border bg-surface-2 text-muted hover:text-text"
+                      }`}
+                      data-testid={r === "yes" ? "rushed-yes-button" : `rushed-${r}`}
+                    >
+                      {t(`payment_check.rushed_${r}`)}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* Optional message text */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="optional-msg" className="text-xs font-semibold text-text">
+              <label htmlFor="optional-msg" className="text-xs font-semibold text-muted">
                 {t("payment_check.message_box_label")} ({t("payment_check.optional")})
               </label>
               <textarea
@@ -236,17 +258,17 @@ export default function PaymentCheck() {
                 onChange={(e) => setMessageText(e.target.value)}
                 rows={3}
                 placeholder={t("payment_check.message_box_placeholder")}
-                className="w-full rounded-2xl border border-border bg-surface p-3.5 text-xs text-text placeholder:text-muted focus:border-brand focus:outline-none"
+                className="w-full rounded-2xl border border-border bg-surface p-3.5 text-xs text-text placeholder:text-muted focus:border-info focus:outline-none font-mono"
               />
             </div>
 
             {error && (
               <div
-                className="flex items-center gap-2 rounded-xl border border-risk-high/30 bg-risk-high-tint p-3 text-xs text-risk-high"
+                className="flex items-center gap-2 rounded-2xl border border-risk-high/30 bg-risk-high/10 p-4 text-xs text-risk-high font-medium"
                 role="alert"
                 data-testid="payment-error-message"
               >
-                <Icon icon="ph:warning-circle-bold" className="text-base shrink-0" />
+                <Icon icon="ph:warning-circle" className="text-base shrink-0" />
                 <span>{error}</span>
               </div>
             )}
@@ -254,8 +276,9 @@ export default function PaymentCheck() {
             <Button
               type="submit"
               variant="primary"
+              size="lg"
               disabled={!isValid || isSubmitting}
-              className="w-full py-3.5 text-base font-bold shadow-md active:scale-98"
+              className="w-full text-base font-bold"
               data-testid="payment-submit-button"
             >
               {t("payment_check.submit_cta")}

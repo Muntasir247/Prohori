@@ -55,16 +55,16 @@ export function PipelineSteps({ onTimeout }: PipelineStepsProps) {
               <div
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
                   isDone
-                    ? "bg-brand text-bg"
+                    ? "bg-accent text-on-accent"
                     : isCurrent
                       ? "border-2 border-brand bg-brand/10 text-brand"
                       : "border border-border text-muted"
                 }`}
               >
                 {isDone ? (
-                  <Icon icon="ph:check-bold" className="text-base" aria-hidden />
+                  <Icon icon="ph:check" className="text-base" aria-hidden />
                 ) : isCurrent ? (
-                  <Icon icon="ph:spinner-bold" className="animate-spin text-base" aria-hidden />
+                  <Icon icon="ph:spinner" className="animate-spin text-base" aria-hidden />
                 ) : (
                   idx + 1
                 )}
@@ -86,8 +86,8 @@ export function PipelineSteps({ onTimeout }: PipelineStepsProps) {
       </div>
 
       {elapsed >= 10 && (
-        <p className="flex items-center gap-2 text-xs text-risk-medium font-medium animate-pulse">
-          <Icon icon="ph:hourglass-bold" aria-hidden />
+        <p className="flex items-center gap-2 text-xs text-risk-medium font-medium">
+          <Icon icon="ph:hourglass" aria-hidden />
           {t("checking.taking_longer")}
         </p>
       )}

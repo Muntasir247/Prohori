@@ -368,7 +368,7 @@ describe("Phase 11: Admin Screens and Partner API", () => {
       expect(screen.getByText(/Select New Role/i)).toBeInTheDocument();
     });
 
-    fireEvent.change(screen.getByRole("combobox"), { target: { value: "reviewer" } });
+    fireEvent.change(screen.getByLabelText(/Select New Role/i), { target: { value: "reviewer" } });
     fireEvent.click(screen.getByRole("button", { name: /Update Role/i }));
 
     await waitFor(() => {

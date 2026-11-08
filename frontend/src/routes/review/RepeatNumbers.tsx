@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
@@ -9,6 +9,7 @@ import { ReviewNav } from "@/components/review/ReviewNav";
 import { analyticsApi } from "@/features/analytics/api";
 import type { RepeatNumberItem } from "@/features/analytics/types";
 import { useSession } from "@/features/auth/useSession";
+import { useDebounce } from "@/lib/useDebounce";
 
 const SparklineChart = lazy(() => import("@/components/charts/SparklineChart"));
 
@@ -21,11 +22,31 @@ export default function RepeatNumbers() {
   const statusFilter = searchParams.get("status") || "all";
   const searchFilter = searchParams.get("search") || "";
 
+  const [searchQuery, setSearchQuery] = useState(searchFilter);
+  const debouncedSearch = useDebounce(searchQuery, 250);
+
   const [selectedNumber, setSelectedNumber] = useState<RepeatNumberItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newStatus, setNewStatus] = useState<"watch" | "confirmed_risky" | "cleared">("watch");
   const [reason, setReason] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Sync debounced search to URL
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams);
+    if (!debouncedSearch.trim()) {
+      next.delete("search");
+    } else {
+      next.set("search", debouncedSearch.trim());
+    }
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [debouncedSearch, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    setSearchQuery(searchFilter);
+  }, [searchFilter]);
 
   const {
     data: response,
@@ -34,11 +55,11 @@ export default function RepeatNumbers() {
     refetch,
     dataUpdatedAt,
   } = useQuery({
-    queryKey: ["repeat-numbers", statusFilter, searchFilter],
+    queryKey: ["repeat-numbers", statusFilter, debouncedSearch],
     queryFn: () =>
       analyticsApi.listRepeatNumbers({
         status: statusFilter,
-        search: searchFilter,
+        search: debouncedSearch,
       }),
     refetchInterval: 60_000,
   });
@@ -66,6 +87,13 @@ export default function RepeatNumbers() {
       setFormError(msg);
     },
   });
+
+  const filteredItems = useMemo(() => {
+    const raw = response?.items || [];
+    if (!searchQuery.trim()) return raw;
+    const q = searchQuery.toLowerCase().trim();
+    return raw.filter((i) => i.masked_display.toLowerCase().includes(q));
+  }, [response?.items, searchQuery]);
 
   if (!user) return null;
 
@@ -98,16 +126,14 @@ export default function RepeatNumbers() {
     });
   };
 
-  const items = response?.items || [];
-
   return (
     <AppShell wide>
       <div className="flex flex-col gap-6">
         <header className="flex flex-col gap-1">
-          <h1 className="text-2xl font-bold tracking-tight text-text">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-text">
             {t("review.repeat_numbers_screen_title", "Repeated Risky Numbers")}
           </h1>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-text-2">
             {t(
               "review.repeat_numbers_screen_subtitle",
               "Phone numbers recurring across multiple user checks and reported cases."
@@ -122,18 +148,18 @@ export default function RepeatNumbers() {
         />
 
         {/* Filter Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-surface/80 p-3.5 text-xs backdrop-blur-md">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-medium text-muted">Status:</span>
+            <span className="text-2xs text-muted font-semibold">Status:</span>
             {(["all", "watch", "confirmed_risky", "cleared"] as const).map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => updateParam("status", s)}
-                className={`rounded-lg px-2.5 py-1 font-medium capitalize transition-colors ${
+                className={`rounded-xl px-3 py-1.5 text-2xs font-bold capitalize transition-all ${
                   statusFilter === s
-                    ? "bg-brand text-white shadow-sm"
-                    : "border border-border bg-surface text-muted hover:bg-bg hover:text-text"
+                    ? "bg-accent text-on-accent"
+                    : "border border-border/70 bg-surface-2 text-muted hover:bg-surface hover:text-text"
                 }`}
               >
                 {s === "all" ? "All statuses" : s.replace("_", " ")}
@@ -145,21 +171,24 @@ export default function RepeatNumbers() {
             <div className="relative">
               <Icon
                 icon="ph:magnifying-glass"
-                className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-xs pointer-events-none"
               />
               <input
-                type="text"
-                placeholder="Search masked number…"
-                value={searchFilter}
-                onChange={(e) => updateParam("search", e.target.value)}
-                className="rounded-lg border border-border bg-bg pl-8 pr-3 py-1.5 text-xs text-text placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-brand"
+                type="search"
+                placeholder="Live search number..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="rounded-xl border border-border/80 bg-surface-2/70 pl-8 pr-3 py-1.5 text-xs text-text placeholder:text-faint focus:outline-none focus:border-brand font-mono transition-all"
               />
             </div>
-            {(statusFilter !== "all" || searchFilter) && (
+            {(statusFilter !== "all" || searchQuery) && (
               <button
                 type="button"
-                onClick={() => setSearchParams(new URLSearchParams())}
-                className="text-xs text-brand hover:underline"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSearchParams(new URLSearchParams());
+                }}
+                className="text-xs font-semibold text-brand hover:underline"
               >
                 Clear
               </button>
@@ -168,39 +197,39 @@ export default function RepeatNumbers() {
         </div>
 
         {/* Numbers Table */}
-        <div className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
+        <div className="rounded-2xl border border-border/80 bg-surface/90 overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="border-b border-border bg-bg/50 text-muted font-medium">
+              <thead className="border-b border-border/80 bg-surface-2/70 text-muted text-2xs font-semibold">
                 <tr>
-                  <th className="py-3 px-4">Masked Number</th>
-                  <th className="py-3 px-4 text-center">Reports</th>
-                  <th className="py-3 px-4 text-center">Total Checks</th>
-                  <th className="py-3 px-4 text-center">High Share</th>
-                  <th className="py-3 px-4">First Seen</th>
-                  <th className="py-3 px-4">Last Seen</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-4 font-semibold">Masked Number</th>
+                  <th className="py-3 px-4 text-center font-semibold">Reports</th>
+                  <th className="py-3 px-4 text-center font-semibold">Total Checks</th>
+                  <th className="py-3 px-4 text-center font-semibold">High Share</th>
+                  <th className="py-3 px-4 font-semibold">First Seen</th>
+                  <th className="py-3 px-4 font-semibold">Last Seen</th>
+                  <th className="py-3 px-4 font-semibold">Status</th>
+                  <th className="py-3 px-4 text-right font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={8} className="py-8 text-center text-muted">
+                    <td colSpan={8} className="py-12 text-center text-muted">
                       <div className="flex items-center justify-center gap-2">
-                        <Icon icon="ph:spinner" className="h-4 w-4 animate-spin text-brand" />
+                        <Icon icon="ph:spinner-gap" className="h-4 w-4 animate-spin text-brand" />
                         <span>Loading repeat numbers…</span>
                       </div>
                     </td>
                   </tr>
-                ) : items.length === 0 ? (
+                ) : filteredItems.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="py-8 text-center text-muted">
+                    <td colSpan={8} className="py-12 text-center text-muted">
                       No repeat numbers found matching current filters.
                     </td>
                   </tr>
                 ) : (
-                  items.map((num) => (
+                  filteredItems.map((num) => (
                     <tr
                       key={num.id}
                       onClick={() => setSelectedNumber(num)}
@@ -212,7 +241,7 @@ export default function RepeatNumbers() {
                         {num.masked_display}
                       </td>
                       <td className="py-3 px-4 text-center font-medium">
-                        <span className="rounded bg-rose-500/10 px-2 py-0.5 text-rose-600 dark:text-rose-400 font-bold">
+                        <span className="rounded bg-risk-high/10 px-2 py-0.5 text-risk-high font-bold">
                           {num.report_count}
                         </span>
                       </td>
@@ -221,7 +250,7 @@ export default function RepeatNumbers() {
                         <span
                           className={`font-medium ${
                             num.high_share >= 0.5
-                              ? "text-rose-600 dark:text-rose-400"
+                              ? "text-risk-high"
                               : "text-muted"
                           }`}
                         >
@@ -238,10 +267,10 @@ export default function RepeatNumbers() {
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-2xs font-semibold uppercase tracking-wider ${
                             num.status === "confirmed_risky"
-                              ? "bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/20"
+                              ? "bg-risk-high/15 text-risk-high border border-risk-high/20"
                               : num.status === "cleared"
-                              ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-                              : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                              ? "bg-success/15 text-success border border-success/20"
+                              : "bg-warning/15 text-warning border border-warning/20"
                           }`}
                         >
                           {num.status === "confirmed_risky"
@@ -305,7 +334,7 @@ export default function RepeatNumbers() {
                 <button
                   type="button"
                   onClick={() => openStatusModal(selectedNumber)}
-                  className="rounded-lg bg-brand px-3 py-1.5 text-xs font-medium text-white hover:bg-brand/90"
+                  className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-on-accent hover:bg-brand/90"
                 >
                   Change Status
                 </button>
@@ -334,7 +363,7 @@ export default function RepeatNumbers() {
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="rounded-lg border border-border bg-bg/50 p-3">
                   <div className="text-muted">Report Count</div>
-                  <div className="mt-1 text-lg font-bold text-rose-600 dark:text-rose-400">
+                  <div className="mt-1 text-lg font-bold text-risk-high">
                     {selectedNumber.report_count}
                   </div>
                 </div>
@@ -346,7 +375,7 @@ export default function RepeatNumbers() {
                 </div>
                 <div className="rounded-lg border border-border bg-bg/50 p-3">
                   <div className="text-muted">High Risk Checks</div>
-                  <div className="mt-1 text-lg font-bold text-amber-500">
+                  <div className="mt-1 text-lg font-bold text-warning">
                     {selectedNumber.high_count}
                   </div>
                 </div>
@@ -388,7 +417,7 @@ export default function RepeatNumbers() {
             aria-modal="true"
             aria-labelledby="status-modal-title"
             data-testid="status-modal"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-xs"
           >
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-start justify-between">
@@ -411,7 +440,7 @@ export default function RepeatNumbers() {
 
               <form onSubmit={handleStatusSubmit} className="mt-5 flex flex-col gap-4 text-xs">
                 {formError && (
-                  <div className="rounded-lg bg-rose-500/10 border border-rose-500/30 p-2.5 text-rose-600 dark:text-rose-400">
+                  <div className="rounded-lg bg-risk-high/10 border border-risk-high/30 p-2.5 text-risk-high">
                     {formError}
                   </div>
                 )}
@@ -462,7 +491,7 @@ export default function RepeatNumbers() {
                   <button
                     type="submit"
                     disabled={updateMutation.isPending || reason.trim().length < 10}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 font-medium text-white hover:bg-brand/90 disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 font-medium text-on-accent hover:bg-brand/90 disabled:opacity-50"
                   >
                     {updateMutation.isPending ? (
                       <>

@@ -1,7 +1,9 @@
 {
   "app": {
     "name": "Prohori",
-    "tagline": "Check suspicious messages before you send money"
+    "tagline": "Check suspicious messages before you send money",
+    "prototype_notice": "Prototype. Uses simulated data.",
+    "wordmark_sub": "Check before you pay"
   },
   "common": {
     "back": "Back",
@@ -22,7 +24,7 @@
     "down": "down"
   },
   "landing": {
-    "eyebrow": "Bangladesh's Digital Safety Watchdog",
+    "eyebrow": "Check before you pay",
     "hero_h1": "Pause before sending money",
     "hero_subtitle": "Paste suspicious SMS, Messenger, or WhatsApp messages to immediately know if it is a scam.",
     "hero_check_message": "Check message",
@@ -35,16 +37,16 @@
     "card_payment_desc": "Check payment requests before sending money to anyone.",
     "card_sent_title": "Already sent money?",
     "card_sent_desc": "What to do immediately if you have been scammed: hotlines and steps.",
-    "promises_title": "Our Safety Promises",
-    "promise_risk_title": "No green or 100% safe",
-    "promise_risk_desc": "Scammers adapt constantly. Low risk still requires caution.",
+    "promises_title": "Honest limits",
+    "promise_risk_title": "Low never means safe",
+    "promise_risk_desc": "Scams change all the time. A Low result still asks you to confirm who you are paying.",
     "promise_pii_title": "Zero personal data retained",
     "promise_pii_desc": "Phone numbers and PII in your message are masked immediately.",
-    "promise_review_title": "Independent analysis",
-    "promise_review_desc": "Transparent analysis combining verified rules and intelligence.",
+    "promise_review_title": "People review reported cases",
+    "promise_review_desc": "Reported messages go to human reviewers who watch for repeat numbers and new campaigns.",
     "promise_helpline_title": "Verified official helplines",
     "promise_helpline_desc": "Direct tel links only for officially verified government and provider helplines.",
-    "footer_simulated_notice": "Notice: Prototype operating with simulated data only (simulated-v1)."
+    "footer_simulated_notice": "Prototype. Uses simulated data."
   },
   "check": {
     "title": "Check a message",
@@ -80,7 +82,10 @@
     "sender_not_sure": "Not sure",
     "submit_cta": "Check message",
     "too_short": "Enter at least 10 characters",
-    "too_long": "Maximum 4,000 characters allowed"
+    "too_long": "Maximum 4,000 characters allowed",
+    "clear": "Clear",
+    "check_payment_link": "Checking a payment request? Go to Payment Check",
+    "simulated_notice": "Simulated sample message loaded"
   },
   "payment_check": {
     "title": "Check payment request",
@@ -109,7 +114,8 @@
   "pause": {
     "title": "Take a breath",
     "message": "Take a breath. Scammers want you to rush.",
-    "skip": "Skip"
+    "skip": "Skip",
+    "subtitle": "Scammers rely on manufactured urgency"
   },
   "result": {
     "loading": "Loading result…",
@@ -145,7 +151,11 @@
     "mandatory_low_caution": "Low risk does not mean 100% safe — always stay vigilant.",
     "final_caution_line": "Never share your PIN, OTP, or password with anyone.",
     "warning_signs": "Warning signs",
-    "not_found_desc": "This check was not found or you do not have permission to view it."
+    "not_found_desc": "This check was not found or you do not have permission to view it.",
+    "banner_eyebrow_high": "High risk",
+    "banner_eyebrow_medium": "Medium risk",
+    "banner_eyebrow_low": "Low risk",
+    "banner_eyebrow_unavailable": "Check unavailable"
   },
   "report": {
     "title": "Report suspicious incident",
@@ -180,7 +190,21 @@
     "back_to_history": "Back to history",
     "delete_check": "Delete check",
     "delete_confirm_title": "Are you sure?",
-    "delete_confirm_desc": "This record will be permanently deleted and cannot be recovered."
+    "delete_confirm_desc": "This record will be permanently deleted and cannot be recovered.",
+    "type_message": "Message",
+    "type_payment": "Payment",
+    "search_label": "Search history",
+    "search_placeholder": "Search text, amount or scam type",
+    "clear_search": "Clear search",
+    "reset_filters": "Clear filters",
+    "showing": "{{shown}} of {{total}} checks",
+    "payment_check": "Payment check",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "no_match_title": "No checks match",
+    "no_match_desc": "Try another word or clear the filters.",
+    "load_error": "History could not be loaded. Please try again.",
+    "retry": "Try again"
   },
   "auth": {
     "login_title": "Sign in",
@@ -281,7 +305,27 @@
     "device_prefs_note": "Text size and read aloud preferences are stored on this device.",
     "last_seen": "Last active {{date}}",
     "consent_title": "Consent record",
-    "consent_none": "No consent recorded for this account."
+    "consent_none": "No consent recorded for this account.",
+    "guest_notice_title": "Sign in for account settings",
+    "guest_notice_desc": "Sign in to manage your profile, password, active sessions, and data export. Device preferences below work without an account.",
+    "no_active_sessions": "No active sessions found.",
+    "loading_sessions": "Loading sessions…",
+    "subtitle": "Your account, display and privacy.",
+    "loading": "Loading settings…",
+    "email_hint": "Email can't be changed",
+    "current_session": "Current",
+    "profile_title": "Your profile",
+    "profile_desc": "This name appears when Prohori greets you.",
+    "display_title": "Display",
+    "display_desc": "Language and theme are saved to your account.",
+    "display_desc_guest": "Sign in to keep these on every device.",
+    "device_title": "On this device",
+    "read_aloud_desc": "Results are spoken as soon as they appear.",
+    "password_desc": "Use at least 10 characters.",
+    "sessions_desc": "Devices where your account is signed in.",
+    "sign_out_title": "Sign out",
+    "sign_out_desc": "Sign out of Prohori on this device.",
+    "danger_title": "Danger zone"
   },
   "errors": {
     "unknown": "Something went wrong",
@@ -332,6 +376,7 @@
     "not_ready": "Cases list and dashboard are not yet available in this build.",
     "manage_sessions": "View your sessions",
     "nav_overview": "Overview",
+    "nav_cases": "Case Queue",
     "nav_numbers": "Repeat Numbers",
     "nav_campaigns": "Campaigns",
     "nav_reports": "Reports & Export",
@@ -462,5 +507,17 @@
     "users_title": "User & Role Management",
     "users_subtitle": "Manage team roles, staff invitations, and access permissions.",
     "invite_user": "Invite Reviewer / Admin"
+  },
+  "a11y": {
+    "skip_to_content": "Skip to content"
+  },
+  "nav": {
+    "main": "Main navigation",
+    "check": "Check",
+    "history": "History",
+    "settings": "Settings",
+    "safety": "Safety",
+    "privacy": "Privacy",
+    "already_sent": "Already sent"
   }
 }

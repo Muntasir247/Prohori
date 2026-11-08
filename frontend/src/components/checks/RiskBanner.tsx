@@ -3,154 +3,107 @@ import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { RiskLevel } from "@/features/checks/types";
 
+// Doc 01 §7 RiskBanner: full width of the reader column, tint fill, 48 px
+// Bold icon, level word, one-line instruction. Risk is never colour alone:
+// each level carries its word and its own icon shape. Lantern never appears here.
 interface RiskBannerProps {
   level: RiskLevel;
   isFallback?: boolean;
 }
+
+type Variant = "high" | "medium" | "low" | "unavailable";
+
+const STYLE: Record<
+  Variant,
+  { wrap: string; icon: string; iconWrap: string; heading: string; eyebrow: string }
+> = {
+  high: {
+    wrap: "border-risk-high/50 bg-risk-high-tint",
+    iconWrap: "text-risk-high",
+    icon: "ph:hand-palm-bold",
+    heading: "text-text",
+    eyebrow: "text-risk-high",
+  },
+  medium: {
+    wrap: "border-risk-medium/50 bg-risk-medium-tint",
+    iconWrap: "text-risk-medium",
+    icon: "ph:warning-bold",
+    heading: "text-text",
+    eyebrow: "text-risk-medium",
+  },
+  low: {
+    wrap: "border-risk-low/50 bg-risk-low-tint",
+    iconWrap: "text-risk-low",
+    icon: "ph:info-bold",
+    heading: "text-text",
+    eyebrow: "text-risk-low",
+  },
+  unavailable: {
+    wrap: "border-info/50 bg-info-tint",
+    iconWrap: "text-info",
+    icon: "ph:cloud-slash-bold",
+    heading: "text-text",
+    eyebrow: "text-info",
+  },
+};
 
 export function RiskBanner({ level, isFallback }: RiskBannerProps) {
   const { t } = useTranslation();
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
-    // Result page moves focus to the banner heading
+    // Result page moves focus to the banner heading (Doc 01 §8).
     headingRef.current?.focus();
   }, [level]);
 
-  if (isFallback || !level) {
-    return (
-      <div
-        className="rounded-2xl border border-info/30 bg-info-tint p-5 text-text"
-        role="alert"
-        aria-live="polite"
-        data-testid="risk-banner-unavailable"
-      >
-        <div className="flex items-start gap-4">
-          <div className="rounded-xl bg-info/20 p-2 text-info">
-            <Icon icon="ph:warning-circle-bold" className="text-3xl" aria-hidden />
-          </div>
-          <div>
-            <h1
-              ref={headingRef}
-              tabIndex={-1}
-              className="text-xl font-bold tracking-tight outline-none focus:ring-2 focus:ring-accent"
-              data-testid="banner-heading"
-            >
-              {t("result.unavailable_title")}
-            </h1>
-            <p className="mt-1 text-sm text-text/80">{t("result.unavailable_subtitle")}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const variant: Variant =
+    isFallback || !level
+      ? "unavailable"
+      : level === "High"
+        ? "high"
+        : level === "Medium"
+          ? "medium"
+          : level === "Low"
+            ? "low"
+            : "unavailable";
 
-  if (level === "High") {
-    return (
-      <div
-        className="rounded-2xl border border-risk-high/30 bg-risk-high-tint p-5 text-text"
-        role="alert"
-        aria-live="polite"
-        data-testid="risk-banner-high"
-      >
-        <div className="flex items-start gap-4">
-          <div className="rounded-xl bg-risk-high/20 p-2 text-risk-high">
-            <Icon icon="ph:octagon-bold" className="text-3xl" aria-hidden />
-          </div>
-          <div>
-            <h1
-              ref={headingRef}
-              tabIndex={-1}
-              className="text-xl font-bold tracking-tight outline-none focus:ring-2 focus:ring-accent"
-              data-testid="banner-heading"
-            >
-              {t("result.high_title")}
-            </h1>
-            <p className="mt-1 text-sm text-text/80">{t("result.high_subtitle")}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const s = STYLE[variant];
+  const title =
+    variant === "unavailable" ? t("result.unavailable_title") : t(`result.${variant}_title`);
+  const subtitle =
+    variant === "unavailable" ? t("result.unavailable_subtitle") : t(`result.${variant}_subtitle`);
 
-  if (level === "Medium") {
-    return (
-      <div
-        className="rounded-2xl border border-risk-medium/30 bg-risk-medium-tint p-5 text-text"
-        role="alert"
-        aria-live="polite"
-        data-testid="risk-banner-medium"
-      >
-        <div className="flex items-start gap-4">
-          <div className="rounded-xl bg-risk-medium/20 p-2 text-risk-medium">
-            <Icon icon="ph:warning-bold" className="text-3xl" aria-hidden />
-          </div>
-          <div>
-            <h1
-              ref={headingRef}
-              tabIndex={-1}
-              className="text-xl font-bold tracking-tight outline-none focus:ring-2 focus:ring-accent"
-              data-testid="banner-heading"
-            >
-              {t("result.medium_title")}
-            </h1>
-            <p className="mt-1 text-sm text-text/80">{t("result.medium_subtitle")}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (level === "Low") {
-    return (
-      <div
-        className="rounded-2xl border border-risk-low/30 bg-risk-low-tint p-5 text-text"
-        role="alert"
-        aria-live="polite"
-        data-testid="risk-banner-low"
-      >
-        <div className="flex items-start gap-4">
-          <div className="rounded-xl bg-risk-low/20 p-2 text-risk-low">
-            <Icon icon="ph:info-bold" className="text-3xl" aria-hidden />
-          </div>
-          <div>
-            <h1
-              ref={headingRef}
-              tabIndex={-1}
-              className="text-xl font-bold tracking-tight outline-none focus:ring-2 focus:ring-accent"
-              data-testid="banner-heading"
-            >
-              {t("result.low_title")}
-            </h1>
-            <p className="mt-1 text-sm text-text/80">{t("result.low_subtitle")}</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Fallback / Unavailable
   return (
     <div
-      className="rounded-2xl border border-info/30 bg-info-tint p-5 text-text"
+      className={`animate-fade-up rounded-lg border p-5 sm:p-6 ${s.wrap}`}
       role="alert"
       aria-live="polite"
-      data-testid="risk-banner-unavailable"
+      data-testid={`risk-banner-${variant}`}
     >
       <div className="flex items-start gap-4">
-        <div className="rounded-xl bg-info/20 p-2 text-info">
-          <Icon icon="ph:warning-circle-bold" className="text-3xl" aria-hidden />
-        </div>
-        <div>
+        <span className={`relative flex h-12 w-12 shrink-0 items-center justify-center ${s.iconWrap}`}>
+          {variant === "high" ? (
+            <>
+              <Icon icon="ph:octagon-bold" className="absolute inset-0 h-12 w-12" aria-hidden />
+              <Icon icon={s.icon} className="relative h-6 w-6" aria-hidden />
+            </>
+          ) : (
+            <Icon icon={s.icon} className="h-12 w-12" aria-hidden />
+          )}
+        </span>
+        <div className="min-w-0">
+          <p className={`text-sm font-semibold ${s.eyebrow}`}>
+            {t(`result.banner_eyebrow_${variant}`)}
+          </p>
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="text-xl font-bold tracking-tight outline-none focus:ring-2 focus:ring-accent"
+            className={`mt-1 text-[26px] font-bold leading-tight sm:text-[28px] ${s.heading}`}
             data-testid="banner-heading"
           >
-            {t("result.unavailable_title")}
+            {title}
           </h1>
-          <p className="mt-1 text-sm text-text/80">{t("result.unavailable_subtitle")}</p>
+          <p className="mt-2 max-w-prose text-base font-medium text-text sm:text-lg">{subtitle}</p>
         </div>
       </div>
     </div>

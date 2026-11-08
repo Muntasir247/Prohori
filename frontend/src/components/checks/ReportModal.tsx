@@ -63,7 +63,7 @@ export function ReportModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-raat/60 backdrop-blur-sm p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="report-modal-title"
@@ -74,7 +74,7 @@ export function ReportModal({
       >
         <div className="flex items-center justify-between border-b border-border pb-3">
           <div className="flex items-center gap-2 text-text font-bold text-lg">
-            <Icon icon="ph:shield-warning-bold" className="text-risk-medium text-xl" aria-hidden />
+            <Icon icon="ph:warning" className="text-risk-medium text-xl" aria-hidden />
             <h2 id="report-modal-title">{t("report.title")}</h2>
           </div>
           <button
@@ -84,29 +84,29 @@ export function ReportModal({
             aria-label={t("report.close")}
             data-testid="report-close-button"
           >
-            <Icon icon="ph:x-bold" className="text-lg" />
+            <Icon icon="ph:x" className="text-lg" />
           </button>
         </div>
 
         {reference ? (
           <div className="flex flex-col gap-4 py-4 text-center" data-testid="report-success-view">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-success-tint text-success">
-              <Icon icon="ph:check-circle-bold" className="text-3xl" aria-hidden />
+              <Icon icon="ph:check-circle" className="text-3xl" aria-hidden />
             </div>
             <div>
               <h3 className="text-lg font-bold text-text">{t("report.success_title")}</h3>
               <p className="mt-1 text-sm text-muted">
                 {t("report.reference_label")}:{" "}
-                <span className="font-mono font-bold text-accent" data-testid="report-reference">
+                <span className="font-mono font-bold text-text-2" data-testid="report-reference">
                   {reference}
                 </span>
               </p>
             </div>
-            <p className="text-xs text-muted">
+            <p className="text-sm text-text-2">
               {t("report.success_note")}
             </p>
             <Button
-              variant="primary"
+              variant="calm"
               onClick={onClose}
               className="mt-2 w-full"
               data-testid="report-done-button"
@@ -138,7 +138,7 @@ export function ReportModal({
                 maxLength={500}
                 rows={3}
                 placeholder={t("report.note_placeholder")}
-                className="w-full rounded-xl border border-border bg-surface-2 p-3 text-sm text-text placeholder:text-muted focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+                className="w-full rounded-xl border border-border bg-surface-2 p-3 text-sm text-text placeholder:text-muted focus:border-focus focus:outline-none focus:ring-1 focus:ring-focus"
                 data-testid="report-note-input"
               />
               <span className="text-right text-xs text-muted">
@@ -152,7 +152,7 @@ export function ReportModal({
                   type="checkbox"
                   checked={consent}
                   onChange={(e) => setConsent(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 rounded border-border text-brand focus:ring-brand accent-brand cursor-pointer"
+                  className="mt-0.5 h-4 w-4 rounded border-border text-text-2 focus:ring-focus accent-[var(--color-pine)] cursor-pointer"
                   data-testid="report-consent-checkbox"
                 />
                 <span className="text-xs leading-relaxed text-text">
@@ -163,7 +163,7 @@ export function ReportModal({
 
             {error && (
               <p className="text-xs text-risk-high font-medium flex items-center gap-1.5" role="alert">
-                <Icon icon="ph:warning-circle-bold" aria-hidden />
+                <Icon icon="ph:warning-circle" aria-hidden />
                 {error}
               </p>
             )}
@@ -174,13 +174,13 @@ export function ReportModal({
               </Button>
               <Button
                 type="submit"
-                variant="primary"
+                variant="calm"
                 disabled={!consent || submitting}
                 data-testid="submit-report-button"
               >
                 {submitting ? (
                   <span className="flex items-center gap-2">
-                    <Icon icon="ph:spinner-bold" className="animate-spin" aria-hidden />
+                    <Icon icon="ph:spinner" className="animate-spin" aria-hidden />
                     {t("report.sending")}
                   </span>
                 ) : (

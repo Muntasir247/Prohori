@@ -17,6 +17,7 @@ export function TextField({
   hint,
   type = "text",
   id,
+  className = "",
   ...rest
 }: Props) {
   const { t } = useTranslation();
@@ -26,17 +27,20 @@ export function TextField({
   const effectiveType = showPasswordToggle && reveal ? "text" : type;
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={fieldId} className="text-sm font-medium">
-        {label}
-      </label>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <label htmlFor={fieldId} className="text-sm font-semibold text-text">
+          {label}
+        </label>
+        {hint && !errorKey && <span id={`${fieldId}-hint`} className="text-xs text-text-2">{hint}</span>}
+      </div>
       <div className="relative">
         <input
           id={fieldId}
           type={effectiveType}
           aria-invalid={errorKey ? true : undefined}
-          aria-describedby={errorKey ? `${fieldId}-error` : undefined}
-          className="min-h-11 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand aria-[invalid=true]:border-red-500"
+          aria-describedby={errorKey ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined}
+          className={`min-h-12 w-full rounded-md border border-border bg-surface px-4 py-3 text-base text-text placeholder:text-faint transition-colors duration-[120ms] hover:border-border-strong focus-visible:border-focus aria-[invalid=true]:border-risk-high ${showPasswordToggle ? "pr-12" : ""} ${className}`}
           {...rest}
         />
         {showPasswordToggle && (
@@ -44,16 +48,16 @@ export function TextField({
             type="button"
             onClick={() => setReveal((v) => !v)}
             aria-label={t(reveal ? "auth.hide_password" : "auth.show_password")}
-            className="absolute inset-y-0 right-0 flex items-center px-3 text-muted"
+            className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-text-2 transition-colors hover:text-text"
           >
-            <Icon icon={reveal ? "ph:eye-slash" : "ph:eye"} aria-hidden />
+            <Icon icon={reveal ? "ph:eye-slash" : "ph:eye"} className="text-xl" aria-hidden />
           </button>
         )}
       </div>
-      {hint && !errorKey && <p className="text-xs text-muted">{hint}</p>}
       {errorKey && (
-        <p id={`${fieldId}-error`} className="text-xs text-red-600" role="alert">
-          {t(errorKey)}
+        <p id={`${fieldId}-error`} className="flex items-start gap-1.5 text-sm font-medium text-risk-high" role="alert">
+          <Icon icon="ph:x-circle" className="mt-0.5 shrink-0 text-base" aria-hidden />
+          <span>{t(errorKey)}</span>
         </p>
       )}
     </div>

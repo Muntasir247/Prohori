@@ -63,44 +63,55 @@ export function PressurePause({
     onSkip?.();
   };
 
+  const progressPercent = (seconds / initialSeconds) * 100;
+
   return (
     <div
-      className="flex flex-col gap-3 rounded-2xl border border-accent/40 bg-surface-2 p-5 text-text shadow-sm"
+      className="rounded-lg border border-border-strong bg-surface p-5 text-text sm:p-6"
       role="region"
       aria-label="Pressure Pause"
       data-testid="pressure-pause"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-accent font-semibold text-sm">
-          <Icon icon="ph:pause-circle-bold" className="text-xl" aria-hidden />
-          <span>{t("pause.title", "Take a breath")}</span>
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-pine text-bone">
+            <Icon icon="ph:hand-palm" className="text-2xl" aria-hidden />
+          </span>
+          <div>
+            <h3 className="text-lg font-semibold text-text">{t("pause.title", "Take a breath")}</h3>
+            <p className="mt-0.5 text-[15px] text-text-2">
+              {t("pause.subtitle", "Scammers rely on manufactured urgency")}
+            </p>
+          </div>
         </div>
-        <span
-          className="rounded-full bg-accent/20 px-2.5 py-0.5 text-xs font-mono font-bold text-accent"
+
+        <div
+          className="flex h-11 min-w-11 items-center justify-center rounded-md border border-border-strong px-2 font-mono text-base font-medium tabular-nums text-text"
           data-testid="pause-countdown"
           aria-live="polite"
         >
           {seconds}s
-        </span>
+        </div>
       </div>
 
-      <p className="text-sm text-text/90 font-medium">
+      <p className="mt-4 text-base font-medium text-text">
         {t("pause.message", "Take a breath. Scammers want you to rush.")}
       </p>
 
-      <div className="flex items-center justify-between pt-1">
-        <div className="h-1.5 w-2/3 overflow-hidden rounded-full bg-border">
+      <div className="mt-4 flex items-center justify-between gap-4">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-3" aria-hidden>
           <div
-            className={`h-full bg-accent ${
-              prefersReducedMotion ? "" : "transition-all duration-1000"
+            className={`h-full origin-left rounded-full bg-bone ${
+              prefersReducedMotion ? "" : "transition-transform duration-1000 ease-linear"
             }`}
-            style={{ width: `${(seconds / 10) * 100}%` }}
+            style={{ transform: `scaleX(${progressPercent / 100})` }}
           />
         </div>
+
         <button
           type="button"
           onClick={handleSkip}
-          className="text-xs font-medium text-muted hover:text-text underline focus:outline-none focus:ring-2 focus:ring-accent rounded px-1.5 py-0.5"
+          className="inline-flex min-h-11 items-center rounded-md px-3 text-[15px] font-medium text-text-2 underline underline-offset-4 transition-colors duration-[120ms] hover:text-text"
           data-testid="pause-skip-button"
           aria-label={t("pause.skip", "Skip countdown and proceed")}
         >

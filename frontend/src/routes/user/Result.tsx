@@ -181,7 +181,7 @@ export default function Result() {
     return (
       <AppShell>
         <div className="mx-auto max-w-xl py-12 flex flex-col items-center justify-center gap-3">
-          <Icon icon="ph:spinner-bold" className="animate-spin text-3xl text-brand" />
+          <Icon icon="ph:spinner" className="animate-spin text-3xl text-text-2" />
           <p className="text-sm text-muted">{t("result.loading")}</p>
         </div>
       </AppShell>
@@ -194,9 +194,9 @@ export default function Result() {
         <div className="mx-auto max-w-xl py-8 flex flex-col gap-4">
           <div className="rounded-2xl border border-risk-high/30 bg-risk-high-tint p-5 text-text">
             <h2 className="font-bold text-base text-risk-high">{t("errors.not_found")}</h2>
-            <p className="text-xs text-muted mt-1">{error || t("result.not_found_desc")}</p>
+            <p className="text-sm text-text-2 mt-1">{error || t("result.not_found_desc")}</p>
           </div>
-          <Link to="/check" className="text-xs font-semibold text-accent hover:underline">
+          <Link to="/check" className="text-xs font-semibold text-text-2 hover:underline">
             ← {t("result.check_another")}
           </Link>
         </div>
@@ -221,7 +221,7 @@ export default function Result() {
         {/* Navigation */}
         <div className="flex items-center justify-between text-xs font-semibold text-muted">
           <Link to="/check" className="flex items-center gap-1 hover:text-text">
-            <Icon icon="ph:arrow-left-bold" />
+            <Icon icon="ph:arrow-left" />
             <span>{t("common.back")}</span>
           </Link>
           <span className="font-mono text-muted text-xs">
@@ -239,7 +239,7 @@ export default function Result() {
             role="note"
             data-testid="mandatory-low-caution"
           >
-            <Icon icon="ph:shield-warning-bold" className="text-base text-risk-low shrink-0 mt-0.5" />
+            <Icon icon="ph:warning" className="text-base text-risk-low shrink-0 mt-0.5" />
             <span className="font-semibold leading-relaxed">
               {t("result.mandatory_low_caution")}
             </span>
@@ -254,34 +254,38 @@ export default function Result() {
 
         {/* 4. Why this looks risky (2-4 reasons from server) */}
         {result.reasons.length > 0 && (
-          <section className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-muted">
-              {isUnavailable ? t("result.warning_signs") : t("result.why_this_looks_risky")}
-            </h2>
-            <ul className="flex flex-col gap-2.5 text-xs sm:text-sm text-text leading-relaxed">
-              {result.reasons.map((reason, idx) => (
-                <li key={idx} className="flex items-start gap-2.5">
-                  <span className="text-accent font-bold mt-0.5">•</span>
-                  <span>{reason}</span>
-                </li>
-              ))}
-            </ul>
+          <section className="double-bezel">
+            <div className="double-bezel-inner p-5 sm:p-6 flex flex-col gap-3.5">
+              <h2 className="text-xs text-muted font-semibold">
+                {isUnavailable ? t("result.warning_signs") : t("result.why_this_looks_risky")}
+              </h2>
+              <ul className="flex flex-col gap-2.5 text-xs sm:text-sm text-text leading-relaxed font-medium">
+                {result.reasons.map((reason, idx) => (
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <span className="text-warning font-bold mt-0.5">•</span>
+                    <span>{reason}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </section>
         )}
 
         {/* 5. HighlightedMessage (Scam Anatomy on tap) */}
         {result.masked_text && (
-          <section className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5">
-            <HighlightedMessage
-              maskedText={result.masked_text}
-              highlights={result.highlights || []}
-            />
+          <section className="double-bezel">
+            <div className="double-bezel-inner p-5 sm:p-6 flex flex-col gap-3">
+              <HighlightedMessage
+                maskedText={result.masked_text}
+                highlights={result.highlights || []}
+              />
+            </div>
           </section>
         )}
 
         {/* 6. What to do now (Safe actions) */}
         <section className="flex flex-col gap-3">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-muted">
+          <h2 className="text-xs text-muted font-semibold">
             {t("result.what_to_do_now")}
           </h2>
 
@@ -290,10 +294,10 @@ export default function Result() {
             {helplineAction && helplineAction.phone ? (
               <a
                 href={`tel:${helplineAction.phone}`}
-                className="flex items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-3.5 text-sm font-bold text-bg shadow hover:bg-accent/90 transition-transform active:scale-98"
+                className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-md bg-bone px-5 text-base font-semibold text-raat transition-colors duration-[120ms] hover:bg-bone/90 active:translate-y-px"
                 data-testid="primary-helpline-action"
               >
-                <Icon icon="ph:phone-call-bold" className="text-lg" />
+                <Icon icon="ph:phone-call" className="text-lg" />
                 <span>
                   {helplineAction.label} ({helplineAction.phone})
                 </span>
@@ -303,7 +307,7 @@ export default function Result() {
                 className="flex items-center gap-3 rounded-xl border border-border bg-surface p-4 text-xs text-text"
                 data-testid="unverified-provider-notice"
               >
-                <Icon icon="ph:info-bold" className="text-base text-accent shrink-0" />
+                <Icon icon="ph:info" className="text-base text-warning shrink-0" />
                 <span className="font-medium">
                   {t("result.official_app_helpline_notice")}
                 </span>
@@ -316,12 +320,14 @@ export default function Result() {
               .map((action) => (
                 <div
                   key={action.id}
-                  className="flex flex-col gap-1 rounded-xl border border-border bg-surface p-4"
+                  className="double-bezel"
                 >
-                  <strong className="text-xs font-bold text-text">{action.label}</strong>
-                  {action.body && (
-                    <p className="text-xs text-muted leading-relaxed">{action.body}</p>
-                  )}
+                  <div className="double-bezel-inner p-4 flex flex-col gap-1">
+                    <strong className="text-xs font-bold text-text">{action.label}</strong>
+                    {action.body && (
+                      <p className="text-sm text-text-2 leading-relaxed font-normal">{action.body}</p>
+                    )}
+                  </div>
                 </div>
               ))}
           </div>
@@ -330,16 +336,16 @@ export default function Result() {
         {/* 7. More Actions (Report, Share, Read aloud, Already sent, Check another) */}
         <section className="flex flex-col gap-2.5 pt-2">
           {/* Action Row: Read aloud & Share */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row [&>*]:flex-1">
             {/* Ask someone you trust (F33) */}
             <Button
               variant="secondary"
               onClick={handleShare}
               disabled={shareLoading}
-              className="w-full py-3 text-xs font-bold flex items-center justify-center gap-2"
+              className="w-full min-h-11 text-[15px] font-medium flex items-center justify-center gap-2"
               data-testid="share-button"
             >
-              <Icon icon="ph:share-network-bold" className="text-base text-accent" />
+              <Icon icon="ph:share-network" className="text-base text-text-2" />
               <span>{t("share.ask_trusted")}</span>
             </Button>
 
@@ -348,12 +354,12 @@ export default function Result() {
               <Button
                 variant="secondary"
                 onClick={toggleReadAloud}
-                className="w-full py-3 text-xs font-bold flex items-center justify-center gap-2"
+                className="w-full min-h-11 text-[15px] font-medium flex items-center justify-center gap-2"
                 data-testid="read-aloud-button"
               >
                 <Icon
-                  icon={isSpeaking ? "ph:stop-circle-fill" : "ph:speaker-high-bold"}
-                  className={`text-base ${isSpeaking ? "text-risk-high animate-pulse" : "text-accent"}`}
+                  icon={isSpeaking ? "ph:stop-circle" : "ph:speaker-high"}
+                  className={`text-base ${isSpeaking ? "text-risk-high" : "text-text-2"}`}
                 />
                 <span>
                   {isSpeaking ? t("read_aloud.stop_reading") : t("read_aloud.read_aloud")}
@@ -365,10 +371,10 @@ export default function Result() {
           {/* S18 Already Sent Money link */}
           <Link
             to="/already-sent"
-            className="flex items-center justify-center gap-2 rounded-xl border border-risk-high/30 bg-surface py-3 text-xs font-bold text-text hover:bg-surface-2 transition-colors"
+            className="flex items-center justify-center gap-2 rounded-md border border-risk-high/40 bg-surface min-h-11 text-[15px] font-medium text-text hover:bg-surface-2 transition-colors"
             data-testid="already-sent-link"
           >
-            <Icon icon="ph:warning-circle-bold" className="text-base text-risk-high" />
+            <Icon icon="ph:warning-circle" className="text-base text-risk-high" />
             <span>{t("already_sent.btn_text")}</span>
           </Link>
 
@@ -379,7 +385,7 @@ export default function Result() {
               data-testid="reported-status-tag"
             >
               <span className="flex items-center gap-2 font-semibold">
-                <Icon icon="ph:check-circle-bold" />
+                <Icon icon="ph:check-circle" />
                 {t("result.reported_status")}
               </span>
               {result.report_reference && (
@@ -392,17 +398,17 @@ export default function Result() {
             <Button
               variant="secondary"
               onClick={() => setReportModalOpen(true)}
-              className="w-full py-3 text-xs font-bold"
+              className="w-full min-h-11 text-[15px] font-medium"
               data-testid="report-button"
             >
-              <Icon icon="ph:flag-bold" className="mr-1.5 text-base" />
+              <Icon icon="ph:flag" className="mr-1.5 text-base" />
               {t("result.report_this_message")}
             </Button>
           )}
 
           <Link
             to="/check"
-            className="flex items-center justify-center rounded-xl border border-border bg-surface py-3 text-xs font-bold text-text hover:bg-surface-2 transition-colors"
+            className="flex items-center justify-center rounded-md border border-border bg-surface min-h-11 text-[15px] font-medium text-text hover:bg-surface-2 transition-colors"
           >
             {t("result.check_another")}
           </Link>
@@ -413,7 +419,7 @@ export default function Result() {
           <summary className="flex cursor-pointer items-center justify-between font-semibold select-none">
             <span>{t("result.how_decided_title")}</span>
             <Icon
-              icon="ph:caret-down-bold"
+              icon="ph:caret-down"
               className="transition-transform group-open:rotate-180 text-muted"
             />
           </summary>
@@ -425,7 +431,7 @@ export default function Result() {
                 {result.scam_type.name}
               </p>
             )}
-            <p className="text-2xs text-muted/80">{t("result.how_decided_disclaimer")}</p>
+            <p className="text-2xs text-faint">{t("result.how_decided_disclaimer")}</p>
           </div>
         </details>
 
@@ -452,7 +458,7 @@ export default function Result() {
         {/* Share Modal (F33, S21) */}
         {shareModalOpen && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4"
             role="dialog"
             aria-modal="true"
             aria-labelledby="share-modal-title"
@@ -460,7 +466,7 @@ export default function Result() {
             <div className="w-full max-w-md flex flex-col gap-4 rounded-3xl border border-border bg-surface p-6 shadow-xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Icon icon="ph:share-network-bold" className="text-xl text-accent" />
+                  <Icon icon="ph:share-network" className="text-xl text-text-2" />
                   <h3 id="share-modal-title" className="text-sm font-bold text-text">
                     {t("share.ask_trusted")}
                   </h3>
@@ -471,7 +477,7 @@ export default function Result() {
                   className="rounded-lg p-1 text-muted hover:text-text"
                   aria-label={t("share.close")}
                 >
-                  <Icon icon="ph:x-bold" className="text-lg" />
+                  <Icon icon="ph:x" className="text-lg" />
                 </button>
               </div>
 
@@ -481,7 +487,7 @@ export default function Result() {
                 </div>
               ) : (
                 <>
-                  <p className="text-xs text-muted leading-relaxed">
+                  <p className="text-sm text-text-2 leading-relaxed">
                     {t("share.share_desc")}
                   </p>
 
@@ -496,13 +502,13 @@ export default function Result() {
                           data-testid="share-url-input"
                         />
                         <Button
-                          variant="primary"
+                          variant="calm"
                           onClick={handleCopyShareLink}
                           className="shrink-0 text-xs px-3 py-2"
                           data-testid="copy-share-btn"
                         >
                           <Icon
-                            icon={copySuccess ? "ph:check-bold" : "ph:copy-bold"}
+                            icon={copySuccess ? "ph:check" : "ph:copy"}
                             className="mr-1"
                           />
                           <span>{copySuccess ? t("share.link_copied") : t("share.copy_link")}</span>
@@ -510,8 +516,8 @@ export default function Result() {
                       </div>
 
                       <div className="flex items-center justify-between text-2xs text-muted pt-1">
-                        <span className="flex items-center gap-1 font-semibold text-accent">
-                          <Icon icon="ph:clock-bold" />
+                        <span className="flex items-center gap-1 font-semibold text-text-2">
+                          <Icon icon="ph:clock" />
                           {t("share.expires_in")}
                         </span>
                         <button
@@ -527,7 +533,7 @@ export default function Result() {
                   )}
 
                   <div className="rounded-xl border border-border bg-surface-2 p-3 text-2xs text-muted leading-relaxed flex items-start gap-2">
-                    <Icon icon="ph:shield-check-bold" className="text-base text-accent shrink-0 mt-0.5" />
+                    <Icon icon="ph:lock-simple" className="text-base text-text-2 shrink-0 mt-0.5" />
                     <span>{t("share.privacy_guarantee")}</span>
                   </div>
                 </>

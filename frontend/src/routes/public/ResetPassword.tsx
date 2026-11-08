@@ -49,9 +49,9 @@ export default function ResetPassword() {
   if (!token || expired) {
     return (
       <AuthCard title={t("auth.reset_title")}>
-        <div className="flex flex-col gap-4 text-sm">
+        <div className="flex flex-col gap-4 text-xs leading-relaxed">
           <p className="text-muted">{t("auth.reset_expired")}</p>
-          <Link to="/forgot-password" className="text-brand hover:underline">
+          <Link to="/forgot-password" className="font-semibold text-brand hover:underline">
             {t("auth.request_new_link")}
           </Link>
         </div>
@@ -63,7 +63,7 @@ export default function ResetPassword() {
     <AuthCard title={t("auth.reset_title")}>
       <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
         {err && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="rounded-xl border border-risk-high/30 bg-risk-high/10 px-3.5 py-2.5 text-xs font-medium text-risk-high">
             {t(err.messageKey)}
           </p>
         )}
@@ -87,7 +87,7 @@ export default function ResetPassword() {
           errorKey={mismatch ? "errors.field.mismatch" : undefined}
           required
         />
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} className="mt-1">
           {t("auth.set_new_password")}
         </Button>
       </form>

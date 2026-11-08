@@ -69,7 +69,7 @@ export default function Onboarding() {
           {[1, 2, 3].map((n) => (
             <span
               key={n}
-              className={`h-1.5 w-10 rounded-full ${n <= step ? "bg-brand" : "bg-border"}`}
+              className={`h-1.5 w-10 rounded-full ${n <= step ? "bg-accent" : "bg-border"}`}
             />
           ))}
         </div>
@@ -110,7 +110,7 @@ export default function Onboarding() {
           <ol className="flex flex-col gap-3">
             {howto.map((line, i) => (
               <li key={i} className="flex items-start gap-3">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-sm text-white">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent text-sm text-on-accent">
                   {i + 1}
                 </span>
                 <span className="text-sm">{line}</span>

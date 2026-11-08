@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { AppShell } from "@/components/AppShell";
 import { adminApi, AuditEvent } from "@/features/admin/api";
+import { useDebounce } from "@/lib/useDebounce";
 
 export default function AdminAuditLog() {
   const { t } = useTranslation();
@@ -17,6 +18,9 @@ export default function AdminAuditLog() {
   const [page, setPage] = useState(1);
   const pageSize = 25;
 
+  const debouncedActor = useDebounce(actor, 300);
+  const debouncedAction = useDebounce(action, 300);
+
   const [inspectingEvent, setInspectingEvent] = useState<AuditEvent | null>(null);
 
   const {
@@ -26,11 +30,11 @@ export default function AdminAuditLog() {
     refetch,
     dataUpdatedAt,
   } = useQuery({
-    queryKey: ["admin-audit", actor, action, fromDate, toDate, page],
+    queryKey: ["admin-audit", debouncedActor, debouncedAction, fromDate, toDate, page],
     queryFn: () =>
       adminApi.listAuditLogs({
-        actor: actor || undefined,
-        action: action || undefined,
+        actor: debouncedActor || undefined,
+        action: debouncedAction || undefined,
         from_date: fromDate || undefined,
         to_date: toDate || undefined,
         page,
@@ -54,10 +58,10 @@ export default function AdminAuditLog() {
         {/* Title and Immutable Notice */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">
-              {t("admin.audit_title", "System Audit Log (S35)")}
+            <h1 className="font-display text-2xl font-bold tracking-tight text-text">
+              {t("admin.audit_title", "System Audit Log")}
             </h1>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-text-2">
               {t(
                 "admin.audit_subtitle",
                 "Cryptographic immutable trail of reviewer decisions, document publications, and administrative actions.",
@@ -66,7 +70,7 @@ export default function AdminAuditLog() {
           </div>
 
           <div className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted">
-            <Icon icon="ph:lock-key-fill" className="h-3.5 w-3.5 text-brand" />
+            <Icon icon="ph:lock-key" className="h-3.5 w-3.5 text-brand" />
             <span>Append-only / Immutable</span>
           </div>
         </div>
@@ -237,14 +241,14 @@ export default function AdminAuditLog() {
 
         {/* Before / After Diff Drawer */}
         {inspectingEvent && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-4xl rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <div>
                   <h3 className="text-lg font-bold text-text">
                     Audit Diff: {inspectingEvent.action}
                   </h3>
-                  <p className="text-xs text-muted">
+                  <p className="text-sm text-text-2">
                     Entity: {inspectingEvent.entity_type} #{inspectingEvent.entity_id} ·{" "}
                     {new Date(inspectingEvent.created_at).toLocaleString()}
                   </p>
@@ -260,7 +264,7 @@ export default function AdminAuditLog() {
 
               <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <div className="flex items-center justify-between pb-1 text-xs font-semibold uppercase text-rose-500">
+                  <div className="flex items-center justify-between pb-1 text-xs font-semibold uppercase text-risk-high">
                     <span>State Before</span>
                     <Icon icon="ph:minus-circle" className="h-4 w-4" />
                   </div>
@@ -272,7 +276,7 @@ export default function AdminAuditLog() {
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between pb-1 text-xs font-semibold uppercase text-emerald-500">
+                  <div className="flex items-center justify-between pb-1 text-xs font-semibold uppercase text-success">
                     <span>State After</span>
                     <Icon icon="ph:plus-circle" className="h-4 w-4" />
                   </div>

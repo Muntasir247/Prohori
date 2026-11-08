@@ -24,6 +24,7 @@ import Settings from "@/routes/user/Settings";
 
 // Reviewer screens load only for signed-in staff (Doc 02 Section 6).
 const ReviewOverview = lazy(() => import("@/routes/review/Overview"));
+const CaseQueue = lazy(() => import("@/routes/review/CaseQueue"));
 const RepeatNumbers = lazy(() => import("@/routes/review/RepeatNumbers"));
 const Campaigns = lazy(() => import("@/routes/review/Campaigns"));
 const Reports = lazy(() => import("@/routes/review/Reports"));
@@ -70,14 +71,7 @@ export const router = createBrowserRouter([
       </RequireAuth>
     ),
   },
-  {
-    path: "/settings",
-    element: (
-      <RequireAuth>
-        <Settings />
-      </RequireAuth>
-    ),
-  },
+  { path: "/settings", element: <Settings /> },
 
   // Reviewer group (S24+). RequireRole is UX only; the API enforces roles.
   {
@@ -86,6 +80,16 @@ export const router = createBrowserRouter([
       <RequireRole roles={["reviewer", "admin"]}>
         <Suspense fallback={null}>
           <ReviewOverview />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/review/cases",
+    element: (
+      <RequireRole roles={["reviewer", "admin"]}>
+        <Suspense fallback={null}>
+          <CaseQueue />
         </Suspense>
       </RequireRole>
     ),

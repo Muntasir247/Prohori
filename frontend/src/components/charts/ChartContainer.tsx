@@ -25,15 +25,15 @@ export function ChartContainer({
   const [showTable, setShowTable] = useState(false);
 
   return (
-    <div className="flex flex-col rounded-xl border border-border bg-surface p-5 shadow-sm">
-      <div className="mb-4 flex flex-wrap items-start justify-between gap-2 border-b border-border/50 pb-3">
+    <div className="flex flex-col rounded-lg border border-border bg-surface p-4 sm:p-6">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-2 border-b border-border pb-3">
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-semibold text-text">{title}</h3>
             {simulated && (
               <span
                 data-testid="simulated-badge"
-                className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400"
+                className="inline-flex items-center gap-1 rounded-sm border border-warning/40 bg-warning-tint px-2 py-0.5 text-xs font-medium text-warning"
                 title="Model data running simulated-v1"
               >
                 <Icon icon="ph:flask" className="h-3 w-3" aria-hidden />
@@ -41,7 +41,7 @@ export function ChartContainer({
               </span>
             )}
           </div>
-          {subtitle && <p className="mt-0.5 text-xs text-muted">{subtitle}</p>}
+          {subtitle && <p className="mt-1 text-sm text-text-2">{subtitle}</p>}
         </div>
 
         {tableContent && !isEmpty && (
@@ -50,10 +50,10 @@ export function ChartContainer({
             aria-label="Toggle data table"
             aria-pressed={showTable}
             onClick={() => setShowTable((v) => !v)}
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors ${
+            className={`inline-flex min-h-9 items-center gap-1.5 rounded-md border px-3 text-sm font-medium transition-colors ${
               showTable
-                ? "border-brand bg-brand/10 text-brand"
-                : "border-border bg-surface text-muted hover:bg-bg hover:text-text"
+                ? "border-border-strong bg-surface-2 text-text"
+                : "border-border bg-surface text-text-2 hover:border-border-strong hover:text-text"
             }`}
           >
             <Icon icon={showTable ? "ph:chart-bar" : "ph:table"} className="h-3.5 w-3.5" aria-hidden />
@@ -65,8 +65,8 @@ export function ChartContainer({
       <div className="min-h-[260px] flex flex-1 flex-col justify-center">
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
-            <div className="mb-2 rounded-full bg-border/40 p-3 text-muted">
-              <Icon icon="ph:chart-bar" className="h-6 w-6" aria-hidden />
+            <div className="mb-3 text-text-2">
+              <Icon icon="ph:chart-bar" className="h-8 w-8" aria-hidden />
             </div>
             <p className="text-sm font-medium text-text">
               {emptyMessage || t("review.empty_chart", "No data in this range.")}

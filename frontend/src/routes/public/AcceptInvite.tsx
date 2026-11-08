@@ -50,7 +50,7 @@ export default function AcceptInvite() {
   if (!token || expired) {
     return (
       <AuthCard title={t("invite.title")}>
-        <p className="text-sm text-muted">{t("invite.expired")}</p>
+        <p className="text-sm text-text-2 leading-relaxed">{t("invite.expired")}</p>
       </AuthCard>
     );
   }
@@ -60,14 +60,14 @@ export default function AcceptInvite() {
       title={t("invite.title")}
       subtitle={t("invite.subtitle")}
       footer={
-        <Link to="/login" className="text-brand hover:underline">
+        <Link to="/login" className="text-xs font-semibold text-brand hover:underline">
           {t("auth.back_to_login")}
         </Link>
       }
     >
       <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
         {err && Object.keys(err.fields).length === 0 && (
-          <p role="alert" className="text-sm text-red-600">
+          <p role="alert" className="rounded-xl border border-risk-high/30 bg-risk-high/10 px-3.5 py-2.5 text-xs font-medium text-risk-high">
             {t(err.messageKey)}
           </p>
         )}
@@ -106,7 +106,7 @@ export default function AcceptInvite() {
           errorKey={mismatch ? "errors.field.mismatch" : undefined}
           required
         />
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} className="mt-1">
           {t("invite.submit")}
         </Button>
       </form>

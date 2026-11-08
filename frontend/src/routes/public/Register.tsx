@@ -61,7 +61,7 @@ export default function Register() {
       title={t("auth.register_title")}
       subtitle={t("auth.no_account_needed")}
       footer={
-        <Link to="/login" className="text-brand hover:underline">
+        <Link to="/login" className="text-xs font-semibold text-brand hover:underline">
           {t("auth.have_account")}
         </Link>
       }
@@ -70,7 +70,7 @@ export default function Register() {
         {err && (
           <p
             role="alert"
-            className="rounded-lg border border-red-500/40 bg-red-500/5 px-3 py-2 text-sm text-red-600"
+            className="rounded-xl border border-risk-high/30 bg-risk-high/10 px-3.5 py-2.5 text-xs font-medium text-risk-high"
           >
             {t(err.messageKey, { seconds: err.retryAfter ?? 3600 })}
           </p>
@@ -107,27 +107,29 @@ export default function Register() {
           required
         />
 
-        <label className="flex items-start gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={consent}
-            onChange={(e) => setConsent(e.target.checked)}
-            className="mt-0.5 h-4 w-4 accent-[var(--color-brand)]"
-          />
-          <span>
-            {t("auth.consent_label")}{" "}
-            <Link to="/safety" className="text-brand hover:underline">
-              {t("auth.privacy_note")}
-            </Link>
-          </span>
-        </label>
-        {consentError && (
-          <p className="text-xs text-red-600" role="alert">
-            {t("errors.field.required")}
-          </p>
-        )}
+        <div className="flex flex-col gap-1">
+          <label className="flex items-start gap-2.5 rounded-xl border border-border/50 bg-surface-2/30 p-3 text-xs leading-relaxed text-muted transition-colors hover:border-border cursor-pointer">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded accent-brand"
+            />
+            <span>
+              {t("auth.consent_label")}{" "}
+              <Link to="/safety" className="font-semibold text-brand hover:underline">
+                {t("auth.privacy_note")}
+              </Link>
+            </span>
+          </label>
+          {consentError && (
+            <p className="flex items-center gap-1 text-xs font-medium text-risk-high" role="alert">
+              <span>{t("errors.field.required")}</span>
+            </p>
+          )}
+        </div>
 
-        <Button type="submit" loading={submitting}>
+        <Button type="submit" loading={submitting} className="mt-1">
           {t("auth.create_account")}
         </Button>
       </form>

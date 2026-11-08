@@ -20,8 +20,8 @@ export function SparklineChart({ data }: SparklineChartProps) {
         <LineChart data={data} margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
           <Tooltip
             contentStyle={{
-              backgroundColor: "var(--color-surface, #13211E)",
-              borderColor: "var(--color-border, #243E36)",
+              backgroundColor: "var(--color-surface)",
+              borderColor: "var(--color-border)",
               borderRadius: "0.375rem",
               fontSize: "0.75rem",
               padding: "0.25rem 0.5rem",
@@ -32,7 +32,7 @@ export function SparklineChart({ data }: SparklineChartProps) {
           <Line
             type="monotone"
             dataKey="count"
-            stroke="#F59E0B"
+            stroke="var(--chart-1)"
             strokeWidth={2}
             dot={false}
           />

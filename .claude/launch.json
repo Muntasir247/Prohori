@@ -2,39 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "backend",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": [
-        "-c",
-        "cd backend && exec .venv/Scripts/python -m uvicorn app.main:app --port 8000"
-      ],
-      "port": 8000
-    },
-    {
       "name": "frontend",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "frontend", "run", "dev"],
       "port": 5173
-    },
-    {
-      "name": "backend-e2e",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": [
-        "-c",
-        "cd backend && APP_ORIGIN=http://localhost:5180 exec .venv/Scripts/python -m uvicorn app.main:app --port 8010"
-      ],
-      "port": 8010,
-      "autoPort": false
-    },
-    {
-      "name": "frontend-e2e",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": [
-        "-c",
-        "cd frontend && PROHORI_API_PORT=8010 exec npx vite --port 5180 --strictPort"
-      ],
-      "port": 5180,
-      "autoPort": false
     }
   ]
 }

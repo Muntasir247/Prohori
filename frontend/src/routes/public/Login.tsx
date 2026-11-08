@@ -81,12 +81,12 @@ export default function Login() {
       title={t("auth.login_title")}
       footer={
         <div className="flex flex-col items-center gap-3">
-          <Link to="/register" className="text-brand hover:underline">
+          <Link to="/register" className="text-xs font-semibold text-brand hover:underline">
             {t("auth.create_account")}
           </Link>
           <Link
             to="/check"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-border px-4 text-sm font-medium text-text hover:bg-surface"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-border/80 bg-surface/40 px-4 text-xs font-semibold text-text transition-all hover:bg-surface hover:border-border hover:shadow-sm"
           >
             {t("auth.check_without_account")}
           </Link>
@@ -97,23 +97,23 @@ export default function Login() {
         {noticeKey && !err && (
           <p
             role="status"
-            className="flex items-center gap-2 rounded-lg border border-border bg-bg px-3 py-2 text-sm"
+            className="flex items-center gap-2.5 rounded-xl border border-brand/30 bg-brand/10 px-3.5 py-2.5 text-xs text-brand font-medium"
           >
-            <Icon icon="ph:info" aria-hidden className="shrink-0 text-brand" />
-            {t(NOTICES[noticeKey])}
+            <Icon icon="ph:info" aria-hidden className="shrink-0 text-base text-brand" />
+            <span>{t(NOTICES[noticeKey])}</span>
           </p>
         )}
 
         {message && (
           <div
             role="alert"
-            className="rounded-lg border border-red-500/40 bg-red-500/5 px-3 py-2 text-sm text-red-600"
+            className="rounded-xl border border-risk-high/30 bg-risk-high/10 px-3.5 py-2.5 text-xs text-risk-high leading-relaxed"
           >
-            <p>{message}</p>
+            <p className="font-medium">{message}</p>
             {unverified && (
               <Link
                 to={`/verify-email?email=${encodeURIComponent(email)}`}
-                className="mt-1 inline-block font-medium underline"
+                className="mt-1.5 inline-block font-bold underline"
               >
                 {t("auth.resend_verification")}
               </Link>
@@ -141,13 +141,13 @@ export default function Login() {
           required
         />
 
-        <div className="flex items-center justify-between text-sm">
-          <Link to="/forgot-password" className="text-brand hover:underline">
+        <div className="flex items-center justify-end text-xs">
+          <Link to="/forgot-password" className="text-muted hover:text-text hover:underline transition-colors font-medium">
             {t("auth.forgot_password")}
           </Link>
         </div>
 
-        <Button type="submit" loading={login.isPending}>
+        <Button type="submit" loading={login.isPending} className="mt-1">
           {t("auth.sign_in")}
         </Button>
       </form>

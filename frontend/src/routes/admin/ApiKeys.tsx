@@ -96,10 +96,10 @@ export default function AdminApiKeys() {
         {/* Header & Create Button */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">
-              {t("admin.api_keys_title", "Partner API Keys (S34 / F30)")}
+            <h1 className="font-display text-2xl font-bold tracking-tight text-text">
+              {t("admin.api_keys_title", "Partner API Keys")}
             </h1>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-text-2">
               {t(
                 "admin.api_keys_subtitle",
                 "Programmatic integration keys for mobile wallet partners (bKash, Nagad, banks). Raw keys are SHA-256 hashed and never stored.",
@@ -117,9 +117,9 @@ export default function AdminApiKeys() {
               setCreateError(null);
               setIsCreateOpen(true);
             }}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-hover transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent shadow-sm hover:bg-accent-hover transition-colors"
           >
-            <Icon icon="ph:plus-bold" className="h-4 w-4" />
+            <Icon icon="ph:plus" className="h-4 w-4" />
             <span>{t("admin.new_api_key", "Create API Key")}</span>
           </button>
         </div>
@@ -150,7 +150,7 @@ export default function AdminApiKeys() {
           <div className="flex flex-col justify-between rounded-xl border border-border bg-surface p-4">
             <div>
               <div className="flex items-center gap-2 font-semibold text-sm text-text">
-                <Icon icon="ph:shield-check" className="h-4 w-4 text-emerald-500" />
+                <Icon icon="ph:lock-simple" className="h-4 w-4 text-success" />
                 <span>Security Guarantee</span>
               </div>
               <p className="mt-2 text-xs text-muted leading-relaxed">
@@ -158,7 +158,7 @@ export default function AdminApiKeys() {
                 one-way SHA-256 digests. If a key is lost, revoke it and issue a new one.
               </p>
             </div>
-            <div className="mt-3 text-xs text-amber-600 dark:text-amber-400 font-medium">
+            <div className="mt-3 text-xs text-warning font-medium">
               Notice: Endpoints return simulated data tags during pilot phase.
             </div>
           </div>
@@ -218,13 +218,13 @@ export default function AdminApiKeys() {
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                             k.is_active
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-                              : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                              ? "bg-success/10 text-success border border-success/20"
+                              : "bg-risk-high/10 text-risk-high border border-risk-high/20"
                           }`}
                         >
                           <span
                             className={`h-1.5 w-1.5 rounded-full ${
-                              k.is_active ? "bg-emerald-500" : "bg-rose-500"
+                              k.is_active ? "bg-success" : "bg-risk-high"
                             }`}
                           />
                           {k.is_active ? "Active" : "Revoked"}
@@ -239,7 +239,7 @@ export default function AdminApiKeys() {
                                 revokeMutation.mutate(k.id);
                               }
                             }}
-                            className="inline-flex items-center gap-1 rounded px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-500/10 transition-colors"
+                            className="inline-flex items-center gap-1 rounded px-2.5 py-1 text-xs font-semibold text-risk-high hover:bg-risk-high/10 transition-colors"
                           >
                             <Icon icon="ph:x-circle" className="h-3.5 w-3.5" />
                             <span>Revoke</span>
@@ -256,7 +256,7 @@ export default function AdminApiKeys() {
 
         {/* Create Key Modal */}
         {isCreateOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <h3 className="text-lg font-bold text-text">Generate Partner API Key</h3>
@@ -270,7 +270,7 @@ export default function AdminApiKeys() {
               </div>
 
               {createError && (
-                <div className="mt-4 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-600 dark:text-rose-400">
+                <div className="mt-4 rounded-lg border border-risk-high/30 bg-risk-high/10 p-3 text-xs text-risk-high">
                   {createError}
                 </div>
               )}
@@ -366,7 +366,7 @@ export default function AdminApiKeys() {
                   <button
                     type="submit"
                     disabled={createMutation.isPending}
-                    className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover disabled:opacity-50"
                   >
                     {createMutation.isPending && (
                       <Icon icon="ph:spinner" className="h-4 w-4 animate-spin" />
@@ -381,17 +381,17 @@ export default function AdminApiKeys() {
 
         {/* Key Shown Once Modal */}
         {newKeyResult && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-xl rounded-2xl border border-border bg-surface p-6 shadow-2xl">
-              <div className="flex items-center gap-3 border-b border-border pb-4 text-emerald-600 dark:text-emerald-400">
-                <Icon icon="ph:key-bold" className="h-6 w-6" />
+              <div className="flex items-center gap-3 border-b border-border pb-4 text-success">
+                <Icon icon="ph:key" className="h-6 w-6" />
                 <h3 className="text-lg font-bold text-text">Partner API Key Generated</h3>
               </div>
 
               <div className="mt-4 space-y-4">
-                <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-amber-800 dark:text-amber-300">
+                <div className="rounded-xl border border-warning/30 bg-warning/10 p-4 text-warning">
                   <div className="flex items-center gap-2 font-bold text-sm">
-                    <Icon icon="ph:warning-octagon" className="h-5 w-5 text-amber-500" />
+                    <Icon icon="ph:warning-octagon" className="h-5 w-5 text-warning" />
                     <span>Save This Key Now</span>
                   </div>
                   <p className="mt-1 text-xs leading-relaxed">
@@ -412,9 +412,9 @@ export default function AdminApiKeys() {
                     <button
                       type="button"
                       onClick={() => copyToClipboard(newKeyResult.raw_key)}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-xs font-semibold text-white hover:bg-brand-hover shrink-0"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-xs font-semibold text-on-accent hover:bg-accent-hover shrink-0"
                     >
-                      <Icon icon={copied ? "ph:check-bold" : "ph:copy-bold"} className="h-4 w-4" />
+                      <Icon icon={copied ? "ph:check" : "ph:copy"} className="h-4 w-4" />
                       <span>{copied ? "Copied!" : "Copy"}</span>
                     </button>
                   </div>
@@ -434,7 +434,7 @@ export default function AdminApiKeys() {
                   <button
                     type="button"
                     onClick={() => setNewKeyResult(null)}
-                    className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-hover"
+                    className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover"
                   >
                     I have saved this key
                   </button>

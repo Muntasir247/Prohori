@@ -32,7 +32,7 @@ export function RepeatNumbersChart({ data, simulated = true }: RepeatNumbersChar
         {data.map((row) => (
           <tr key={row.date} className="hover:bg-bg/50">
             <td className="py-2 pr-4 font-mono">{row.date}</td>
-            <td className="py-2 text-right font-medium text-amber-500">{row.active_count}</td>
+            <td className="py-2 text-right font-medium text-warning">{row.active_count}</td>
           </tr>
         ))}
       </tbody>
@@ -51,14 +51,14 @@ export function RepeatNumbersChart({ data, simulated = true }: RepeatNumbersChar
       <div className="h-64 w-full" data-testid="repeat-numbers-chart">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" opacity={0.2} vertical={false} />
-            <XAxis dataKey="date" tick={{ fontSize: 11 }} tickLine={false} />
-            <YAxis tick={{ fontSize: 11 }} allowDecimals={false} tickLine={false} />
+            <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+            <XAxis dataKey="date" tick={{ fontSize: 12, fill: "var(--chart-axis)" }} axisLine={{ stroke: "var(--chart-grid)" }} tickLine={false} />
+            <YAxis tick={{ fontSize: 12, fill: "var(--chart-axis)" }} axisLine={{ stroke: "var(--chart-grid)" }} allowDecimals={false} tickLine={false} />
             <Tooltip
               contentStyle={{
-                backgroundColor: "var(--color-surface, #13211E)",
-                borderColor: "var(--color-border, #243E36)",
-                borderRadius: "0.5rem",
+                backgroundColor: "var(--color-surface)",
+                borderColor: "var(--color-border)",
+                borderRadius: "8px", color: "var(--color-text)",
                 fontSize: "0.75rem",
               }}
               formatter={(val: unknown) => [String(val), t("review.active_numbers", "Active Numbers")]}
@@ -66,9 +66,9 @@ export function RepeatNumbersChart({ data, simulated = true }: RepeatNumbersChar
             <Line
               type="monotone"
               dataKey="active_count"
-              stroke="#F59E0B"
+              stroke="var(--chart-1)"
               strokeWidth={2.5}
-              dot={{ r: 3, fill: "#F59E0B" }}
+              dot={{ r: 3, fill: "var(--chart-1)" }}
               activeDot={{ r: 5 }}
             />
           </LineChart>

@@ -35,19 +35,19 @@ export default function ForgotPassword() {
     <AuthCard
       title={t("auth.forgot_title")}
       footer={
-        <Link to="/login" className="text-brand hover:underline">
+        <Link to="/login" className="text-xs font-semibold text-brand hover:underline">
           {t("auth.back_to_login")}
         </Link>
       }
     >
       {sent ? (
-        <p className="rounded-lg border border-border bg-bg px-3 py-3 text-sm">
-          {t("auth.forgot_sent")}
-        </p>
+        <div className="rounded-xl border border-border/80 bg-surface-2/40 p-4 text-xs leading-relaxed text-muted">
+          <p className="font-medium text-text">{t("auth.forgot_sent")}</p>
+        </div>
       ) : (
         <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
           {error && (
-            <p role="alert" className="text-sm text-red-600">
+            <p role="alert" className="rounded-xl border border-risk-high/30 bg-risk-high/10 px-3.5 py-2.5 text-xs font-medium text-risk-high">
               {error}
             </p>
           )}
@@ -59,7 +59,7 @@ export default function ForgotPassword() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <Button type="submit" loading={submitting}>
+          <Button type="submit" loading={submitting} className="mt-1">
             {t("auth.send_reset_link")}
           </Button>
         </form>

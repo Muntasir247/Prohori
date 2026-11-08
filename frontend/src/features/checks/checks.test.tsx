@@ -300,6 +300,23 @@ describe("Core Check Journey (Phase 08)", () => {
       // The typed text must still be present!
       expect(input.value).toBe("ব্যবহারকারীর গুরুত্বপূর্ণ মেসেজ যা হারাবে না");
     });
+
+    it("clears message input when clear button is clicked", async () => {
+      renderWithRouter(["/check/message"], {
+        "GET /api/v1/samples": () => json(200, mockSamples),
+      });
+
+      const input = screen.getByTestId("message-input") as HTMLTextAreaElement;
+      fireEvent.change(input, {
+        target: { value: "ভুল করে টাইপ করা মেসেজ" },
+      });
+      expect(input.value).toBe("ভুল করে টাইপ করা মেসেজ");
+
+      const clearBtn = screen.getByRole("button", { name: /মুছুন|Clear/i });
+      fireEvent.click(clearBtn);
+
+      expect(input.value).toBe("");
+    });
   });
 
   describe("S11 Payment Check", () => {

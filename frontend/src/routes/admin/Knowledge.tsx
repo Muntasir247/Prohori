@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { AdminNav } from "@/components/admin/AdminNav";
 import { AppShell } from "@/components/AppShell";
 import { adminApi, KbDocument } from "@/features/admin/api";
+import { useDebounce } from "@/lib/useDebounce";
 
 const SCAM_TYPES = [
   { id: 1, name: "Fake Lottery / Prize" },
@@ -29,6 +30,7 @@ export default function AdminKnowledge() {
   const [language, setLanguage] = useState<string>("");
   const [status, setStatus] = useState<string>("");
   const [search, setSearch] = useState<string>("");
+  const debouncedSearch = useDebounce(search, 300);
 
   // Modals & Active Document
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,13 +55,13 @@ export default function AdminKnowledge() {
     refetch,
     dataUpdatedAt,
   } = useQuery({
-    queryKey: ["admin-knowledge", scamType, language, status, search],
+    queryKey: ["admin-knowledge", scamType, language, status, debouncedSearch],
     queryFn: () =>
       adminApi.listKnowledge({
         scam_type: scamType || undefined,
         language: language || undefined,
         status: status || undefined,
-        search: search || undefined,
+        search: debouncedSearch || undefined,
       }),
   });
 
@@ -156,10 +158,10 @@ export default function AdminKnowledge() {
         {/* Header with Title and New Pattern button */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">
-              {t("admin.knowledge_title", "Knowledge Base (S30)")}
+            <h1 className="font-display text-2xl font-bold tracking-tight text-text">
+              {t("admin.knowledge_title", "Knowledge Base")}
             </h1>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-text-2">
               {t(
                 "admin.knowledge_subtitle",
                 "Manage verified scam-pattern documents. Publishing automatically chunks and embeds patterns into the vector store.",
@@ -169,9 +171,9 @@ export default function AdminKnowledge() {
           <button
             type="button"
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-hover transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent shadow-sm hover:bg-accent-hover transition-colors"
           >
-            <Icon icon="ph:plus-bold" className="h-4 w-4" />
+            <Icon icon="ph:plus" className="h-4 w-4" />
             <span>{t("admin.new_pattern", "New Pattern")}</span>
           </button>
         </div>
@@ -230,7 +232,7 @@ export default function AdminKnowledge() {
 
         {/* Publishing error alert if any */}
         {publishError && (
-          <div className="flex items-start gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-600 dark:text-rose-400">
+          <div className="flex items-start gap-3 rounded-xl border border-risk-high/30 bg-risk-high/10 p-4 text-sm text-risk-high">
             <Icon icon="ph:warning-circle" className="h-5 w-5 shrink-0 mt-0.5" />
             <div className="flex-1">
               <span className="font-semibold">Publishing Error:</span> {publishError.message}
@@ -254,7 +256,7 @@ export default function AdminKnowledge() {
             </div>
           ) : documents.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-              <Icon icon="ph:books" className="h-12 w-12 text-muted/60" />
+              <Icon icon="ph:books" className="h-12 w-12 text-faint" />
               <div className="space-y-1">
                 <p className="font-semibold text-text">No scam patterns found</p>
                 <p className="text-sm text-muted">
@@ -264,7 +266,7 @@ export default function AdminKnowledge() {
               <button
                 type="button"
                 onClick={openCreateModal}
-                className="mt-2 inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-hover"
+                className="mt-2 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover"
               >
                 <Icon icon="ph:plus" className="h-4 w-4" />
                 <span>Add first pattern</span>
@@ -310,26 +312,26 @@ export default function AdminKnowledge() {
                         <td className="px-4 py-3 text-muted">
                           {doc.scam_type_name || `Type #${doc.scam_type_id}`}
                         </td>
-                        <td className="px-4 py-3 uppercase text-xs font-semibold tracking-wider text-muted">
+                        <td className="px-4 py-3 text-xs font-semibold text-muted">
                           {doc.language}
                         </td>
                         <td className="px-4 py-3">
                           <span
                             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                               isPublished
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                                ? "bg-success/10 text-success border border-success/20"
                                 : hasFailedPublish
-                                ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
-                                : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                                ? "bg-risk-high/10 text-risk-high border border-risk-high/20"
+                                : "bg-warning/10 text-warning border border-warning/20"
                             }`}
                           >
                             <span
                               className={`h-1.5 w-1.5 rounded-full ${
                                 isPublished
-                                  ? "bg-emerald-500"
+                                  ? "bg-success"
                                   : hasFailedPublish
-                                  ? "bg-rose-500"
-                                  : "bg-amber-500"
+                                  ? "bg-risk-high"
+                                  : "bg-warning"
                               }`}
                             />
                             {hasFailedPublish ? "Draft (Retry)" : doc.status}
@@ -366,7 +368,7 @@ export default function AdminKnowledge() {
                                 onClick={() => publishMutation.mutate(doc.id)}
                                 className={`inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold transition-colors ${
                                   hasFailedPublish
-                                    ? "bg-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-500/30"
+                                    ? "bg-risk-high/20 text-risk-high hover:bg-risk-high/30"
                                     : "bg-brand/10 text-brand hover:bg-brand/20"
                                 }`}
                               >
@@ -392,7 +394,7 @@ export default function AdminKnowledge() {
 
         {/* Create / Edit Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <h3 className="text-lg font-bold text-text">
@@ -408,7 +410,7 @@ export default function AdminKnowledge() {
               </div>
 
               {formError && (
-                <div className="mt-4 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-600 dark:text-rose-400">
+                <div className="mt-4 rounded-lg border border-risk-high/30 bg-risk-high/10 p-3 text-xs text-risk-high">
                   {formError}
                 </div>
               )}
@@ -515,7 +517,7 @@ export default function AdminKnowledge() {
                   <button
                     type="submit"
                     disabled={saveMutation.isPending}
-                    className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover disabled:opacity-50"
                   >
                     {saveMutation.isPending && (
                       <Icon icon="ph:spinner" className="h-4 w-4 animate-spin" />
@@ -530,14 +532,14 @@ export default function AdminKnowledge() {
 
         {/* View Chunks Modal */}
         {viewingChunksDoc && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <div>
                   <h3 className="text-lg font-bold text-text">
                     Chunks for {viewingChunksDoc.code}
                   </h3>
-                  <p className="text-xs text-muted">{viewingChunksDoc.title}</p>
+                  <p className="text-sm text-text-2">{viewingChunksDoc.title}</p>
                 </div>
                 <button
                   type="button"
@@ -555,7 +557,7 @@ export default function AdminKnowledge() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-xs text-muted">
+                    <p className="text-sm text-text-2">
                       This pattern has {viewingChunksDoc.chunk_count} chunks indexed in the vector retrieval engine.
                     </p>
                     <div className="rounded-lg border border-border bg-background p-3 text-xs font-mono text-text">

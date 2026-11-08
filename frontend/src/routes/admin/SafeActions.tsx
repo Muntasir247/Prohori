@@ -155,10 +155,10 @@ export default function AdminSafeActions() {
         {/* Title & Action Button */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">
-              {t("admin.safe_actions_title", "Safe Actions & Helplines (S31)")}
+            <h1 className="font-display text-2xl font-bold tracking-tight text-text">
+              {t("admin.safe_actions_title", "Safe Actions & Helplines")}
             </h1>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-text-2">
               {t(
                 "admin.safe_actions_subtitle",
                 "Control the verified next steps presented to users. Helplines cannot activate without source verification.",
@@ -168,17 +168,17 @@ export default function AdminSafeActions() {
           <button
             type="button"
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-hover transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent shadow-sm hover:bg-accent-hover transition-colors"
           >
-            <Icon icon="ph:plus-bold" className="h-4 w-4" />
+            <Icon icon="ph:plus" className="h-4 w-4" />
             <span>{t("admin.new_safe_action", "New Safe Action")}</span>
           </button>
         </div>
 
         {/* 90-day verification alert banner */}
         {unverifiedHelplines.length > 0 && (
-          <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-700 dark:text-amber-300">
-            <Icon icon="ph:warning" className="h-5 w-5 shrink-0 mt-0.5 text-amber-500" />
+          <div className="flex items-start gap-3 rounded-xl border border-warning/30 bg-warning/10 p-4 text-sm text-warning">
+            <Icon icon="ph:warning" className="h-5 w-5 shrink-0 mt-0.5 text-warning" />
             <div className="flex-1">
               <span className="font-semibold">Re-verification Required:</span>{" "}
               {unverifiedHelplines.length} helpline(s) have not been re-verified within the last 90 days.
@@ -236,7 +236,7 @@ export default function AdminSafeActions() {
                       <td className="px-4 py-3 text-muted">{act.label_bn}</td>
                       <td className="px-4 py-3 font-mono text-sm font-semibold text-text">
                         {act.phone ? (
-                          <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                          <span className="inline-flex items-center gap-1 text-success">
                             <Icon icon="ph:phone" className="h-3.5 w-3.5" />
                             {act.phone}
                           </span>
@@ -248,10 +248,10 @@ export default function AdminSafeActions() {
                         <span
                           className={`inline-block rounded px-2 py-0.5 text-xs font-semibold ${
                             act.min_level === "High"
-                              ? "bg-rose-500/10 text-rose-600"
+                              ? "bg-risk-high/10 text-risk-high"
                               : act.min_level === "Medium"
-                              ? "bg-amber-500/10 text-amber-600"
-                              : "bg-blue-500/10 text-blue-600"
+                              ? "bg-warning/10 text-warning"
+                              : "bg-info/10 text-info"
                           }`}
                         >
                           {act.min_level}
@@ -262,7 +262,7 @@ export default function AdminSafeActions() {
                           <div>
                             <span className="text-text">{act.verified_at}</span>
                             {act.needs_reverification && (
-                              <span className="ml-1 inline-flex items-center gap-0.5 rounded bg-amber-500/10 px-1 text-[10px] font-bold text-amber-600">
+                              <span className="ml-1 inline-flex items-center gap-0.5 rounded bg-warning/10 px-1 text-[10px] font-bold text-warning">
                                 &gt;90d
                               </span>
                             )}
@@ -290,13 +290,13 @@ export default function AdminSafeActions() {
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                             act.is_active
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                              ? "bg-success/10 text-success border border-success/20"
                               : "bg-muted/10 text-muted border border-border"
                           }`}
                         >
                           <span
                             className={`h-1.5 w-1.5 rounded-full ${
-                              act.is_active ? "bg-emerald-500" : "bg-muted"
+                              act.is_active ? "bg-success" : "bg-muted"
                             }`}
                           />
                           {act.is_active ? "Active" : "Inactive"}
@@ -319,7 +319,7 @@ export default function AdminSafeActions() {
                                 deleteMutation.mutate(act.id);
                               }
                             }}
-                            className="rounded p-1 text-muted hover:bg-rose-500/10 hover:text-rose-500"
+                            className="rounded p-1 text-muted hover:bg-risk-high/10 hover:text-risk-high"
                             title="Delete action"
                           >
                             <Icon icon="ph:trash" className="h-4 w-4" />
@@ -336,7 +336,7 @@ export default function AdminSafeActions() {
 
         {/* Create / Edit Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <h3 className="text-lg font-bold text-text">
@@ -352,7 +352,7 @@ export default function AdminSafeActions() {
               </div>
 
               {formError && (
-                <div className="mt-4 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-600 dark:text-rose-400">
+                <div className="mt-4 rounded-lg border border-risk-high/30 bg-risk-high/10 p-3 text-xs text-risk-high">
                   {formError}
                 </div>
               )}
@@ -494,7 +494,7 @@ export default function AdminSafeActions() {
                     />
                     <div>
                       <span className="text-sm font-semibold text-text">Active</span>
-                      <p className="text-xs text-muted">
+                      <p className="text-sm text-text-2">
                         Inactive until verified. If a phone number is entered, active status requires a valid source URL and verification date.
                       </p>
                     </div>
@@ -512,7 +512,7 @@ export default function AdminSafeActions() {
                   <button
                     type="submit"
                     disabled={saveMutation.isPending}
-                    className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover disabled:opacity-50"
                   >
                     {saveMutation.isPending && (
                       <Icon icon="ph:spinner" className="h-4 w-4 animate-spin" />

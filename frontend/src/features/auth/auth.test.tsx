@@ -613,4 +613,19 @@ describe("Settings (S22)", () => {
     expect(screen.getByLabelText("লেখার আকার")).toBeInTheDocument();
     expect(screen.getByLabelText("ফলাফল সবসময় পড়ে শোনান")).toBeInTheDocument();
   });
+
+  it("renders for guests and allows preference customization", async () => {
+    mockFetch({ "GET /api/v1/auth/session": () => json(200, null) });
+    renderAt("/settings", [{ path: "/settings", element: <Settings /> }]);
+    
+    // Profile tab shows guest notice
+    expect(await screen.findByText(/অ্যাকাউন্ট সেটিংসের জন্য সাইন ইন করুন/i)).toBeInTheDocument();
+
+    // Preferences tab is fully interactive for guests
+    fireEvent.click(screen.getByRole("tab", { name: "পছন্দ" }));
+    const readAloudCheckbox = screen.getByLabelText("ফলাফল সবসময় পড়ে শোনান") as HTMLInputElement;
+    expect(readAloudCheckbox).toBeInTheDocument();
+    fireEvent.click(readAloudCheckbox);
+    expect(readAloudCheckbox.checked).toBe(true);
+  });
 });

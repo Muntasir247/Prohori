@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AdminNav } from "@/components/admin/AdminNav";
@@ -24,6 +24,11 @@ export default function AdminUsers() {
   const [targetRole, setTargetRole] = useState<"user" | "reviewer" | "admin">("user");
   const [actionError, setActionError] = useState<string | null>(null);
 
+  // Live Filters
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
   const {
     data: users = [],
     isLoading,
@@ -34,6 +39,21 @@ export default function AdminUsers() {
     queryKey: ["admin-users"],
     queryFn: () => adminApi.listUsers(),
   });
+
+  const filteredUsers = useMemo(() => {
+    return users.filter((u) => {
+      if (roleFilter !== "all" && u.role !== roleFilter) return false;
+      if (statusFilter === "active" && !u.is_active) return false;
+      if (statusFilter === "inactive" && u.is_active) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const nameMatch = (u.display_name || "").toLowerCase().includes(q);
+        const emailMatch = u.email.toLowerCase().includes(q);
+        if (!nameMatch && !emailMatch) return false;
+      }
+      return true;
+    });
+  }, [users, roleFilter, statusFilter, searchQuery]);
 
   const inviteMutation = useMutation({
     mutationFn: () => {
@@ -114,10 +134,10 @@ export default function AdminUsers() {
         {/* Title & Invite Button */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-text">
-              {t("admin.users_title", "User & Role Management (S33)")}
+            <h1 className="font-display text-2xl font-bold tracking-tight text-text">
+              {t("admin.users_title", "User & Role Management")}
             </h1>
-            <p className="text-sm text-muted">
+            <p className="text-sm text-text-2">
               {t(
                 "admin.users_subtitle",
                 "Invite staff reviewers, manage permission tiers, and enforce administrator safeguards.",
@@ -133,17 +153,77 @@ export default function AdminUsers() {
               setInviteError(null);
               setIsInviteOpen(true);
             }}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-hover transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-on-accent transition-all hover:bg-brand/90 hover:scale-[1.02] active:scale-[0.98]"
           >
-            <Icon icon="ph:user-plus-bold" className="h-4 w-4" />
+            <Icon icon="ph:user-plus" className="h-4 w-4" />
             <span>{t("admin.invite_user", "Invite Reviewer / Admin")}</span>
           </button>
         </div>
 
+        {/* Live Filter Toolbar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-surface/80 p-3.5 text-xs backdrop-blur-md">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-2xs text-muted font-semibold">Role:</span>
+            {(["all", "admin", "reviewer", "user"] as const).map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRoleFilter(r)}
+                className={`rounded-xl px-3 py-1.5 text-2xs font-bold capitalize transition-all ${
+                  roleFilter === r
+                    ? "bg-accent text-on-accent"
+                    : "border border-border/70 bg-surface-2 text-muted hover:bg-surface hover:text-text"
+                }`}
+              >
+                {r === "all" ? "All roles" : r}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="rounded-xl border border-border/80 bg-surface-2 px-3 py-1.5 text-xs text-text focus:outline-none focus:border-brand cursor-pointer"
+            >
+              <option value="all">All Statuses</option>
+              <option value="active">Active Only</option>
+              <option value="inactive">Inactive Only</option>
+            </select>
+
+            <div className="relative">
+              <Icon
+                icon="ph:magnifying-glass"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted text-xs pointer-events-none"
+              />
+              <input
+                type="search"
+                placeholder="Search name or email..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="rounded-xl border border-border/80 bg-surface-2/70 pl-8 pr-3 py-1.5 text-xs text-text placeholder:text-faint focus:outline-none focus:border-brand font-mono transition-all"
+              />
+            </div>
+            {(roleFilter !== "all" || statusFilter !== "all" || searchQuery) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setRoleFilter("all");
+                  setStatusFilter("all");
+                  setSearchQuery("");
+                }}
+                className="text-xs font-semibold text-brand hover:underline"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Global Action Error Alert */}
         {actionError && (
-          <div className="flex items-start gap-3 rounded-xl border border-rose-500/30 bg-rose-500/10 p-4 text-sm text-rose-600 dark:text-rose-400">
-            <Icon icon="ph:shield-warning" className="h-5 w-5 shrink-0 mt-0.5" />
+          <div className="flex items-start gap-3 rounded-xl border border-risk-high/30 bg-risk-high/10 p-4 text-sm text-risk-high">
+            <Icon icon="ph:warning" className="h-5 w-5 shrink-0 mt-0.5" />
             <div className="flex-1">
               <span className="font-semibold">{actionError}</span>
             </div>
@@ -158,20 +238,20 @@ export default function AdminUsers() {
         )}
 
         {/* Table */}
-        <div className="overflow-hidden rounded-xl border border-border bg-surface shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-border/80 bg-surface shadow-lg">
           {isLoading ? (
             <div className="flex h-48 items-center justify-center gap-2 text-sm text-muted">
-              <Icon icon="ph:spinner" className="h-5 w-5 animate-spin text-brand" />
+              <Icon icon="ph:spinner-gap" className="h-5 w-5 animate-spin text-brand" />
               <span>Loading users…</span>
             </div>
-          ) : users.length === 0 ? (
+          ) : filteredUsers.length === 0 ? (
             <div className="py-16 text-center text-sm text-muted">
-              No users found.
+              No users found matching current filters.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-text">
-                <thead className="border-b border-border bg-background/50 text-xs uppercase text-muted">
+                <thead className="border-b border-border/80 bg-surface-2/70 text-2xs text-muted font-semibold">
                   <tr>
                     <th className="px-4 py-3">Display Name</th>
                     <th className="px-4 py-3">Email Address</th>
@@ -181,8 +261,8 @@ export default function AdminUsers() {
                     <th className="px-4 py-3 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
-                  {users.map((u) => (
+                <tbody className="divide-y divide-border/40">
+                  {filteredUsers.map((u) => (
                     <tr key={u.id} className="hover:bg-background/40 transition-colors">
                       <td className="px-4 py-3 font-medium text-text">
                         {u.display_name || "—"}
@@ -194,9 +274,9 @@ export default function AdminUsers() {
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
                             u.role === "admin"
-                              ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20"
+                              ? "bg-info/10 text-info border border-info/20"
                               : u.role === "reviewer"
-                              ? "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
+                              ? "bg-info/10 text-info border border-info/20"
                               : "bg-muted/10 text-muted border border-border"
                           }`}
                         >
@@ -217,13 +297,13 @@ export default function AdminUsers() {
                         <span
                           className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                             u.is_active
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-                              : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                              ? "bg-success/10 text-success border border-success/20"
+                              : "bg-risk-high/10 text-risk-high border border-risk-high/20"
                           }`}
                         >
                           <span
                             className={`h-1.5 w-1.5 rounded-full ${
-                              u.is_active ? "bg-emerald-500" : "bg-rose-500"
+                              u.is_active ? "bg-success" : "bg-risk-high"
                             }`}
                           />
                           {u.is_active ? "Active" : "Deactivated"}
@@ -249,8 +329,8 @@ export default function AdminUsers() {
                             onClick={() => toggleActive(u)}
                             className={`inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium transition-colors ${
                               u.is_active
-                                ? "text-rose-600 hover:bg-rose-500/10"
-                                : "text-emerald-600 hover:bg-emerald-500/10"
+                                ? "text-risk-high hover:bg-risk-high/10"
+                                : "text-success hover:bg-success/10"
                             }`}
                           >
                             <Icon
@@ -271,7 +351,7 @@ export default function AdminUsers() {
 
         {/* Invite Reviewer Modal */}
         {isInviteOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <h3 className="text-lg font-bold text-text">Invite Team Member</h3>
@@ -286,7 +366,7 @@ export default function AdminUsers() {
 
               {inviteResult ? (
                 <div className="mt-4 space-y-4">
-                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-700 dark:text-emerald-300">
+                  <div className="rounded-xl border border-success/30 bg-success/10 p-4 text-success">
                     <div className="flex items-center gap-2 font-semibold">
                       <Icon icon="ph:check-circle" className="h-5 w-5" />
                       <span>Invitation Link Generated</span>
@@ -312,7 +392,7 @@ export default function AdminUsers() {
                           navigator.clipboard.writeText(inviteResult.invite_url);
                           alert("Invite link copied to clipboard!");
                         }}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-3 py-2 text-xs font-semibold text-white hover:bg-brand-hover shrink-0"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-3 py-2 text-xs font-semibold text-on-accent hover:bg-accent-hover shrink-0"
                       >
                         <Icon icon="ph:copy" className="h-4 w-4" />
                         <span>Copy</span>
@@ -339,7 +419,7 @@ export default function AdminUsers() {
                   className="mt-4 space-y-4"
                 >
                   {inviteError && (
-                    <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-600 dark:text-rose-400">
+                    <div className="rounded-lg border border-risk-high/30 bg-risk-high/10 p-3 text-xs text-risk-high">
                       {inviteError}
                     </div>
                   )}
@@ -368,7 +448,7 @@ export default function AdminUsers() {
                     </select>
                   </div>
 
-                  <p className="text-xs text-muted">
+                  <p className="text-sm text-text-2">
                     Invitations expire after 48 hours. A single-use link will be created and displayed immediately.
                   </p>
 
@@ -383,7 +463,7 @@ export default function AdminUsers() {
                     <button
                       type="submit"
                       disabled={inviteMutation.isPending}
-                      className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
+                      className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover disabled:opacity-50"
                     >
                       {inviteMutation.isPending && (
                         <Icon icon="ph:spinner" className="h-4 w-4 animate-spin" />
@@ -399,7 +479,7 @@ export default function AdminUsers() {
 
         {/* Change Role Modal */}
         {editingUser && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-raat/60 p-4 backdrop-blur-sm">
             <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
               <div className="flex items-center justify-between border-b border-border pb-4">
                 <h3 className="text-lg font-bold text-text">Change Role</h3>
@@ -413,7 +493,7 @@ export default function AdminUsers() {
               </div>
 
               <div className="mt-4 space-y-4">
-                <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400">
+                <div className="rounded-lg border border-warning/30 bg-warning/10 p-3 text-xs text-warning">
                   <div className="font-semibold flex items-center gap-1.5">
                     <Icon icon="ph:warning-circle" className="h-4 w-4" />
                     <span>Security Notice</span>
@@ -430,8 +510,9 @@ export default function AdminUsers() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-muted">Select New Role</label>
+                  <label htmlFor="role-select" className="block text-xs font-medium text-muted">Select New Role</label>
                   <select
+                    id="role-select"
                     value={targetRole}
                     onChange={(e) => setTargetRole(e.target.value as "user" | "reviewer" | "admin")}
                     className="mt-1 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-text"
@@ -459,7 +540,7 @@ export default function AdminUsers() {
                         data: { role: targetRole },
                       })
                     }
-                    className="inline-flex items-center gap-2 rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
+                    className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover disabled:opacity-50"
                   >
                     {updateMutation.isPending && (
                       <Icon icon="ph:spinner" className="h-4 w-4 animate-spin" />

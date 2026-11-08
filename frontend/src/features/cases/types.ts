@@ -49,6 +49,27 @@ export interface CaseCheckDetail {
   created_at?: string;
 }
 
+export interface CaseSummary {
+  id: string;
+  reference: string;
+  status: "new" | "in_review" | "confirmed_scam" | "not_scam" | "escalated" | "closed";
+  created_at: string;
+  assigned_to?: string | null;
+  scam_type?: ScamTypeSummary | null;
+  check_kind: "message" | "payment";
+  final_level: "High" | "Medium" | "Low" | null;
+  masked_preview: string;
+  repeat_count: number;
+}
+
+export interface CaseListResponse {
+  items: CaseSummary[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
+
 export interface CaseDetail {
   id: string;
   reference: string;
@@ -73,4 +94,3 @@ export interface CaseDecisionPayload {
   version: number;
   scam_type_id?: number | null;
 }
-

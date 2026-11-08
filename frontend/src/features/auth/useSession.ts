@@ -19,6 +19,11 @@ export function useSession() {
     queryKey: SESSION_KEY,
     queryFn: () => authApi.getSession(),
     staleTime: 60_000,
+    // A failed session check must not restart every time another component
+    // reads the session: in React Query v5 a refetch of an errored query with
+    // no data goes back to "pending", which made pages that gate on isLoading
+    // unmount and remount their children in an endless loop (backend down).
+    retryOnMount: false,
   });
 }
 

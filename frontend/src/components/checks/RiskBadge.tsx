@@ -11,8 +11,8 @@ export function RiskBadge({ level }: RiskBadgeProps) {
 
   if (level === "High") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-risk-high/40 bg-risk-high-tint px-2.5 py-0.5 text-xs font-semibold text-risk-high">
-        <Icon icon="ph:octagon-fill" className="text-sm" aria-hidden />
+      <span className="inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-sm border border-risk-high/40 bg-risk-high-tint px-2 text-xs font-semibold text-risk-high">
+        <Icon icon="ph:octagon-bold" className="text-sm" aria-hidden />
         {t("result.badge_high")}
       </span>
     );
@@ -20,8 +20,8 @@ export function RiskBadge({ level }: RiskBadgeProps) {
 
   if (level === "Medium") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-risk-medium/40 bg-risk-medium-tint px-2.5 py-0.5 text-xs font-semibold text-risk-medium">
-        <Icon icon="ph:warning-fill" className="text-sm" aria-hidden />
+      <span className="inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-sm border border-risk-medium/40 bg-risk-medium-tint px-2 text-xs font-semibold text-risk-medium">
+        <Icon icon="ph:warning-bold" className="text-sm" aria-hidden />
         {t("result.badge_medium")}
       </span>
     );
@@ -29,16 +29,16 @@ export function RiskBadge({ level }: RiskBadgeProps) {
 
   if (level === "Low") {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full border border-risk-low/40 bg-risk-low-tint px-2.5 py-0.5 text-xs font-semibold text-risk-low">
-        <Icon icon="ph:info-fill" className="text-sm" aria-hidden />
+      <span className="inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-sm border border-risk-low/40 bg-risk-low-tint px-2 text-xs font-semibold text-risk-low">
+        <Icon icon="ph:info-bold" className="text-sm" aria-hidden />
         {t("result.badge_low")}
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-info/40 bg-info-tint px-2.5 py-0.5 text-xs font-semibold text-info">
-      <Icon icon="ph:warning-circle-fill" className="text-sm" aria-hidden />
+    <span className="inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-sm border border-info/40 bg-info-tint px-2 text-xs font-semibold text-info">
+      <Icon icon="ph:cloud-slash-bold" className="text-sm" aria-hidden />
       {t("result.badge_unavailable")}
     </span>
   );
