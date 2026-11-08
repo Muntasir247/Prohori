@@ -50,6 +50,12 @@ async def resolve_check_auth(
     session: DbSession,
 ) -> tuple[User | None, str | None, UUID | None]:
     """Resolve caller identity: API Key (with checks:write), User, or Guest."""
+    if getattr(request.state, "api_key", None):
+        key_obj = request.state.api_key
+        if "checks:write" not in (key_obj.scopes or []):
+            raise AppError("forbidden", status=403, message_key="errors.forbidden")
+        return None, None, key_obj.id
+
     auth_header = request.headers.get("authorization") or request.headers.get(
         "x-api-key"
     )
@@ -109,6 +115,13 @@ async def enforce_check_rate_limit(
     "/check-message",
     response_model=CheckResultResponse,
     dependencies=[Depends(enforce_csrf)],
+    summary="Check suspicious message [Partner Endpoint — Simulated Data]",
+    description=(
+        "Partner and guest endpoint to check a suspicious message for fraud. "
+        "NOTICE: Simulated data only (simulated-v1). "
+        "Auth: Guest or API key with 'checks:write' scope."
+    ),
+    tags=["Partner", "checks"],
 )
 async def check_message(
     body: CheckMessageRequest,
@@ -136,6 +149,13 @@ async def check_message(
     "/check-payment",
     response_model=CheckResultResponse,
     dependencies=[Depends(enforce_csrf)],
+    summary="Check suspicious payment request [Partner Endpoint — Simulated Data]",
+    description=(
+        "Partner and guest endpoint to assess payment risk before sending money. "
+        "NOTICE: Simulated data only (simulated-v1). "
+        "Auth: Guest or API key with 'checks:write' scope."
+    ),
+    tags=["Partner", "checks"],
 )
 async def check_payment(
     body: CheckPaymentRequest,

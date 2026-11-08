@@ -393,8 +393,54 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
       - Read aloud button hiding when voice is absent, and speaking/stopping when present.
     - Production build: `npm run build` succeeds cleanly with `dist/sw.js` emitted.
     - Code quality: `tsc --noEmit` clean (0 errors), `eslint .` clean (0 problems), `ruff check backend` clean (0 errors), `ruff format --check backend` clean.
-- [ ] **Phase 11 — Admin and partner API.** Admin screens and partner keys.
+- [x] **Phase 11 — Admin and partner API.** Admin screens and partner keys.
   _Done when:_ publishing a pattern changes retrieval results.
+  - **1. Knowledge Base (Doc 01 S30, Doc 02 Feature F24):**
+    - Manage verified scam-pattern documents with code, title, scam category, language (bn/en/banglish), source URL, and body.
+    - Publishing triggers semantic chunking (200–400 tokens with 40-token overlap) and vector store embedding (`app/pipeline/retrieval.py`).
+    - Failure safety: embedding failure leaves document in `Draft` with `Retry` action; successful publish updates chunks and instantly reloads the retrieval engine so subsequent check queries retrieve the newly published knowledge pattern.
+  - **2. Safe Actions & Helplines (Doc 01 S31, Doc 02 Feature F24):**
+    - Safe actions CRUD (`/api/v1/admin/safe-actions`).
+    - **Database & API Verification Enforcement:** Helplines with phone numbers cannot be active without `source_url` and `verified_at` (enforced via database `CheckConstraint("phone_needs_source")` and API `422 unverified_helpline`).
+    - **90-Day Warning:** Automated calculation flags any helpline whose `verified_at` date exceeds 90 days (`needs_reverification = True`), rendering a prominent warning badge and re-verification alert banner.
+  - **3. Quality & Evaluation Harness (Doc 01 S32, Doc 02 Feature F25, Section 10.7):**
+    - Reads `eval_runs` history, route traffic mix (message vs payment), token metrics (input, output, cache read tokens), and Anthropic prompt cache hit rate.
+    - **Section 10.7 Prompt Activation Gate:** `POST /api/v1/admin/prompts/{id}/activate` strictly enforces production guardrails (`high_precision >= 0.90`, `high_recall >= 0.85`, `genuine_high_rate <= 0.03`, and `unsafe_flags == 0`). If targets fail or unsafe flags exist, activation aborts with `409 eval_gate_failed`.
+    - Prominently labeled notice on UI and API: `"Measured on simulated data only (simulated-v1)"`.
+  - **4. User & Role Management (Doc 01 S33, Doc 02 Feature F29):**
+    - Staff user management with single-use 48-hour invitation links (`POST /api/v1/admin/users/invite`).
+    - Role modifications (`user`, `reviewer`, `admin`) and account deactivations.
+    - **Session Revocation Rule:** Role changes and deactivations immediately revoke all active sessions for that user for security.
+    - **Last Admin Protection:** The API and UI strictly protect the last remaining active administrator, blocking demotion or deactivation with `409 last_admin`.
+  - **5. Partner API & Authentication Sandbox (Doc 01 S34, Doc 02 Feature F15, F30):**
+    - Cryptographic key generation for partners (`prh_live_` or `prh_test_` + 32 random bytes).
+    - **Zero Raw Key Storage:** Raw keys are displayed **only once** upon generation with copy utility; database stores strictly SHA-256 digests (`key_hash`).
+    - `ApiKeyMiddleware` (`app/middleware/api_key.py`): extracts Bearer token or `X-API-Key`, validates SHA-256 hash, enforces per-key rate limits via sliding window counter, updates `last_used_at`, and sets request scopes (`checks:write`, `cases:read`).
+    - Three partner endpoints documented in OpenAPI `/docs` with labeled simulated-data notices and `Partner` tags:
+      1. `POST /api/v1/check-message` (scope `checks:write`)
+      2. `POST /api/v1/check-payment` (scope `checks:write`)
+      3. `GET /api/v1/cases` (scope `cases:read`)
+  - **6. Audit Log (Doc 01 S35, Doc 02 Feature F17):**
+    - Strictly read-only, append-only immutable audit trail.
+    - Captures actor ID, actor role, action, target entity, request ID, before & after state payloads.
+    - Filterable by actor, action, date range, with before/after JSON diff drawer. Admins cannot edit or delete audit logs (no update/delete routes exist).
+  - **Verified:**
+    - **Automated Role Denial Test:** `test_role_denial_on_every_admin_route_automatically` automatically iterates every single route registered under `/api/v1/admin/*` and asserts that Reviewers receive `403 Forbidden`.
+    - **Backend Integration Tests:** 7 tests in `backend/tests/test_phase11_admin.py` and 41 total backend tests passing:
+      - Publishing pattern updates retrieval results.
+      - Unverified helpline rejected (422) + 90-day warning calculation.
+      - API key creation, single exposure, SHA-256 storage, per-key rate limiting, and scope validation.
+      - Quality page metrics and 409 eval gate rejection.
+      - User invitations, session revocation on role change, and last admin protection (409).
+      - Audit log read-only integrity.
+    - **Frontend Integration Tests:** 6 tests in `frontend/src/features/admin/admin.test.tsx` and 74 total frontend tests passing:
+      - S30 Knowledge Base pattern listing, creation, and publish chunk update.
+      - S31 Safe Actions client validation blocking unverified helpline activation and 90-day warning banner.
+      - S32 Quality KPI display, simulated data notice, and 409 eval gate error alert.
+      - S33 Users invite link generation and last admin protection alert.
+      - S34 Partner API Keys creation, single raw key display modal, and placeholder curl snippet.
+      - S35 Audit log immutable trail and before/after JSON diff inspection drawer.
+    - **Build & Quality:** `npm run build` succeeds cleanly; `tsc --noEmit` clean; `eslint .` clean; `ruff check backend` clean; `ruff format --check backend` clean.
 - [ ] **Phase 12 — Evaluation.** Measure quality and stop regressions. _Done when:_
   thresholds and unsafe gate enforced.
 - [ ] **Phase 13 — Hardening.** Security, Bangla, accessibility and responsive pass.

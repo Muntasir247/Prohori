@@ -9,6 +9,7 @@ from __future__ import annotations
 from fastapi import APIRouter
 
 from app.api.v1 import (
+    admin,
     analytics,
     auth,
     campaigns,
@@ -30,3 +31,4 @@ api_router.include_router(public.router)
 api_router.include_router(analytics.router)
 api_router.include_router(campaigns.router)
 api_router.include_router(cases.router)
+api_router.include_router(admin.router)

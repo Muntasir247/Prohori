@@ -28,6 +28,14 @@ const RepeatNumbers = lazy(() => import("@/routes/review/RepeatNumbers"));
 const Campaigns = lazy(() => import("@/routes/review/Campaigns"));
 const Reports = lazy(() => import("@/routes/review/Reports"));
 
+// Admin screens load only for administrators (Doc 01 S30-S35, Doc 02 Section 6).
+const AdminKnowledge = lazy(() => import("@/routes/admin/Knowledge"));
+const AdminSafeActions = lazy(() => import("@/routes/admin/SafeActions"));
+const AdminQuality = lazy(() => import("@/routes/admin/Quality"));
+const AdminUsers = lazy(() => import("@/routes/admin/Users"));
+const AdminApiKeys = lazy(() => import("@/routes/admin/ApiKeys"));
+const AdminAuditLog = lazy(() => import("@/routes/admin/AuditLog"));
+
 // Route groups (public/user/review/admin/system) from Doc 02 Section 6. Phase 04
 // adds the auth and account screens (S03–S08, S22), the invite acceptance page,
 // and the role-gated reviewer landing. Later phases fill /check and /review.
@@ -107,6 +115,78 @@ export const router = createBrowserRouter([
       <RequireRole roles={["reviewer", "admin"]}>
         <Suspense fallback={null}>
           <Reports />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+
+  // Admin group (S30–S35). Role-gated for admins only.
+  {
+    path: "/admin",
+    element: (
+      <RequireRole roles={["admin"]}>
+        <Suspense fallback={null}>
+          <AdminKnowledge />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/admin/knowledge",
+    element: (
+      <RequireRole roles={["admin"]}>
+        <Suspense fallback={null}>
+          <AdminKnowledge />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/admin/safe-actions",
+    element: (
+      <RequireRole roles={["admin"]}>
+        <Suspense fallback={null}>
+          <AdminSafeActions />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/admin/quality",
+    element: (
+      <RequireRole roles={["admin"]}>
+        <Suspense fallback={null}>
+          <AdminQuality />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/admin/users",
+    element: (
+      <RequireRole roles={["admin"]}>
+        <Suspense fallback={null}>
+          <AdminUsers />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/admin/api-keys",
+    element: (
+      <RequireRole roles={["admin"]}>
+        <Suspense fallback={null}>
+          <AdminApiKeys />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/admin/audit",
+    element: (
+      <RequireRole roles={["admin"]}>
+        <Suspense fallback={null}>
+          <AdminAuditLog />
         </Suspense>
       </RequireRole>
     ),

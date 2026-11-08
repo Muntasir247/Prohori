@@ -20,6 +20,7 @@ from app.api.v1.router import api_router
 from app.config import get_settings
 from app.errors import AppError, envelope_from_parts
 from app.logging_config import configure_logging, get_logger
+from app.middleware.api_key import ApiKeyMiddleware
 from app.middleware.request_id import RequestContextMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
 
@@ -77,14 +78,20 @@ def create_app() -> FastAPI:
     )
 
     # Middleware is applied bottom-up, so register in reverse of execution order:
-    # execution order ends up request id -> security headers -> CORS -> route.
+    # request id -> security headers -> api key -> CORS -> route.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type", "X-Requested-With"],
+        allow_headers=[
+            "Content-Type",
+            "X-Requested-With",
+            "Authorization",
+            "X-API-Key",
+        ],
     )
+    app.add_middleware(ApiKeyMiddleware)
     app.add_middleware(SecurityHeadersMiddleware)
     app.add_middleware(RequestContextMiddleware)
 

@@ -1,8 +1,10 @@
 """SQLAlchemy ORM models.
 
 Models accrete across phases. Phase 04 defines the authentication tables; Phase 07
-adds check, case, risky number, knowledge, and API key models. ``Base.metadata``
-is the single source of truth the test suite uses to create tables on SQLite.
+adds check, case, risky number, knowledge, and API key models; Phase 11 adds
+KbDocument, KbChunk, PromptVersion, and EvalRun.
+``Base.metadata`` is the single source of truth the test suite uses to
+create tables on SQLite.
 """
 
 from __future__ import annotations
@@ -22,7 +24,8 @@ from app.models.check import (
     ScamType,
     Share,
 )
-from app.models.knowledge import SafeAction, Sample, Tip
+from app.models.eval import EvalRun, PromptVersion
+from app.models.knowledge import KbChunk, KbDocument, SafeAction, Sample, Tip
 from app.models.rate_limit import RateLimitCounter
 from app.models.session import Session
 from app.models.user import User, UserRole
@@ -49,4 +52,8 @@ __all__ = [
     "Sample",
     "Tip",
     "ApiKey",
+    "KbDocument",
+    "KbChunk",
+    "PromptVersion",
+    "EvalRun",
 ]

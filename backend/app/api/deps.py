@@ -52,6 +52,13 @@ async def enforce_csrf(request: Request) -> None:
     """
     if request.method not in _STATE_CHANGING:
         return
+    # Programmatic API key requests do not use ambient cookie credentials
+    if (
+        getattr(request.state, "api_key", None)
+        or request.headers.get("authorization")
+        or request.headers.get("x-api-key")
+    ):
+        return
     if not request.headers.get("x-requested-with"):
         raise AppError("csrf_failed", status=403, message_key="errors.csrf_failed")
     origin = request.headers.get("origin")

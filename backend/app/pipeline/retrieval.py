@@ -23,9 +23,14 @@ from app.llm.prompts import p6
 
 logger = logging.getLogger("prohori.retrieval")
 
-_CACHE_FILE = Path("backend/app/pipeline/models/kb_chunks.joblib")
-if not _CACHE_FILE.exists() and Path("app/pipeline/models/kb_chunks.joblib").exists():
-    _CACHE_FILE = Path("app/pipeline/models/kb_chunks.joblib")
+_CACHE_FILE = Path(__file__).resolve().parent / "models" / "kb_chunks.joblib"
+if (
+    not _CACHE_FILE.exists()
+    and Path("backend/app/pipeline/models/kb_chunks.joblib").exists()
+):
+    _CACHE_FILE = Path("backend/app/pipeline/models/kb_chunks.joblib").resolve()
+elif not _CACHE_FILE.exists() and Path("app/pipeline/models/kb_chunks.joblib").exists():
+    _CACHE_FILE = Path("app/pipeline/models/kb_chunks.joblib").resolve()
 
 
 def compute_deterministic_vector(text: str, dim: int = 1024) -> list[float]:
@@ -93,7 +98,12 @@ class RetrievalEngine:
 
         if chunks is not None:
             self.chunks = chunks
-        elif _CACHE_FILE.exists():
+        else:
+            self.reload_chunks()
+
+    def reload_chunks(self) -> None:
+        """Reload chunks from disk cache."""
+        if _CACHE_FILE.exists():
             try:
                 data = joblib.load(_CACHE_FILE)
                 self.chunks = data.get("chunks", [])
@@ -227,9 +237,10 @@ class RetrievalEngine:
             chunk = self.chunks[idx]
             results.append(
                 {
-                    "code": chunk["document_code"],
+                    "code": chunk.get("document_code") or chunk.get("code", ""),
                     "title": chunk["title"],
                     "text": chunk["content"],
+                    "content": chunk["content"],
                     "scam_type_id": chunk.get("scam_type_id"),
                     "rrf_score": round(score, 5),
                 }

@@ -40,7 +40,8 @@ async def api_key(db: AsyncSession) -> tuple[str, ApiKey]:
         rate_limit_per_min=60,
     )
     db.add(k)
-    await db.flush()
+    await db.commit()
+    await db.refresh(k)
     return raw_key, k
 
 
@@ -138,8 +139,9 @@ async def test_api_key_auth(
     assert res.status_code == 200
 
     # Key without checks:write scope -> 403
+    await db.refresh(key_record)
     key_record.scopes = ["cases:read"]
-    await db.flush()
+    await db.commit()
 
     res_forbidden = await client.post(
         "/api/v1/check-message",
