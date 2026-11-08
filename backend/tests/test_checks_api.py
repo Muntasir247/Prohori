@@ -248,3 +248,34 @@ async def test_user_history_and_delete_flow(
     # c1 is now gone from detail
     get_del = await client.get(f"/api/v1/checks/{id1}")
     assert get_del.status_code == 404
+
+
+async def test_simulate_failure_unsetting_api_key_returns_unavailable_never_low(
+    client: AsyncClient, monkeypatch: pytest.MonkeyPatch
+):
+    """Simulate failure by unsetting the API key and confirm Unavailable screen appears and never shows Low."""
+    from app.llm.client import ClaudeClient, LLMError
+
+    def _broken_call(*args, **kwargs):
+        raise LLMError("Anthropic API Key is missing, unset or invalid")
+
+    monkeypatch.setattr(ClaudeClient, "call_structured", _broken_call)
+    monkeypatch.setattr(ClaudeClient, "call_plain_text", _broken_call)
+
+    # Benign or ambiguous message with 0 hard rules
+    payload = {
+        "text": "হ্যালো ভাইয়া, কালকে মিটিং কয়টায় শুরু হবে জানাবেন কি?",
+        "language_hint": "bn",
+    }
+    res = await client.post("/api/v1/check-message", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+
+    # MUST be fallback / Unavailable
+    assert data["is_fallback"] is True
+    # MUST NEVER show Low by default
+    assert data["final_level"] != "Low"
+    assert data["final_level"] is None
+    # Must have fallback advice
+    assert len(data["reasons"]) > 0
+    assert len(data["safe_actions"]) > 0

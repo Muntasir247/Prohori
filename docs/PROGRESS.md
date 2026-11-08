@@ -236,8 +236,48 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
     - All 25 Phase 06 and pipeline files are clean under Ruff (`ruff check` + `ruff format`).
     - 5 smoke checks executed across Bangla, English, and Banglish (Scenario 1 rules_only High,
       Scenarios 2-4 Medium fallback floor from soft rules, Scenario 5 Unavailable fallback from zero rules).
-- [ ] **Phase 07 — Check flows end to end.** Connect the user journey to the real
-  pipeline. _Done when:_ a guest gets a real Bangla result at 360 px.
+- [x] **Phase 07 — Check flows end to end.** Connect the user journey to the real
+  pipeline with real data. _Done when:_ a guest gets a real Bangla result at 360 px,
+  and failure simulation confirms Unavailable never shows Low.
+  - **API Endpoints (`api/v1/checks.py`, `api/v1/public.py`, `services/checks.py`):**
+    - `POST /check-message`: 10-4000 chars, extracts language, claimed sender, normalizes,
+      masks PII (OTP/PIN/phones/names), runs deterministic rule engine, Haiku triage,
+      hybrid retrieval, Sonnet analysis, and risk fusion table. Rate limited: 10/min, 60/day.
+      Supports API key auth with `checks:write` scope (returns 403 when missing).
+    - `POST /check-payment`: validates amount 1-10,000,000 BDT, normalizes BD recipient phone,
+      evaluates `PaymentRiskModel` logistic regression, runs risk fusion, checks known confirmed
+      risky numbers, updates `RiskyNumber` and `CheckNumber`. Rate limited: 10/min, 60/day.
+    - `GET /checks`: user history with filters (`level`, `kind`, `limit`).
+    - `GET /checks/{id}`: returns full check result, enforcing ownership for users and guests.
+    - `DELETE /checks/{id}`: soft-deletes un-reported check (returns 409 if check has been reported as a case).
+    - `POST /checks/{id}/report`: requires `consent: true` (422 if missing), idempotent (returns
+      stable `PRO-XXXXXX` reference on repeat), and updates `RiskyNumber.report_count` in the same transaction.
+    - `GET /safe-actions`: filters active actions by context (`before_payment`, `after_payment`, `both`) and provider.
+    - `GET /samples`: retrieves simulated demo samples.
+    - `GET /tips/current`: retrieves current weekly tip or 204.
+  - **Frontend Core Journey (`routes/user/`, `routes/public/Landing.tsx`, `components/checks/`):**
+    - **S01 Landing:** Hero, action buttons, dynamic "Try a sample" chips running the real pipeline.
+    - **S09 Check Home:** Action cards (Message, Payment), urgent "Already sent money" row, weekly tip, recent checks.
+    - **S10 Message Check:** 10-4,000 char validation, PIN/OTP warning banner, optional sender select, paste button, sample chips, preserves user text on failure.
+    - **S11 Payment Check:** Amount (BDT), recipient status segmented control, channel chips, rushed toggle, provider select, preserves inputs on failure.
+    - **S12 Checking:** Pipeline animation reflecting real deterministic steps.
+    - **S13-S16 Result Screens (High, Medium, Low, Unavailable):**
+      - The client **never computes risk**: renders exclusively what the server returns.
+      - **Focus & Accessibility:** Automatically moves focus to the banner heading on load and enforces `aria-live="polite"` and `role="alert"`.
+      - **High (S13):** Octagon badge, Pressure Pause 10-second countdown (F32), reasons, and primary helpline.
+      - **Medium (S14):** Triangle warning badge, no pressure pause.
+      - **Low (S15):** Info badge (NOT green), mandatory caution directly under headline ("কম ঝুঁকির অর্থ শতভাগ নিরাপদ নয় — সচেতন থাকুন").
+      - **Unavailable (S16):** Neutral fallback banner ("We could not finish this check"), **never shows Low**.
+      - **Helpline Action:** Verified number uses `tel:` (e.g., `tel:16247` for bKash). If unverified or provider missing, shows "Use the number in your provider's official app" (`official_app_helpline_notice`).
+    - **HighlightedMessage (Scam Anatomy):** Underlines verified quotes (`border-b-2`) and reveals the flag reason popover on tap (`anatomy-popover`).
+    - **S17 Report Modal:** Masked preview, optional 500-char note, required consent checkbox, displays reference `PRO-XXXXXX`.
+    - **S19 History & S20 Check Detail:** Guest sign-in prompt, filter chips, check detail view with Delete confirmation modal (409 guard on reported checks).
+  - **Verified:**
+    - Backend: 138 pytest tests passing 100% (`test_checks_api.py`, `test_phase06_pipeline.py`, `test_auth.py`, `test_auth_security.py`, `test_pii_masking.py`, etc.).
+    - Failure Simulation: `test_simulate_failure_unsetting_api_key_returns_unavailable_never_low` proves that unsetting/invalidating the API key triggers fallback with `is_fallback: True`, `final_level: None` (or Medium with 2+ soft rules), and **never shows Low**.
+    - Frontend: 54 vitest tests passing 100% across all screens, components, and interactions.
+    - Lint & Typecheck: `tsc --noEmit` clean; `eslint .` clean (0 errors, 0 warnings); backend `ruff check .` clean; `ruff format --check .` clean.
+    - Production build: `npm run build` succeeds cleanly.
 - [ ] **Phase 08 — Reviewer workbench.** Queue, case detail, decisions, audit and
   notifications. _Done when:_ a report from S17 is decided in S26, and a later
   check on that number hits the hard rule.

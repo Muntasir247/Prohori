@@ -57,7 +57,7 @@ export default function History() {
               to="/login"
               className="rounded-xl bg-accent px-5 py-2.5 text-xs font-bold text-bg shadow hover:bg-accent/90"
             >
-              {t("auth.login")}
+              {t("auth.sign_in")}
             </Link>
             <Link
               to="/check"
