@@ -702,6 +702,8 @@ async def _write(data: dict[str, list[dict[str, Any]]]) -> dict[str, int]:
 
     engine = get_engine()
     async with engine.begin() as conn:
+        from app.models import Base
+        await conn.run_sync(Base.metadata.create_all)
         await _insert_scam_types(conn, text, data["scam_types"])
         await _insert_users(conn, text, data["users"])
         await _insert_samples(conn, text, data["samples"])
