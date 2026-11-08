@@ -23,6 +23,7 @@ from app.logging_config import configure_logging, get_logger
 from app.middleware.api_key import ApiKeyMiddleware
 from app.middleware.request_id import RequestContextMiddleware
 from app.middleware.security_headers import SecurityHeadersMiddleware
+from app.sentry import init_sentry
 
 _logger = get_logger("prohori")
 
@@ -68,6 +69,7 @@ async def _lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     settings = get_settings()
     configure_logging(settings.log_level)
+    init_sentry(settings)
 
     app = FastAPI(
         title="Prohori API",

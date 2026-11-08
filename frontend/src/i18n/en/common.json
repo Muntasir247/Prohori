@@ -6,7 +6,10 @@
   "common": {
     "back": "Back",
     "cancel": "Cancel",
-    "deleting": "Deleting…"
+    "deleting": "Deleting…",
+    "last_updated": "Last updated: ",
+    "refresh": "Refresh",
+    "delete": "Delete"
   },
   "home": {
     "title": "Prohori is running",
@@ -40,7 +43,8 @@
     "promise_review_title": "Independent analysis",
     "promise_review_desc": "Transparent analysis combining verified rules and intelligence.",
     "promise_helpline_title": "Verified official helplines",
-    "promise_helpline_desc": "Direct tel links only for officially verified government and provider helplines."
+    "promise_helpline_desc": "Direct tel links only for officially verified government and provider helplines.",
+    "footer_simulated_notice": "Notice: Prototype operating with simulated data only (simulated-v1)."
   },
   "check": {
     "title": "Check a message",
@@ -90,7 +94,8 @@
     "rushed_label": "Are they rushing you to pay quickly?",
     "message_box_label": "Accompanying message (optional)",
     "message_box_placeholder": "Any text or instructions given...",
-    "submit_cta": "Check payment"
+    "submit_cta": "Check payment",
+    "optional": "Optional"
   },
   "checking": {
     "title": "Checking in progress…",
@@ -157,7 +162,8 @@
     "success_title": "Report submitted",
     "success_note": "Thank you! Your report helps protect others from fraud.",
     "done": "Done",
-    "error_failed": "Could not submit report. Please try again."
+    "error_failed": "Could not submit report. Please try again.",
+    "optional": "Optional"
   },
   "history": {
     "title": "My Check History",
@@ -423,5 +429,38 @@
     "call_cyber_police": "Call CID Cyber Police (01320010148)",
     "offline_mode": "Offline mode active",
     "offline_note": "This emergency guide is saved and available without an internet connection."
+  },
+  "risk": {
+    "high": "High Risk",
+    "medium": "Medium Risk",
+    "low": "Low Risk"
+  },
+  "admin": {
+    "nav_knowledge": "Knowledge Base",
+    "nav_safe_actions": "Safe Actions",
+    "nav_quality": "Quality & Eval",
+    "nav_users": "User Management",
+    "nav_api_keys": "API Keys",
+    "nav_audit": "Audit Log",
+    "api_keys_title": "Partner API Keys",
+    "api_keys_subtitle": "Manage programmatic access keys for partner integrations.",
+    "new_api_key": "Create API Key",
+    "audit_title": "System Audit Log",
+    "audit_subtitle": "Append-only record of administrative and reviewer changes.",
+    "knowledge_title": "Scam Knowledge Base",
+    "knowledge_subtitle": "Manage verified fraud patterns, vector embeddings, and documents.",
+    "new_pattern": "Add New Pattern",
+    "search_patterns": "Search patterns...",
+    "all_scam_types": "All Scam Types",
+    "all_languages": "All Languages",
+    "all_statuses": "All Statuses",
+    "quality_title": "Quality & Evaluation Harness",
+    "quality_subtitle": "Evaluate prompt versions, precision/recall metrics, and safety gates.",
+    "safe_actions_title": "Safe Actions & Helplines",
+    "safe_actions_subtitle": "Manage verified next steps and official hotlines.",
+    "new_safe_action": "New Safe Action",
+    "users_title": "User & Role Management",
+    "users_subtitle": "Manage team roles, staff invitations, and access permissions.",
+    "invite_user": "Invite Reviewer / Admin"
   }
 }

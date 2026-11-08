@@ -92,3 +92,25 @@ def test_production_with_resend_starts_with_secure_cookies(monkeypatch):
         RESEND_API_KEY="re_x",
     )  # type: ignore[arg-type]
     assert settings.cookie_secure is True
+
+
+def test_cors_exact_origin_validation(monkeypatch):
+    _clear_required(monkeypatch)
+    # Valid extra origins
+    s1 = Settings(
+        **_BASE,
+        CORS_ORIGINS="https://app.prohori.com, https://admin.prohori.com",
+    )  # type: ignore[arg-type]
+    assert "https://app.prohori.com" in s1.cors_origins
+    assert "https://admin.prohori.com" in s1.cors_origins
+    assert "*" not in s1.cors_origins
+
+    # Wildcard is strictly forbidden
+    s_wildcard = Settings(**_BASE, CORS_ORIGINS="*")  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="wildcard"):
+        _ = s_wildcard.cors_origins
+
+    # Origin without scheme is forbidden
+    s_invalid = Settings(**_BASE, CORS_ORIGINS="evil.com")  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="Must start with http"):
+        _ = s_invalid.cors_origins

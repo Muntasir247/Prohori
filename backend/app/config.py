@@ -57,6 +57,7 @@ class Settings(BaseSettings):
         default="console", alias="EMAIL_DRIVER"
     )
     app_origin: str = Field(default="http://localhost:5173", alias="APP_ORIGIN")
+    allowed_cors_origins: str | None = Field(default=None, alias="CORS_ORIGINS")
     sentry_dsn: str | None = Field(default=None, alias="SENTRY_DSN")
     daily_llm_spend_cap_usd: float = Field(
         default=5.0, alias="DAILY_LLM_SPEND_CAP_USD", ge=0
@@ -95,8 +96,28 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> list[str]:
-        """Exact allowed origins for CORS (never a wildcard)."""
-        return [self.app_origin]
+        """Exact allowed origins for CORS (never a wildcard).
+
+        Ensures exact-origin matching per Doc 02 Section 11, rejecting
+        wildcard origins ('*') and requiring explicit protocol and host.
+        """
+        origins = [self.app_origin]
+        if self.allowed_cors_origins:
+            for item in self.allowed_cors_origins.split(","):
+                item = item.strip()
+                if not item:
+                    continue
+                if item == "*":
+                    raise ValueError("CORS wildcard '*' is strictly forbidden")
+                if not item.startswith(("http://", "https://")):
+                    raise ValueError(
+                        f"Invalid CORS origin: {item}. Must start with http:// or https://"
+                    )
+                origins.append(item.rstrip("/"))
+
+        # Return unique exact origins, strictly never containing '*'
+        clean_origins = list(dict.fromkeys(o for o in origins if o and o != "*"))
+        return clean_origins
 
     @property
     def is_production(self) -> bool:

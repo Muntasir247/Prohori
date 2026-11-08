@@ -16,6 +16,7 @@ from app.models.base import Base
 from app.models.check import (
     Campaign,
     Case,
+    CaseNote,
     Check,
     CheckEmbedding,
     CheckNumber,
@@ -45,6 +46,7 @@ __all__ = [
     "ScamType",
     "Campaign",
     "Case",
+    "CaseNote",
     "DailyAggregate",
     "CheckEmbedding",
     "Share",

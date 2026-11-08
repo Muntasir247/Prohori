@@ -27,6 +27,7 @@ const ReviewOverview = lazy(() => import("@/routes/review/Overview"));
 const RepeatNumbers = lazy(() => import("@/routes/review/RepeatNumbers"));
 const Campaigns = lazy(() => import("@/routes/review/Campaigns"));
 const Reports = lazy(() => import("@/routes/review/Reports"));
+const CaseDetail = lazy(() => import("@/routes/review/CaseDetail"));
 
 // Admin screens load only for administrators (Doc 01 S30-S35, Doc 02 Section 6).
 const AdminKnowledge = lazy(() => import("@/routes/admin/Knowledge"));
@@ -115,6 +116,16 @@ export const router = createBrowserRouter([
       <RequireRole roles={["reviewer", "admin"]}>
         <Suspense fallback={null}>
           <Reports />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/review/cases/:id",
+    element: (
+      <RequireRole roles={["reviewer", "admin"]}>
+        <Suspense fallback={null}>
+          <CaseDetail />
         </Suspense>
       </RequireRole>
     ),

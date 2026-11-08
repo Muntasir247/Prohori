@@ -17,7 +17,8 @@ PY := $(shell [ -x backend/.venv/bin/python ] && echo backend/.venv/bin/python \
 	|| echo python))
 
 .PHONY: help dev dev-backend dev-frontend install test test-backend test-frontend \
-	lint lint-backend lint-frontend migrate seed eval nightly
+	lint lint-backend lint-frontend audit audit-backend audit-frontend \
+	migrate seed eval nightly
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?##' $(MAKEFILE_LIST) | \
@@ -53,6 +54,14 @@ lint-backend: ## Run ruff on the backend
 
 lint-frontend: ## Run eslint and the TypeScript type check
 	cd frontend && npm run lint && npm run typecheck
+
+audit: audit-backend audit-frontend ## Run security audits (pip-audit, npm audit)
+
+audit-backend: ## Run pip-audit on backend dependencies
+	cd backend && $(PY) -m pip_audit --desc on -r requirements.txt
+
+audit-frontend: ## Run npm audit on frontend dependencies
+	cd frontend && npm audit
 
 migrate: ## Apply Alembic migrations (needs a running database)
 	cd backend && $(PY) -m alembic upgrade head

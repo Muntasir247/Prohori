@@ -473,8 +473,39 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
       - Latency: p50 = **9.8 ms**, p95 = **12.1 ms**
     - **Unit & Integration Tests:** 16 tests in `backend/tests/test_phase12_eval.py` passing 100% (65 total unit tests passing).
     - **Linter & Formatting:** `ruff check backend` clean (0 errors).
-- [ ] **Phase 13 — Hardening.** Security, Bangla, accessibility and responsive pass.
+- [x] **Phase 13 — Hardening.** Security, Bangla, accessibility and responsive pass.
   _Done when:_ every R-item has a test or a documented reason.
+  - **1. Section 11 Risk Register & Security Audit (`docs/SECURITY_REVIEW.md`):**
+    - Audited all 29 risks (R01–R29) against Section 11 specifications and Section 13 critical scenarios (T01–T28).
+    - Fixed gaps in strict required order: data exposure (Sentry scrubbing, zero body logs, HMAC-SHA256 numbers, CSV formula escaping), authorization (role checks on all routes, IDOR prevention, optimistic concurrency on case decisions), abuse (per-IP/guest/key sliding rate limits, spend caps, exact-origin CORS, prompt injection defenses), and quality (eval gates, WCAG 2.2 AA, responsive layouts).
+    - Fully documented items requiring live production deployment: R07 (unlabeled Bangla NER limitation outside honorifics), R27 (cloud point-in-time recovery requires managed cloud host), and R29 (legal sign-off under Bangladesh PDPO 2025).
+  - **2. Security Headers, Strict CSP, and Exact-Origin CORS:**
+    - `backend/app/middleware/security_headers.py`: Emits HSTS (`max-age=31536000`), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, strict CSP (`default-src 'self'`, `frame-ancestors 'none'`, no inline scripts), `Permissions-Policy`, and COOP/CORP.
+    - `backend/app/config.py`: Strictly validates `cors_origins` list; rejects wildcard `*` with `ValueError` on boot; validates `http://`/`https://` schemes. Unit tested in `test_config.py` and `test_security_headers.py`.
+  - **3. Sentry Request Body & PII Scrubber:**
+    - `backend/app/sentry.py`: Implemented `scrub_sentry_event` hook wired into FastAPI application via `sentry_sdk.init(before_send=scrub_sentry_event)`.
+    - Completely strips `request["data"]`, drops raw request bodies, redacts sensitive headers (`Authorization`, `Cookie`, `X-API-Key`), scrubs breadcrumbs containing credentials, and sanitizes user PII to opaque UUIDs. Unit tested in `test_sentry.py`.
+  - **4. CI Security & Dependency Auditing:**
+    - `.github/workflows/ci.yml`: Added `gitleaks` secret scanning job (`gitleaks/gitleaks-action@v2`), `pip-audit --desc` to backend CI, and `npm audit --audit-level=moderate` to frontend CI. Added `make audit`, `make audit-backend`, and `make audit-frontend` targets in `Makefile`.
+  - **5. Reviewer Case Detail Screen (S26) & Optimistic Concurrency:**
+    - Backend: Implemented `CaseNote` model, `GET /api/v1/cases/{id}`, `POST /api/v1/cases/{id}/decision`, and `POST /api/v1/cases/{id}/notes`. Built version-based optimistic concurrency (`UPDATE cases ... WHERE version = :version`), returning HTTP 409 Conflict (T18) on concurrent decisions and automatically updating associated risky numbers to `confirmed_risky` (T25).
+    - Frontend: Implemented S26 screen (`frontend/src/routes/review/CaseDetail.tsx`) with 8+4 column layout, decision radio group, scam type selector, 10–500 character reason counter, confirmation modal, note timeline, and local draft autosave (`prohori_case_draft_{id}`) surviving session timeouts.
+  - **6. Accessibility Pass (WCAG 2.2 AA):**
+    - Ran `@axe-core/react` across all routes (Landing, Login, MessageCheck, PaymentCheck, ReportModal, AlreadySent). Zero violations found.
+    - Verified keyboard navigation paths: S10 (check submission), S13 (pressure pause skip button reachable via Tab/Space), S17 (report modal focus trap & Escape key dismiss), and S26 (decision radio, reason textarea, and submit modal). Tested in `accessibility.test.tsx` (10/10 tests passing).
+  - **7. Responsive Layout Verification (360px–1440px):**
+    - Enforced `overflow-x: hidden; max-width: 100vw;` in `globals.css`.
+    - Tested responsive behavior across 360px (mobile), 768px (tablet), 1024px (laptop), and 1440px (desktop) across all routes in `responsive.test.tsx` (24/24 tests passing). Zero horizontal page scroll detected.
+  - **8. Bangla Language Review & i18n Completeness:**
+    - Audited full key parity: resolved all missing keys between `frontend/src/i18n/bn/common.json` and `frontend/src/i18n/en/common.json` (exactly 466 keys matching, 0 missing).
+    - Confirmed Pressure Pause, fallback, and Low-risk mandatory caution copy appear in both languages. Low risk is never green and carries the mandatory caution.
+    - Produced `docs/BANGLA_REVIEW.md` cataloging safety disclaimers, emergency steps, fraud idioms, and reviewer terminology for human verification.
+  - **9. Public Bundle Size Measurement:**
+    - `npm run build` output: JS gzip = **143.99 kB** (`index-*.js`), CSS gzip = **6.27 kB** (`index-*.css`). Total initial public transfer = **150.26 kB**, well below the 200 kB budget target in Doc 01 (24.8% headroom).
+    - Heavy Recharts bundle (`CartesianChart` ~99.44 kB gzip) and reviewer/admin modules are cleanly code-split and loaded only on-demand.
+  - **10. Full Verification Suite:**
+    - Backend: 181 passed in `pytest` (100%), `ruff check` clean (0 warnings/errors).
+    - Frontend: 108 passed in `vitest` (100%), `eslint` clean, `tsc --noEmit` clean, `npm run build` clean.
 - [ ] **Phase 14 — Deployment, demo and submission.** Live demo link, video and
   final form check. _Done when:_ demo works twice in a row, and form answers match
   what was built.

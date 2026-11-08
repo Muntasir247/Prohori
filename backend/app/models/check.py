@@ -223,6 +223,29 @@ class Case(Base):
     check = relationship("Check", lazy="joined")
     scam_type = relationship("ScamType", lazy="joined")
     campaign = relationship("Campaign", back_populates="cases")
+    notes = relationship(
+        "CaseNote",
+        back_populates="case",
+        cascade="all, delete-orphan",
+        order_by="desc(CaseNote.created_at)",
+    )
+
+
+class CaseNote(Base):
+    __tablename__ = "case_notes"
+
+    id: Mapped[UUID] = uuid_pk()
+    case_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("cases.id", ondelete="CASCADE"), nullable=False
+    )
+    author_id: Mapped[UUID | None] = mapped_column(
+        Uuid(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    note: Mapped[str] = mapped_column(String(2000), nullable=False)
+    created_at: Mapped[datetime] = created_at_col()
+
+    case = relationship("Case", back_populates="notes")
+    author = relationship("User", lazy="joined")
 
 
 class Share(Base):

@@ -21,9 +21,18 @@ from app.errors import AppError
 from app.models.api_key import ApiKey
 from app.models.audit import AuditEvent
 from app.models.base import utcnow
-from app.models.check import Case, Check, CheckNumber, RiskyNumber, ScamType
+from app.models.check import Case, CaseNote, Check, CheckNumber, RiskyNumber, ScamType
 from app.models.user import User
-from app.schemas.cases import CaseListResponse, CaseSummary, ScamTypeSummary
+from app.schemas.cases import (
+    CaseDecisionIn,
+    CaseDetailOut,
+    CaseListResponse,
+    CaseNoteIn,
+    CaseNoteOut,
+    CaseSummary,
+    CheckNumberDetail,
+    ScamTypeSummary,
+)
 from app.security.tokens import hash_token
 
 router = APIRouter(prefix="/cases", tags=["cases"])
@@ -348,4 +357,271 @@ async def export_cases_csv(
         csv_generator(),
         media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+async def _get_case_or_404(session: DbSession, case_id_or_ref: str) -> Case:
+    try:
+        from uuid import UUID
+
+        val_uuid = UUID(case_id_or_ref)
+        stmt = select(Case).where(
+            (Case.id == val_uuid) | (Case.reference == case_id_or_ref)
+        )
+    except ValueError:
+        stmt = select(Case).where(Case.reference == case_id_or_ref)
+
+    case = (await session.execute(stmt)).scalar_one_or_none()
+    if not case:
+        raise AppError("not_found", status=404, message_key="errors.case_not_found")
+    return case
+
+
+@router.get(
+    "/{id}",
+    response_model=CaseDetailOut,
+    summary="Get case details (S26)",
+)
+async def get_case_detail(
+    id: str,
+    user: ReviewerUser,
+    session: DbSession,
+) -> CaseDetailOut:
+    """Return full case details for reviewer workbench (Doc 01 S26)."""
+    case = await _get_case_or_404(session, id)
+    check = case.check
+
+    # Numbers
+    num_query = (
+        select(CheckNumber.role, RiskyNumber)
+        .join(RiskyNumber, CheckNumber.number_id == RiskyNumber.id)
+        .where(CheckNumber.check_id == check.id)
+    )
+    num_rows = (await session.execute(num_query)).all()
+    numbers = [
+        CheckNumberDetail(
+            role=role,
+            masked_display=rn.masked_display,
+            status=rn.status,
+            report_count=rn.report_count,
+            check_count=rn.check_count,
+        )
+        for role, rn in num_rows
+    ]
+
+    # Notes
+    notes_query = (
+        select(CaseNote)
+        .where(CaseNote.case_id == case.id)
+        .order_by(desc(CaseNote.created_at))
+    )
+    notes_rows = (await session.execute(notes_query)).scalars().all()
+    notes = [
+        CaseNoteOut(
+            id=n.id,
+            case_id=n.case_id,
+            author_id=n.author_id,
+            author_name=n.author.display_name if n.author else None,
+            note=n.note,
+            created_at=n.created_at,
+        )
+        for n in notes_rows
+    ]
+
+    # Timeline from audit_events
+    timeline_query = (
+        select(AuditEvent)
+        .where(
+            AuditEvent.entity_type == "case",
+            AuditEvent.entity_id == str(case.id),
+        )
+        .order_by(desc(AuditEvent.created_at))
+    )
+    timeline_rows = (await session.execute(timeline_query)).scalars().all()
+    timeline = [
+        {
+            "id": str(t.id),
+            "action": t.action,
+            "actor_id": str(t.actor_id) if t.actor_id else None,
+            "created_at": t.created_at.isoformat(),
+            "before": t.before,
+            "after": t.after,
+        }
+        for t in timeline_rows
+    ]
+
+    # Scam type
+    st = case.scam_type
+    st_summary = (
+        ScamTypeSummary(
+            id=st.id,
+            slug=st.slug,
+            name_en=st.name_en,
+            name_bn=st.name_bn,
+        )
+        if st
+        else None
+    )
+
+    return CaseDetailOut(
+        id=case.id,
+        reference=case.reference,
+        status=case.status,
+        version=case.version,
+        created_at=case.created_at,
+        decided_at=case.decided_at,
+        decided_by=case.decided_by,
+        decision_reason=case.decision_reason,
+        reporter_note=case.reporter_note,
+        reporter_consent_at=case.reporter_consent_at,
+        scam_type=st_summary,
+        check={
+            "id": str(check.id),
+            "kind": check.kind,
+            "final_level": check.final_level,
+            "rule_hits": check.rule_hits,
+            "reasons": check.reasons,
+            "red_flags": check.red_flags,
+            "safe_actions": check.safe_action_ids,
+            "masked_text": check.masked_text,
+            "route": check.route,
+            "latency_ms": check.latency_ms,
+            "is_fallback": check.is_fallback,
+            "prompt_version": check.prompt_version,
+            "model_name": check.model_name,
+            "risk_score": (
+                float(check.model_prob) if check.model_prob is not None else None
+            ),
+            "created_at": check.created_at.isoformat() if check.created_at else None,
+        },
+        numbers=numbers,
+        notes=notes,
+        timeline=timeline,
+    )
+
+
+@router.post(
+    "/{id}/decision",
+    response_model=CaseDetailOut,
+    summary="Record reviewer decision with optimistic concurrency (S26, R09)",
+)
+async def record_case_decision(
+    id: str,
+    body: CaseDecisionIn,
+    user: ReviewerUser,
+    session: DbSession,
+) -> CaseDetailOut:
+    """Record reviewer decision with version-based optimistic locking (R09, T18).
+
+    If another reviewer modified this case, returns 409 Conflict.
+    When confirmed as scam, updates associated RiskyNumbers to confirmed_risky (T25).
+    """
+    case = await _get_case_or_404(session, id)
+
+    # Concurrency check (R09, T18)
+    if case.version != body.version:
+        raise AppError(
+            "conflict",
+            status=409,
+            message_key="errors.case_version_conflict",
+        )
+
+    before_state = {
+        "status": case.status,
+        "version": case.version,
+        "scam_type_id": case.scam_type_id,
+        "decided_at": case.decided_at.isoformat() if case.decided_at else None,
+    }
+
+    case.status = body.decision
+    case.decision_reason = body.reason
+    case.decided_by = user.id
+    case.decided_at = utcnow()
+    case.version += 1
+    if body.scam_type_id is not None:
+        case.scam_type_id = body.scam_type_id
+
+    # Update associated numbers status if applicable
+    if body.decision == "confirmed_scam":
+        num_query = select(RiskyNumber).join(
+            CheckNumber, CheckNumber.number_id == RiskyNumber.id
+        ).where(CheckNumber.check_id == case.check_id)
+        risky_numbers = (await session.execute(num_query)).scalars().all()
+        for rn in risky_numbers:
+            rn.status = "confirmed_risky"
+    elif body.decision == "not_scam":
+        num_query = select(RiskyNumber).join(
+            CheckNumber, CheckNumber.number_id == RiskyNumber.id
+        ).where(CheckNumber.check_id == case.check_id)
+        risky_numbers = (await session.execute(num_query)).scalars().all()
+        for rn in risky_numbers:
+            if rn.status != "confirmed_risky":
+                rn.status = "cleared"
+
+    after_state = {
+        "status": case.status,
+        "version": case.version,
+        "decision": body.decision,
+        "reason": body.reason,
+        "decided_by": str(user.id),
+        "decided_at": case.decided_at.isoformat(),
+    }
+
+    # Record immutable audit event
+    audit = AuditEvent(
+        actor_id=user.id,
+        actor_role=user.role,
+        action="case.decision",
+        entity_type="case",
+        entity_id=str(case.id),
+        before=before_state,
+        after=after_state,
+    )
+    session.add(audit)
+    await session.commit()
+
+    return await get_case_detail(str(case.id), user, session)
+
+
+@router.post(
+    "/{id}/notes",
+    response_model=CaseNoteOut,
+    summary="Add note to case (S26)",
+)
+async def add_case_note(
+    id: str,
+    body: CaseNoteIn,
+    user: ReviewerUser,
+    session: DbSession,
+) -> CaseNoteOut:
+    """Add a reviewer note to a case and log to audit."""
+    case = await _get_case_or_404(session, id)
+
+    note = CaseNote(
+        case_id=case.id,
+        author_id=user.id,
+        note=body.note,
+    )
+    session.add(note)
+    await session.flush()
+
+    audit = AuditEvent(
+        actor_id=user.id,
+        actor_role=user.role,
+        action="case.add_note",
+        entity_type="case",
+        entity_id=str(case.id),
+        before=None,
+        after={"note_id": str(note.id), "note_preview": body.note[:50]},
+    )
+    session.add(audit)
+    await session.commit()
+
+    return CaseNoteOut(
+        id=note.id,
+        case_id=note.case_id,
+        author_id=note.author_id,
+        author_name=user.display_name,
+        note=note.note,
+        created_at=note.created_at,
     )
