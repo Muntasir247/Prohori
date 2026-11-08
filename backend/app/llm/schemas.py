@@ -93,3 +93,24 @@ class PaymentExplanationResult(BaseModel):
     next_step_ids: list[str] = Field(
         ..., description="Subset of allowed safe-action IDs"
     )
+
+
+class GraderResult(BaseModel):
+    """Output schema for regression grading step (Prompt P5)."""
+
+    label_match: bool = Field(
+        ...,
+        description=(
+            "Whether predicted risk_level matches human label "
+            "(scam->High/Medium, genuine->Low)"
+        ),
+    )
+    clarity: int = Field(..., ge=1, le=5, description="Clarity rating from 1 to 5")
+    correctness: int = Field(
+        ..., ge=1, le=5, description="Correctness rating from 1 to 5"
+    )
+    tone: int = Field(..., ge=1, le=5, description="Tone rating from 1 to 5")
+    unsafe_flags: list[str] = Field(
+        default_factory=list,
+        description="List of detected unsafe advice flags",
+    )

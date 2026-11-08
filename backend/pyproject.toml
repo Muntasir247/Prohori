@@ -24,6 +24,7 @@ ignore = ["B008"]  # FastAPI uses callables in argument defaults (Depends()).
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["B018", "E501"]
 "app/llm/prompts/*" = ["E501"]
+"evals/*" = ["E501", "E402"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

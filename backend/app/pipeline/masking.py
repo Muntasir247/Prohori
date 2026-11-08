@@ -247,6 +247,17 @@ def _build_bd_account_recognizer() -> PatternRecognizer:
         # Account numbers typically 8 to 16 digits
         Pattern(name="account_ascii", regex=r"\b\d{8,16}\b", score=0.55),
         Pattern(name="account_bn", regex=r"\b[০-৯]{8,16}\b", score=0.55),
+        # Hyphenated account numbers (e.g. 104-100-29384)
+        Pattern(
+            name="account_hyphenated",
+            regex=r"\b\d{3,6}-\d{3,6}-\d{4,8}\b",
+            score=0.7,
+        ),
+        Pattern(
+            name="account_bn_hyphenated",
+            regex=r"\b[০-৯]{3,6}-[০-৯]{3,6}-[০-৯]{4,8}\b",
+            score=0.7,
+        ),
     ]
     return PatternRecognizer(
         supported_entity="ACCOUNT_NUMBER",
@@ -279,6 +290,46 @@ def _build_url_query_recognizer() -> PatternRecognizer:
     )
 
 
+def _build_card_recognizer() -> PatternRecognizer:
+    """Recognize 16-digit debit/credit card numbers in ASCII and Bengali digits."""
+    patterns = [
+        Pattern(
+            name="card_ascii",
+            regex=r"\b(?:\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4})\b",
+            score=0.85,
+        ),
+        Pattern(
+            name="card_bangla",
+            regex=r"\b(?:[০-৯]{4}[\s-]?[০-৯]{4}[\s-]?[০-৯]{4}[\s-]?[০-৯]{4})\b",
+            score=0.85,
+        ),
+    ]
+    return PatternRecognizer(
+        supported_entity="CREDIT_CARD",
+        patterns=patterns,
+        name="BDCardRecognizer",
+        supported_language="en",
+    )
+
+
+def _build_passport_recognizer() -> PatternRecognizer:
+    """Recognize passport numbers (e.g. BD-A0928192)."""
+    patterns = [
+        Pattern(
+            name="passport_bd",
+            regex=r"\b(?:BD-[A-Z0-9]{8,10}|[A-Z]{1,2}[0-9]{7,8})\b",
+            score=0.8,
+        ),
+    ]
+    return PatternRecognizer(
+        supported_entity="PASSPORT",
+        patterns=patterns,
+        context=["passport", "পাসপোর্ট"],
+        name="BDPassportRecognizer",
+        supported_language="en",
+    )
+
+
 def _build_bangla_name_recognizer() -> PatternRecognizer:
     """Context-based recognizer for Bangla and English names (Risk R07).
 
@@ -286,16 +337,22 @@ def _build_bangla_name_recognizer() -> PatternRecognizer:
     anchored on common honorifics, prefixes ('নাম:', 'গ্রহীতা:', 'Mr.', 'জনাব', etc.).
     """
     patterns = [
-        # "নাম: রহিম উদ্দিন" or "Name: John Doe" or "গ্রহীতা: করিম খান"
+        # "নাম: রহিম উদ্দিন" or "Name: John Doe" or "Cardholder Name: Tanzeem"
         Pattern(
             name="name_label_context",
-            regex=r"(?i)(?:নাম|গ্রহীতা|প্রাপক|name|recipient)\s*[:=-]\s*([A-Za-z\u0980-\u09FF]+(?:\s+[A-Za-z\u0980-\u09FF]+){1,3})",
+            regex=(
+                r"(?i)(?:নাম|গ্রহীতা|প্রাপক|name|cardholder\s*name|recipient)"
+                r"\s*[:=-]\s*([A-Za-z\u0980-\u09FF]+(?:\s+[A-Za-z\u0980-\u09FF]+){1,3})"
+            ),
             score=0.85,
         ),
         # Honorific prefixes: "জনাব রহিম", "শ্রী সুজন", "বেগম খালেদা", "Md. Rafiq"
         Pattern(
             name="honorific_context",
-            regex=r"(?i)\b(?:জনাব|বেগম|শ্রী|মিঃ|মি.|mr\.|mrs\.|ms\.|md\.|mohammad|most\.)\s+([A-Za-z\u0980-\u09FF]+(?:\s+[A-Za-z\u0980-\u09FF]+){0,2})\b",
+            regex=(
+                r"(?i)\b(?:জনাব|বেগম|শ্রী|মিঃ|মি.|মিসেস|মিস|dr\.|mr\.|mrs\.|ms\.|md\.|mohammad|most\.)"
+                r"\s+([A-Za-z\u0980-\u09FF]+(?:\s+[A-Za-z\u0980-\u09FF]+){0,2})\b"
+            ),
             score=0.8,
         ),
     ]
@@ -331,6 +388,8 @@ def get_analyzer_engine() -> AnalyzerEngine:
         analyzer.registry.add_recognizer(_build_bd_phone_recognizer())
         analyzer.registry.add_recognizer(_build_bd_nid_recognizer())
         analyzer.registry.add_recognizer(_build_bd_account_recognizer())
+        analyzer.registry.add_recognizer(_build_card_recognizer())
+        analyzer.registry.add_recognizer(_build_passport_recognizer())
         analyzer.registry.add_recognizer(_build_url_query_recognizer())
         analyzer.registry.add_recognizer(_build_bangla_name_recognizer())
 
@@ -378,6 +437,8 @@ def mask_text(
         entities=[
             "PHONE_NUMBER",
             "ACCOUNT_NUMBER",
+            "CREDIT_CARD",
+            "PASSPORT",
             "BD_NID",
             "EMAIL_ADDRESS",
             "URL_LINK",
@@ -400,7 +461,9 @@ def mask_text(
     _ENTITY_PRIORITY = {
         "PHONE_NUMBER": 10,
         "BD_NID": 9,
+        "PASSPORT": 9,
         "ACCOUNT_NUMBER": 8,
+        "CREDIT_CARD": 8,
         "EMAIL_ADDRESS": 7,
         "EMAIL": 7,
         "URL_LINK": 6,
@@ -445,9 +508,9 @@ def mask_text(
     def _entity_category(entity_type: str) -> str:
         if entity_type == "PHONE_NUMBER":
             return "PHONE"
-        if entity_type == "ACCOUNT_NUMBER":
+        if entity_type in ("ACCOUNT_NUMBER", "CREDIT_CARD"):
             return "ACCOUNT"
-        if entity_type == "BD_NID":
+        if entity_type in ("BD_NID", "PASSPORT"):
             return "NID"
         if entity_type in ("EMAIL_ADDRESS", "EMAIL"):
             return "EMAIL"

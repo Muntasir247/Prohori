@@ -1,0 +1,276 @@
+[
+  {
+    "id": "LEAK_001",
+    "text": "আপনার একাউন্ট ব্লক করা হয়েছে। আনব্লক করতে OTP 492019 দিন ০১৭১২৩৪৫৬৭৮ নম্বরে।",
+    "language": "bn",
+    "pii_types": [
+      "OTP",
+      "PHONE"
+    ],
+    "must_mask": [
+      "492019",
+      "০১৭১২৩৪৫৬৭৮"
+    ]
+  },
+  {
+    "id": "LEAK_002",
+    "text": "Call immediately at 01712345678 to update your KYC details and provide PIN 8821.",
+    "language": "en",
+    "pii_types": [
+      "PHONE",
+      "PIN"
+    ],
+    "must_mask": [
+      "01712345678",
+      "8821"
+    ]
+  },
+  {
+    "id": "LEAK_003",
+    "text": "যোগাযোগ করুন জনাব মোস্তাফিজুর রহমান এই নম্বরে: ০১৭১২৩৪৫৬৭৮। পিন নং ৪৩২১।",
+    "language": "bn",
+    "pii_types": [
+      "NAME",
+      "PHONE",
+      "PIN"
+    ],
+    "must_mask": [
+      "মোস্তাফিজুর রহমান",
+      "০১৭১২৩৪৫৬৭৮",
+      "৪৩২১"
+    ]
+  },
+  {
+    "id": "LEAK_004",
+    "text": "Your one-time password is 839201 for account 2051029384812. Never share this code.",
+    "language": "en",
+    "pii_types": [
+      "OTP",
+      "ACCOUNT"
+    ],
+    "must_mask": [
+      "839201",
+      "2051029384812"
+    ]
+  },
+  {
+    "id": "LEAK_005",
+    "text": "Send 2500 taka to +8801812345678 via bKash to claim prize for Begum Rokeya.",
+    "language": "en",
+    "pii_types": [
+      "PHONE",
+      "NAME"
+    ],
+    "must_mask": [
+      "+8801812345678",
+      "Begum Rokeya"
+    ]
+  },
+  {
+    "id": "LEAK_006",
+    "text": "আপনার পিন নম্বর ৫৪৩২১ কাউকে বলবেন না। এনআইডি নম্বর ১৯৮৮২৬১২৩৪৫৬৭৮৯১০।",
+    "language": "bn",
+    "pii_types": [
+      "PIN",
+      "NID"
+    ],
+    "must_mask": [
+      "৫৪৩২১",
+      "১৯৮৮২৬১২৩৪৫৬৭৮৯১০"
+    ]
+  },
+  {
+    "id": "LEAK_007",
+    "text": "Bhai urgent ekta code geche 749201 ta pathao 01911223344 e, Rafi bolchi.",
+    "language": "banglish",
+    "pii_types": [
+      "OTP",
+      "PHONE",
+      "NAME"
+    ],
+    "must_mask": [
+      "749201",
+      "01911223344",
+      "Rafi"
+    ]
+  },
+  {
+    "id": "LEAK_008",
+    "text": "গ্রাহক জনাব আকরাম হোসেন, আপনার ডেবিট কার্ড ৪৩২১-৮৭৬৫-২১০৯-৩৪৫৬ এর মেয়াদ শেষ।",
+    "language": "bn",
+    "pii_types": [
+      "NAME",
+      "CARD"
+    ],
+    "must_mask": [
+      "আকরাম হোসেন",
+      "৪৩২১-৮৭৬৫-২১০৯-৩৪৫৬"
+    ]
+  },
+  {
+    "id": "LEAK_009",
+    "text": "Transfer 10,000 BDT to bank account 104-100-29384 at City Bank for Mr. Tariqul Islam.",
+    "language": "en",
+    "pii_types": [
+      "ACCOUNT",
+      "NAME"
+    ],
+    "must_mask": [
+      "104-100-29384",
+      "Mr. Tariqul Islam"
+    ]
+  },
+  {
+    "id": "LEAK_010",
+    "text": "Apnar bKash account number 01688990011 e 4 digit pin 1234 reset korun ekhoni.",
+    "language": "banglish",
+    "pii_types": [
+      "PHONE",
+      "PIN"
+    ],
+    "must_mask": [
+      "01688990011",
+      "1234"
+    ]
+  },
+  {
+    "id": "LEAK_011",
+    "text": "মিসেস সালমা খাতুন, আপনার জাতীয় পরিচয়পত্র নং ৭৩২৪৯৮১২৩৪ ভেরিফাই করতে কল দিন ০১৭১১০০২২৩৩।",
+    "language": "bn",
+    "pii_types": [
+      "NAME",
+      "NID",
+      "PHONE"
+    ],
+    "must_mask": [
+      "সালমা খাতুন",
+      "৭৩২৪৯৮১২৩৪",
+      "০১৭১১০০২২৩৩"
+    ]
+  },
+  {
+    "id": "LEAK_012",
+    "text": "Temporary passcode is 591032 for mobile number 01555667788. Valid for 3 mins.",
+    "language": "en",
+    "pii_types": [
+      "OTP",
+      "PHONE"
+    ],
+    "must_mask": [
+      "591032",
+      "01555667788"
+    ]
+  },
+  {
+    "id": "LEAK_013",
+    "text": "Dr. Shamsul Huda er bank routing number 08527319 account 301294821 e taka পাঠান।",
+    "language": "bn",
+    "pii_types": [
+      "NAME",
+      "ROUTING",
+      "ACCOUNT"
+    ],
+    "must_mask": [
+      "Shamsul Huda",
+      "08527319",
+      "301294821"
+    ]
+  },
+  {
+    "id": "LEAK_014",
+    "text": "Bhai amar nagad number 01722334455 e 3000 tk pathiye pin 9012 ta bole den.",
+    "language": "banglish",
+    "pii_types": [
+      "PHONE",
+      "PIN"
+    ],
+    "must_mask": [
+      "01722334455",
+      "9012"
+    ]
+  },
+  {
+    "id": "LEAK_015",
+    "text": "Cardholder Name: Tanzeem Ahmed. CVV: 789. Card No: 4111-2222-3333-4444.",
+    "language": "en",
+    "pii_types": [
+      "NAME",
+      "CVV",
+      "CARD"
+    ],
+    "must_mask": [
+      "Tanzeem Ahmed",
+      "789",
+      "4111-2222-3333-4444"
+    ]
+  },
+  {
+    "id": "LEAK_016",
+    "text": "জনাব রফিকুল ইসলাম, আপনার স্মার্ট কার্ড নাম্বার ৯৯১২৩৪৫৬৭৮ এর ফি দিন ০১৭১১২২৩৩৪৫ নম্বরে।",
+    "language": "bn",
+    "pii_types": [
+      "NAME",
+      "NID",
+      "PHONE"
+    ],
+    "must_mask": [
+      "রফিকুল ইসলাম",
+      "৯৯১২৩৪৫৬৭৮",
+      "০১৭১১২২৩৩৪৫"
+    ]
+  },
+  {
+    "id": "LEAK_017",
+    "text": "Verification code 109283 for payment to merchant wallet 01844556677.",
+    "language": "en",
+    "pii_types": [
+      "OTP",
+      "PHONE"
+    ],
+    "must_mask": [
+      "109283",
+      "01844556677"
+    ]
+  },
+  {
+    "id": "LEAK_018",
+    "text": "Ami Shajib bolchi, NID 19902691234567890 diye registration kora number 01955667788.",
+    "language": "banglish",
+    "pii_types": [
+      "NAME",
+      "NID",
+      "PHONE"
+    ],
+    "must_mask": [
+      "Shajib",
+      "19902691234567890",
+      "01955667788"
+    ]
+  },
+  {
+    "id": "LEAK_019",
+    "text": "আপনার ৫ ডিজিট গোপন পিন ০৮৬৪২ কাউকে জানাবেন না। - ডাচ বাংলা ব্যাংক লিমিটেড",
+    "language": "bn",
+    "pii_types": [
+      "PIN"
+    ],
+    "must_mask": [
+      "০৮৬৪২"
+    ]
+  },
+  {
+    "id": "LEAK_020",
+    "text": "Passport number BD-A0928192 belonging to Farhana Yeasmin needs renewal. Contact 01777889900.",
+    "language": "en",
+    "pii_types": [
+      "PASSPORT",
+      "NAME",
+      "PHONE"
+    ],
+    "must_mask": [
+      "BD-A0928192",
+      "Farhana Yeasmin",
+      "01777889900"
+    ]
+  }
+]

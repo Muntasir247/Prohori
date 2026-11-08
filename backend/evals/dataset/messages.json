@@ -1,0 +1,2402 @@
+[
+  {
+    "id": "EVAL_BN_S001",
+    "text": "প্রিয় গ্রাহক, আপনার অ্যাকাউন্ট ব্লক হতে পারে। যাচাই করতে এখনই আপনার OTP টি এই নম্বরে পাঠান: 01712345678।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S002",
+    "text": "আপনার ওয়ালেটের PIN পরিবর্তন করতে হবে। ক্যানসেল করতে এখনই আপনার বর্তমান ৫ ডিজিটের PIN টি 01788123456 নম্বরে উত্তর দিন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S003",
+    "text": "জরুরি নিরাপত্তা নোটিশ: আপনার একাউন্টে অননুমোদিত লগইন সনাক্ত হয়েছে। ৫ মিনিটের মধ্যে ওটিপি না পাঠালে একাউন্ট বাজেয়াপ্ত হবে: 01823456789",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S004",
+    "text": "বিকাশ সুরক্ষা টিম: আপনার একাউন্ট সক্রিয় রাখতে আপনার মোবাইলে আসা ৬ সংখ্যার সিকিউরিটি পিন কোডটি জানান।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S005",
+    "text": "নগদ কাস্টমার কেয়ার: সার্ভার মেইনটেন্যান্স চলছে। আপনার ৪ ডিজিট গোপন পিনটি ভেরিফাই করতে এসএমএস রিপ্লাই করুন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S006",
+    "text": "টাকা আটকে গেছে। ট্রানজেকশন সফল করতে ওটিপি কোডটি 01911223344 নম্বরে সেন্ড করুন এখনই।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S007",
+    "text": "আপনার ক্রেডিট লিমিট বাড়ানো হয়েছে। কনফার্ম করতে মোবাইলের ওয়ান টাইম পাসওয়ার্ডটি শেয়ার করুন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S008",
+    "text": "প্রিয় গ্রাহক, ভুল ট্রানজেকশন বাতিল করতে আপনার মেসেজে আসা কনফার্মেশন কোডটি প্রদান করুন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S009",
+    "text": "আপনার প্রোফাইল আপগ্রেড সম্পন্ন করতে ওটিপি দিন ০১৭৯৮৭৬৫৪৩২ নম্বরে, নতুবা ব্যালেন্স স্থগিত থাকবে।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S010",
+    "text": "একাউন্ট সুরক্ষার স্বার্থে এখনই আসা ৬ সংখ্যার ওটিপি কোডটি আমাদের প্রতিনিধিকে মেসেজে প্রদান করুন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S011",
+    "text": "আমি বিকাশ হেড অফিস থেকে সিনিয়র অফিসার কামাল বলছি। আপনার একাউন্টে সমস্যা হয়েছে, 01798011223 নম্বরে যোগাযোগ করুন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S012",
+    "text": "নগদ প্রধান কার্যালয় থেকে বলছি। আপনার জাতীয় পরিচয়পত্র আপডেট না করলে একাউন্ট বন্ধ হবে। যোগাযোগ: 01811224455",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S013",
+    "text": "বাংলাদেশ ব্যাংক অনুমোদিত স্পেশাল অডিট সেল থেকে বলছি, আপনার মোবাইল ব্যাংকিং তদন্তে আছে। বিস্তারিত জানতে ফোন দিন: 01300112233",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S014",
+    "text": "রকেট সিকিউরিটি ডিভিশন: আপনি একাউন্ট ব্যবহার না করায় ফি কাটা হবে। সমাধান করতে হেল্পলাইন ম্যানেজারের সাথে কথা বলুন 01611223344",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S015",
+    "text": "উপায় গ্রাহক সেবা টিম: আপনার কেওয়াইসি ভেরিফিকেশন ফেইল করেছে। রি-অ্যাক্টিভেট করতে ম্যানেজারের সাথে কথা বলুন 01511223344",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S016",
+    "text": "আমি আপনার ব্যাংকের রিলেশনশিপ অফিসার। কার্ড সচল রাখতে সিভিসি ও কার্ডের মেয়াদ মেসেজ করুন 01755667788",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S017",
+    "text": "হেড অফিস স্পেশাল সাপোর্ট: আপনার ওয়ালেটে ২০,০০০ টাকার হোল্ড পড়েছে, মুক্ত করতে কল করুন 01733445566",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S018",
+    "text": "আইটি বিভাগ থেকে বলছি: অ্যাপ আপডেট সমস্যা ঠিক করতে এই নম্বরে মেসেজ পাঠান 01844556677",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S019",
+    "text": "ভেরিফিকেশন অফিসার সাজিদ: একাউন্ট সচল রাখতে ৫ মিনিটের মধ্যে কল করুন 01955667788",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S020",
+    "text": "কেন্দ্রীয় ব্যাংকের নির্দেশনা অনুযায়ী আপনার একাউন্ট স্থগিত করা হলো। নিষ্পত্তি করতে মেসেজ দিন 01777889900",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S021",
+    "text": "অভিনন্দন! আপনি বাংলা নববর্ষের লাকি ড্র-তে ১,০০,০০০ টাকা জিতেছেন! প্রসেসিং ফি ১,০০০ টাকা পাঠান 01766099887",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S022",
+    "text": "আপনার নম্বরে ৫,০০০ টাকা ক্যাশব্যাক অফার এসেছে! ক্লেইম করতে ২০০ টাকা রেজিস্ট্রেশন ফি পাঠান এখনই।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S023",
+    "text": "ঈদ স্পেশাল ক্যাম্পেইন: আপনি ৫০,০০০ টাকার মেগা গিফট ভাউচার পেয়েছেন! ডেলিভারি চার্জ ৩০০ টাকা পাঠান 01822334455 নম্বরে।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S024",
+    "text": "অভিনন্দন! আপনার মোবাইল নম্বরে ২০০ টাকা ফ্রি রিচার্জ পেতে এখনই ৩০ টাকা সার্ভিস চার্জ দিয়ে সক্রিয় করুন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S025",
+    "text": "লাকি লটারি উইনার! আপনার অ্যাকাউন্টে প্রথম পুরস্কারের টাকা পাঠানো হচ্ছে, ট্যাক্স বাবদ ২,০০০ টাকা পাঠান 01933445566",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S026",
+    "text": "বিজয়ী অফার: আপনি আইফোন ১৫ জিতেছেন! কাস্টমস ক্লিয়ারেন্সের জন্য ১,৫০০ টাকা পে করুন 01744556677 নম্বরে।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S027",
+    "text": "ধন্যবাদ! আজকের বিশেষ গ্রাহক হিসেবে আপনি পাচ্ছেন নগদ ১০,০০০ টাকা বোনাস। একটিভ করতে পাঠান ৫০০ টাকা।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S028",
+    "text": "টয়োটা কার লটারি অফার: আপনি রানার্সআপ হয়েছেন! প্রাইজ মানি রিলিজ করতে প্রসেসিং ফি প্রদান করুন 01855667788",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S029",
+    "text": "স্পেশাল ক্যাশ রিওয়ার্ড: আপনার ওয়ালেটে ৩,০০০ টাকা পাঠানো হয়েছে, রিসিভ করতে ২০০ টাকা গেটওয়ে ফি সেন্ড করুন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S030",
+    "text": "বিকাশ মেগা অফার: আজই ১,০০০ টাকা পাঠিয়ে ডাবল ২,০০০ টাকা রিটার্ন বুঝে নিন মাত্র ১০ মিনিটে!",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S031",
+    "text": "ভুল করে আমার নম্বরে ১০,০০০ টাকা পাঠিয়ে ফেলেছেন। দয়া করে ফেরত পাঠান এই নম্বরে: 01744556677। আমি বিশ্বাসী মানুষ।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S032",
+    "text": "ভাই ভুল করে আপনার নাম্বারে ২৫০০ টাকা চলে গেছে, আমার বাচ্চার চিকিৎসার টাকা। প্লিজ ফেরত দিন 01811998877 নম্বরে।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S033",
+    "text": "আপা, দোকান থেকে ভুলে আপনার একাউন্টে ৫,০০০ টাকা ক্যাশইন করে ফেলেছি। দয়া করে 01988776655 নাম্বারে ব্যাক করে দিন।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S034",
+    "text": "জরুরি! হাসপাতালে রোগী ভর্তি, ভুলবশত ৩,০০০ টাকা আপনার নাম্বারে গেছে। মানবিক কারণে 01711002233 নাম্বারে ফেরত পাঠান।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S035",
+    "text": "ভাইয়া ঔষধ কেনার টাকা ভুল নম্বরে চলে গেছে। দয়া করে ৪,২০০ টাকা এই পার্সোনাল নম্বরে পাঠান: 01622334455",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S036",
+    "text": "স্যার, কাঁচাবাজারের পেমেন্ট ভুল করে আপনার নাম্বারে গেছে ১,৮০০ টাকা। প্লিজ সেন্ড মানি করুন 01533445566 নম্বরে।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S037",
+    "text": "আম্মুর অপারেশনের টাকা ভুলে চলে গেছে আপনার মোবাইলে। দয়া করে ৮,০০০ টাকা পাঠান 01766554433 এ, অনেক বিপদে আছি।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S038",
+    "text": "ভাই, আপনার একাউন্টে ট্রানজেকশন আইডি সহ মেসেজ গেছে দেখেন, টাকাটা দ্রুত ব্যাক দিন 01877889900 নাম্বারে।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S039",
+    "text": "ভুলবশত প্রেরিত ১৫০০ টাকা অবিলম্বে ফেরত না দিলে আইনি ব্যবস্থা নেওয়া হবে। পাঠান: 01999887766",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S040",
+    "text": "হ্যালো ভাই, কলেজের টিউশন ফি ভুল করে আপনার নম্বরে ঢুকেছে ২০০০ টাকা। এই নাম্বারে ফেরত দিয়ে সাহায্য করুন: 01700112233",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S041",
+    "text": "আমি আপনার এলাকার অফিসিয়াল এজেন্ট। জমির রেজিস্ট্রেশন দ্রুত করতে ৩০০০ টাকা ফি এই নম্বরে পাঠান: 01770123456। রসিদ পরে দেব।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S042",
+    "text": "সৌদি আরবের ভিসা কনফার্ম! পাসপোর্ট প্রসেসিংয়ের জন্য ৫০,০০০ টাকা অ্যাডভান্স পাঠান এজেন্ট একাউন্টে: 01833445566",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S043",
+    "text": "সরকারি অনুদানের ৫০,০০০ টাকা পেতে এজেন্ট চার্জ হিসেবে ২,৫০০ টাকা সেন্ড মানি করুন 01944556677 নম্বরে।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S044",
+    "text": "সহজ কিস্তিতে পার্সোনাল লোন অনুমোদন হয়েছে। ফাইল চার্জ বাবদ ৫,০০০ টাকা পাঠান আমাদের এজেন্টের কাছে: 01755667799",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S045",
+    "text": "প্রবাসী কল্যাণ কল্যাণ তহবিল থেকে সাহায্য পেতে এজেন্ট কমিশন ১,২০০ টাকা ডিপোজিট করুন 01655667788",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S046",
+    "text": "ঘরে বসে পার্ট টাইম চাকরি করে প্রতিদিন ১,৫00 টাকা আয় করুন! জয়েনিং ফি ৫০০ টাকা পাঠান 01566778899",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S047",
+    "text": "অনুমোদিত বিদ্যুৎ বিল কালেকশন এজেন্ট: আপনার বকেয়া লাইন কাটার হাত থেকে বাঁচাতে বিল পাঠান 01788990011",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_S048",
+    "text": "স্কুল উপবৃত্তি এজেন্ট: উপবৃত্তির টাকা রিলিজ করতে কার্ড এক্টিভেশন ফি ৮০০ টাকা পাঠান 01899001122",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_S049",
+    "text": "বিআরটিএ ড্রাইভিং লাইসেন্স এজেন্ট: কোনো পরীক্ষা ছাড়াই লাইসেন্স পেতে অ্যাডভান্স ১০,০০০ টাকা পাঠান 01911335577",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_S050",
+    "text": "ডেলিভারি পার্সেল কাস্টমস ক্লিয়ারেন্স এজেন্ট: পার্সেল রিসিভ করতে ফি পাঠান 01722446688 নম্বরে।",
+    "language": "bn",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_G001",
+    "text": "আপনার ০১৭১৮৮৮৯৯০০ নম্বর থেকে ৫০০ টাকা পাঠানো সফল হয়েছে। গ্রহীতা: রহিম উদ্দিন। লেনদেন আইডি: TX928374।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G002",
+    "text": "আপনার মোবাইল রিচার্জ ২০০ টাকা সফল হয়েছে। বর্তমান ব্যালেন্স: ৪৫ টাকা। মেয়াদ: ১২ ডিসেম্বর ২০২৬।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G003",
+    "text": "আপনার হিসাবে বেতন বাবদ ৩০,০০০ টাকা জমা হয়েছে। বিস্তারিত দেখতে ব্যাংকের অফিসিয়াল অ্যাপে লগইন করুন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G004",
+    "text": "আপনার ডাক্তারের অ্যাপয়েন্টমেন্ট আগামীকাল বিকাল ৪টায়। আসতে না পারলে আগে জানাবেন, ধন্যবাদ।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G005",
+    "text": "নমস্কার, আপনার ঋণের কিস্তি ১৫ তারিখে পরিশোধ করার কথা। প্রয়োজনে শাখায় সরাসরি যোগাযোগ করুন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G006",
+    "text": "প্রিয় গ্রাহক, অক্টোবর মাসের বিদ্যুৎ বিল ১,২৫০ টাকা সফলভাবে পরিশোধ হয়েছে। ট্রানজেকশন আইডি: DESCO88219।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G007",
+    "text": "আপনার পার্সেলটি ডেলিভারির জন্য রাইডারের কাছে হস্তান্তর করা হয়েছে। রাইডার কোড: ৪৪৩১।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G008",
+    "text": "আপনার ইন্টারনেট বিল ৮০০ টাকা গৃহীত হয়েছে। ধন্যবাদ আমাদের সাথে থাকার জন্য।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G009",
+    "text": "ওয়াসার পানির বিল বাবদ ৬৫০ টাকা জমা হয়েছে। রসিদ নম্বর: W-49201।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G010",
+    "text": "আম্মা কেমন আছেন? আজ অফিস শেষ করে বাসায় মিষ্টি নিয়ে আসব।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G011",
+    "text": "কালকে কি সকাল ১০টায় অফিসে মিটিঙে বসবেন? প্রজেক্ট রিপোর্ট তৈরি আছে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G012",
+    "text": "আপনার জিপি পয়েন্টস দিয়ে ১০০ এমবি ইন্টারনেট কেনা সফল হয়েছে। মেয়াদ ৩ দিন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G013",
+    "text": "প্রিয় অভিভাবক, আগামী রবিবার বিদ্যালয়ের অভিভাবক সমাবেশ অনুষ্ঠিত হবে। সকাল ১০টায় উপস্থিত থাকার অনুরোধ রইল।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G014",
+    "text": "আপনার চালডাল অর্ডারের ডেলিভারি আজ বিকাল ৫টা থেকে ৭টার মধ্যে পৌঁছাবে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G015",
+    "text": "দারাজ অনলাইন শপিং: আপনার অর্ডার নং ৯৮৪২১ ডেলিভারি সম্পন্ন হয়েছে। মতামত দিন অ্যাপে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G016",
+    "text": "আপনার সঞ্চয়ী হিসাবের মুনাফা বাবদ ১,৪০০ টাকা জমা হয়েছে। ট্যাক্স কর্তন: ১৪০ টাকা।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G017",
+    "text": "সতর্কবার্তা: আপনার পিন বা পাসওয়ার্ড কাউকে বলবেন না। ব্যাংক কখনোই পিন জানতে চায় না।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_G018",
+    "text": "আড়ং অনলাইন কেনাকাটা: আপনার পেমেন্ট ৩,৫০০ টাকা সফলভাবে সম্পন্ন হয়েছে। ইনভয়েস: AR-9921।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G019",
+    "text": "পাঠাও রাইড ট্রিপ সম্পূর্ণ হয়েছে। ভাড়া ১৬০ টাকা ক্যাশ পরিশোধ করেছেন। নিরাপদ ভ্রমণের জন্য ধন্যবাদ।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G020",
+    "text": "ফুডপান্ডা: খাবার প্রস্তুত হচ্ছে। ডেলিভারি পার্টনার রেস্তোরাঁয় পৌঁছেছেন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G021",
+    "text": "আপনার ট্রেনের টিকিট বুকিং সফল হয়েছে। সিট নম্বর: ঙ-৪৫, শোভন চেয়ার। যাত্রা: ১০ নভেম্বর।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G022",
+    "text": "বিমান বাংলাদেশ এয়ারলাইন্স: ফ্লাইট বিজি-০৮৪ সময়সূচি অনুযায়ী সকাল ৯টায় ঢাকা ত্যাগ করবে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G023",
+    "text": "আপনার অনুরোধে এটিএম কার্ড সাময়িক লক করা হয়েছে। আনলক করতে হেল্পলাইনে কল করুন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_G024",
+    "text": "মাসিক ডিপিএস কিস্তি ২,০০০ টাকা সফলভাবে ডেবিট হয়েছে। একাউন্ট নম্বর: ২০৫.১২০.৭৭১।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G025",
+    "text": "তিতাস গ্যাস বিল পরিশোধ হয়েছে। মোট পরিশোধ: ১,০৮০ টাকা। ট্র্যাকিং: TG-8910।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G026",
+    "text": "ব্র্যাক ব্যাংক: আপনার একাউন্টে ৫,০০০ টাকা এনপিএসবি ট্রান্সফারের মাধ্যমে জমা হয়েছে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G027",
+    "text": "প্রিয় গ্রাহক, আপনার ফাইবার অপটিক ব্রডব্যান্ড লাইনের কাজ শেষ হয়েছে। স্পিড টেস্ট করে দেখুন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G028",
+    "text": "সিটি ব্যাংক: ক্রেডিট কার্ডের স্টেটমেন্ট ইমেইলে পাঠানো হয়েছে। মিনিমাম ডিউ: ৮৫০ টাকা।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G029",
+    "text": "আজকের বাজারে আলুর কেজি ৫৫ টাকা, পেঁয়াজ ১২০ টাকা। দোকানে আসার সময় ব্যাগ আনবেন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G030",
+    "text": "দোস্ত, কালকের ম্যাচের টিকেট কেটে ফেলেছি। স্টেডিয়ামের ৩ নম্বর গেটে দেখা করিস।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G031",
+    "text": "আপনার ওটিপি কোড হলো ৮৪২৯১৫। এটি লগইন নিশ্চিত করার জন্য। কাউকে বলবেন না।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BN_G032",
+    "text": "রবি সেবা: ২০ টাকা ব্যালেন্স ট্র্যান্সফার সফল হয়েছে ০১৭১১০০০০০০ নম্বরে। ফি ২ টাকা।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G033",
+    "text": "আপনার বিশ্ববিদ্যালয়ের সেমিস্টার ফি ১২,৫০০ টাকা গৃহীত হয়েছে। এডমিট কার্ড ডাউনলোড করুন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G034",
+    "text": "বাংলালিংক: ৫৯ টাকায় ২ জিবি ইন্টারনেট প্যাক সক্রিয় হয়েছে। মেয়াদ ৭ দিন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G035",
+    "text": "মেডিসিন ডেলিভারি নিশ্চিত হয়েছে। ফার্মেসি থেকে পার্সেল বের হয়েছে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G036",
+    "text": "জরুরি নোটিশ: আগামীকাল ঘূর্ণিঝড়ের কারণে উপকূলীয় শাখার কার্যক্রম স্থগিত থাকবে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G037",
+    "text": "আপনার রক্ত পরীক্ষার রিপোর্ট প্রস্তুত আছে। ল্যাব কাউন্টারে এসে সংগ্রহ করুন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G038",
+    "text": "লাইফ ইন্স্যুরেন্স প্রিমিয়াম বার্ষিক ১০,০০০ টাকা প্রাপ্তি স্বীকার করা হলো। পলিসি নং: ৯৮৭২৩।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G039",
+    "text": "বাস কাউন্টার: শ্যামলী এনআর ট্রাভেলস, ঢাকা-চট্টগ্রাম রাত ১১টা। আসন: এ১, এ২।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G040",
+    "text": "আপনার বাড়ির হোল্ডিং ট্যাক্স পরিশোধ নিশ্চিত হয়েছে। সিটি কর্পোরেশন অঞ্চল-৫।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G041",
+    "text": "বিকাশ ক্যাশ আউট চার্জ প্রতি হাজারে ১৪.৯০ টাকা করতে প্রিয় এজেন্ট নাম্বার সেট করুন অ্যাপে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BN_G042",
+    "text": "আপনার পাসপোর্টের প্রিন্টিং সম্পন্ন হয়েছে। ডেলিভারির মেসেজ পেলে শাখায় যোগাযোগ করুন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G043",
+    "text": "স্বাগতম! আপনার নতুন একাউন্ট সফলভাবে খোলা হয়েছে। মোবাইল ব্যাংকিং উপভোগ করুন।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G044",
+    "text": "সাপ্তাহিক বাজার তালিকা: চাল ১০ কেজি, ডাল ২ কেজি, তেল ৫ লিটার নিয়ে আসিস।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G045",
+    "text": "আপনার সিমকার্ড বায়োমেট্রিক তথ্য যাচাই সফল হয়েছে। সেবা চালু আছে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G046",
+    "text": "অফিস নোটিশ: সকল কর্মচারীদের আগামী সোমবার সকাল ৯:৩০ এ অল-হ্যান্ডস মিটিংয়ে উপস্থিত থাকতে হবে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G047",
+    "text": "ধন্যবাদ! আপনার জরিপ উত্তর গ্রহণ করা হয়েছে। আপনার মতামত আমাদের জন্য মূল্যবান।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G048",
+    "text": "আপনার জিম মেম্বারশিপ রিনিউয়াল সফল হয়েছে। মেয়াদ: ৩০ নভেম্বর ২০২৬।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G049",
+    "text": "স্কুল বাস আগামীকাল সকাল ৭:১৫ মিনিটে আপনার স্টপেজে পৌঁছাবে।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BN_G050",
+    "text": "রেজিস্ট্রেশন ফি পরিশোধিত হয়েছে। ভর্তি পরীক্ষার রোল নম্বর: ৮৮১০৯২।",
+    "language": "bn",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S001",
+    "text": "Hi, I'm Nusrat from the wallet helpdesk. Your KYC update is due today. Read me the 6-digit code you just got so I can verify your identity and avoid suspension.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S002",
+    "text": "Dear customer, your card has been temporarily suspended due to suspicious activity. Call our officer on 01798011223 and confirm your card number and expiry date to reactivate.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S003",
+    "text": "Login attempt from Chattogram detected on your account. If this was NOT you, forward the 4-digit confirmation code to us now so we can block it.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S004",
+    "text": "Urgent Security Alert: Your mobile banking account is locked. Reply with your 5-digit secret PIN to 01811223344 to restore access immediately.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S005",
+    "text": "Bank verification bot: Enter the 6-digit OTP sent to your SMS to complete your international transaction reversal: 01922334455",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S006",
+    "text": "Security Notice: A transfer of BDT 15,000 is pending. If not authorized, send the one-time code to 01733445566 to cancel.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S007",
+    "text": "Wallet IT Department: We are upgrading the encryption server. Provide the verification code sent to your phone to preserve your balance.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S008",
+    "text": "Your online payment session timed out. Resend the OTP digits to 01844556677 within 2 minutes to release payment.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S009",
+    "text": "Action Required: Unusual withdrawal request detected. Send the 6-digit code to helpline desk on 01955667788.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S010",
+    "text": "Dear valued user, failure to verify the OTP code within 10 minutes will result in permanent account deactivation.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S011",
+    "text": "This is Head of Fraud Prevention at Central Bank. Your account is flagged for illegal remittances. Contact 01755667788 immediately.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S012",
+    "text": "Official Notice from bKash Headquarters: Your account registration information is incomplete. Call 01866778899 to avoid disconnection.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S013",
+    "text": "Nagad Compliance Division: An irregular transaction was detected. Please reach Senior Manager Ashfaq at 01977889900.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S014",
+    "text": "Rocket Customer Service Manager: Your wallet profile needs mandatory biometric sync. Call 01688990011 now.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S015",
+    "text": "City Bank Card Operations: Your debit card will expire in 24 hours. Connect with our card renewal specialist at 01700998877.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S016",
+    "text": "Standard Chartered Fraud Cell: Unauthorized login from unfamiliar IP. Dial 01811002233 to safeguard funds.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S017",
+    "text": "Upay Technical Support: Migration to high security tier is ongoing. Call helpline manager 01922003344.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S018",
+    "text": "Senior Audit Inspector: Irregular cashback accumulation discovered on your SIM. Contact inspector at 01733004455.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S019",
+    "text": "Mobile Financial Services Monitoring Wing: Respond immediately to audit officer on 01844005566.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S020",
+    "text": "Bank Helpdesk: Your mobile account has been frozen by automated security system. Call officer Tariq on 01955006677.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S021",
+    "text": "CONGRATULATIONS! You've won BDT 50,000 in our monthly lucky draw. Pay a 1,500 BDT processing fee to 01766099887 to claim your prize today.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S022",
+    "text": "Winner Alert! You have been selected for BDT 25,000 cash reward. Send BDT 500 tax registration fee to 01877001122 to receive funds.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S023",
+    "text": "Exclusive Offer: Double your wallet balance! Send BDT 2,000 and receive BDT 4,000 in 15 minutes guaranteed. Limited slots: 01988002233",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S024",
+    "text": "Grand Prize Notification: You won a brand new motorcycle! Deposit BDT 3,500 delivery charge to 01699003344 to confirm address.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S025",
+    "text": "Customer Appreciation Grant: Claim your BDT 10,000 grant by paying BDT 450 verification fee to 01700114455 today.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S026",
+    "text": "Special Promotion: 100% cashback on all utility payments! Activate service by sending BDT 300 to 01811225566.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S027",
+    "text": "Lucky SIM Winner: Your phone number won BDT 80,000 in international lottery. Contact claim agent on 01922336677 with BDT 2,000 clearance.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S028",
+    "text": "Instant Reward: You have unlocked BDT 5,000 instant loan and cashback voucher. Pay BDT 250 processing fee to 01733447788.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S029",
+    "text": "Holiday Bonus Voucher: BDT 15,000 credited to temporary vault. Transfer BDT 750 gate fee to 01844558899 to disburse.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S030",
+    "text": "Jackpot Winner: Claim your BDT 100,000 prize before midnight. Send BDT 1,000 dispatch cost to 01955669900.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S031",
+    "text": "Dear sir, I sent BDT 7,500 by mistake to your number instead of my brother. Please kindly refund it to 01711223399. I am very distressed.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S032",
+    "text": "Urgent: accidentally transferred BDT 3,000 to your bKash account for emergency pharmacy bill. Please return to 01822334400 right now.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S033",
+    "text": "Hello, my shop cashier mistakenly entered your number for BDT 5,500 cash-in. Please send it back to merchant number 01933445511.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S034",
+    "text": "Hospital Emergency: Mistakenly transferred BDT 12,000 to your mobile. Please return immediately to doctor assistant 01744556622.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S035",
+    "text": "Hi, I misdialed one digit and sent BDT 4,000 to your wallet. You can verify SMS. Please return to 01855667733.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S036",
+    "text": "Please return the BDT 2,500 sent to your phone by error. This is my university tuition money. Sender number: 01966778844.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S037",
+    "text": "Mistake transfer alert: BDT 6,000 erroneously routed to your account. Send back to 01777889955 to avoid police report.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S038",
+    "text": "Brother, mistakenly deposited BDT 1,800 to your number. Please refund to personal number 01888990066.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S039",
+    "text": "Accidental grocery payment of BDT 3,400 sent to your wallet. Please refund to customer account 01999001177.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S040",
+    "text": "Sir, mistakenly sent BDT 10,000. Please check your balance and transfer it back to 01700112288 promptly.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S041",
+    "text": "Hi, I'm your authorized agent. I can get your loan approved within 24 hours with no documents. Send 5,000 BDT advance to 01723344556, guaranteed.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S042",
+    "text": "Official Dubai Visa Agent: Work permit approved! Send BDT 45,000 medical and embassy processing fee to 01833445577.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S043",
+    "text": "Government SME Subsidy Agent: Get BDT 200,000 grant. Send agent commission BDT 4,000 to 01944556688 today.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S044",
+    "text": "Fast Track BRTA Agent: Get your motor vehicle registration and smart license delivered. Advance BDT 6,000 to 01755667700.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S045",
+    "text": "Customs Clearance Agent: Your overseas gift parcel is held at airport. Pay clearance fee BDT 3,500 to 01866778811.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S046",
+    "text": "High Profit Investment Agent: Earn 25% daily interest on crypto arbitrage. Deposit initial capital BDT 5,000 to 01977889922.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S047",
+    "text": "Authorized Passport Broker: Express emergency passport delivery in 48 hours without police verification. Send BDT 8,000 to 01688990033.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_S048",
+    "text": "Freelance Job Agent: Data entry tasks available. Earn BDT 2,000 daily. Send security deposit BDT 1,000 to 01599001144.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_S049",
+    "text": "Sub-dealer Distribution Agent: Distribute telecom recharge cards with 20% margin. Advance BDT 7,000 to 01700113355.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_S050",
+    "text": "Official Housing Allotment Agent: Pay allotment registration fee BDT 10,000 to 01811224466 for guaranteed government flat.",
+    "language": "en",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_G001",
+    "text": "Your electricity bill for October (BDT 1,240) has been paid successfully. Receipt No: EB-88421. Thank you for paying on time.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G002",
+    "text": "Your one-time code for login is 482915. Do not share it with anyone. This code expires in 5 minutes.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_G003",
+    "text": "Reminder: your rent of BDT 12,000 is due on 5 November. You can pay through the building app before the due date.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G004",
+    "text": "Your parcel from the Dhaka warehouse has been delivered to your building reception. Please collect it within 48 hours.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G005",
+    "text": "Your transfer of BDT 2,000 to Ayesha Khan (01711223344) is complete. If you did not make this transfer, contact support from the app.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_G006",
+    "text": "Dear customer, your credit card bill of BDT 4,500 for statement period ending Oct 25 has been debited from your account.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G007",
+    "text": "You have received BDT 1,500.00 from 01711002200. TrxID: 9X82KA01. Fee: BDT 0.00. Balance: BDT 3,450.00.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G008",
+    "text": "Your mobile recharge of BDT 100 on Grameenphone was successful. Current balance: BDT 124.50.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G009",
+    "text": "Salary credit: BDT 65,000 has been credited to your standard savings account from Acme Tech Ltd.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G010",
+    "text": "Doctor appointment confirmed: Dr. Mahmud, Nephrology, tomorrow at 5:30 PM at Square Hospital. Room 402.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G011",
+    "text": "Your Foodpanda order #9283 from Gloria Jean's has been delivered. We hope you enjoy your meal!",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G012",
+    "text": "Uber receipt: Trip completed. Total BDT 280 charged to your digital wallet. Thank you for riding.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G013",
+    "text": "Security notice: Password changed successfully for user ID user_882. If you did not do this, freeze account from app.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_G014",
+    "text": "Flight Confirmation: Biman Bangladesh flight BG-401 from DAC to CGP departs at 14:15. Seat 12F.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G015",
+    "text": "Water bill payment of BDT 480 for meter #8210 was recorded. Dhaka WASA billing desk.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G016",
+    "text": "Your internet package 50 Mbps Unlimited has been renewed. Next billing date: 05 Dec 2026.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G017",
+    "text": "Daraz Delivery: Package containing Bluetooth headphones is out for delivery with rider Hasan.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G018",
+    "text": "College tuition fee payment BDT 15,000 received for Student ID: 2024-ENG-082. Registration complete.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G019",
+    "text": "Chaldal Grocery: Your order containing 8 items will be delivered between 3:00 PM and 4:00 PM today.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G020",
+    "text": "Your requested monthly account statement for October 2026 has been generated and sent to your registered email.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G021",
+    "text": "Card Authorization: Transaction of BDT 850 at Shwapno Superstore approved. Available limit: BDT 42,000.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G022",
+    "text": "Dear subscriber, 1 GB 4G data added to your account. Dial *121*1# to check remaining data volume.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G023",
+    "text": "ATM cash withdrawal of BDT 5,000 completed at Gulshan-2 ATM booth. Transaction Ref: ATM-7741.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G024",
+    "text": "Your dental checkup has been scheduled for Saturday 11 AM at Dhanmondi Dental Clinic.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G025",
+    "text": "Book order #BK-1049 shipped via Steadfast Courier. Tracking reference: ST-883921.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G026",
+    "text": "Car insurance premium BDT 8,500 renewal confirmation. Policy valid until 15 Nov 2027.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G027",
+    "text": "Gas utility bill payment of BDT 1,080 processed for customer code 99210.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G028",
+    "text": "Gym membership: Monthly subscription of BDT 2,500 renewed for Fitness First Banani.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G029",
+    "text": "Meeting invite: Q4 Financial Performance Review on Thursday at 2:00 PM in Conference Room A.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G030",
+    "text": "Movie ticket purchase confirmed: Star Cineplex, Bashundhara City. Hall 2, Seats F5, F6. Show: 7:00 PM.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G031",
+    "text": "Dear parent, report cards for Term 1 will be distributed during Saturday's meeting from 9:00 AM.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G032",
+    "text": "Your donation of BDT 1,000 to Bangladesh Thalassemia Foundation was received with heartfelt thanks.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G033",
+    "text": "Security token renewal successful. Your digital corporate banking access remains valid for 1 year.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_EN_G034",
+    "text": "Passport application: Police verification completed. File moved to passport printing facility.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G035",
+    "text": "Payment received: BDT 3,200 for prescription glasses at Vision Optics. Order ready for pickup.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G036",
+    "text": "Pathao Parcel: Parcel returned to sender as consignee was unavailable after 3 attempts.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G037",
+    "text": "Intercity Train Ticket: Ekota Express, Dhaka to Dinajpur, Dep: 10:15 AM. Coach Cha, Seat 21.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G038",
+    "text": "Aarong Lifestyle: Payment of BDT 4,200 received. Thank you for shopping with us.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G039",
+    "text": "Notice: Scheduled power grid maintenance in Uttara Sector 4 tomorrow between 8:00 AM and 11:00 AM.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G040",
+    "text": "Hotel booking confirmed: Long Beach Suites Dhaka. Check-in: 12 Nov, Check-out: 14 Nov.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G041",
+    "text": "Blood test results are now available online. Log into the diagnostic lab portal using your patient ID.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G042",
+    "text": "Your monthly Spotify subscription payment of BDT 349 processed via digital debit card.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G043",
+    "text": "Courier Tracking: Package handed over to delivery hub. Expected delivery date: tomorrow.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G044",
+    "text": "Dear alumni, registration for the 25th Annual University Reunion is now open on the alumni website.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G045",
+    "text": "Payment confirmation: Parking fee BDT 100 paid at Hazrat Shahjalal International Airport.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G046",
+    "text": "Your paper submission for the National Engineering Conference has been accepted for poster presentation.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_EN_G047",
+    "text": "Home maintenance request #MR-391 scheduled. Technician will visit tomorrow at 10 AM.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G048",
+    "text": "Your subscription to Financial Express digital daily has been renewed for 12 months.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G049",
+    "text": "Emergency notice: Fire drill scheduled tomorrow at 11:30 AM in Head Office building.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_EN_G050",
+    "text": "Car servicing invoice BDT 6,400 settled. Vehicle ready for pickup from Tejgaon workshop.",
+    "language": "en",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S001",
+    "text": "Bhai, ami Rafi bolchi, amar wallet e problem. Tumi ekta 6 digit code pathao 01755512390 e, quick kaj ta sere felbo.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S002",
+    "text": "Apnar account block hoye jabe. Bachate chaile ekhoni apnar 5 digit pin number 01822334455 e reply korun.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S003",
+    "text": "Bhai ekta code geche apnar phon e bhul kore. Code ta bolen to urgently 01911223344 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S004",
+    "text": "Alert! Apnar mobile banking app e unknown device theke login hocche. OTP ta ekhoni forward koren 01733445566 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S005",
+    "text": "Wallet security update: 6 digit verification code na pathale apnar balance jomate parben na. Send to 01844556677.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S006",
+    "text": "Customer care theke bolchi, apnar account unblock korte message e asha 4 digit pin bolun.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S007",
+    "text": "Bhai emergency te taka lagbe, apnar wallet theke cash out korte confirmation code ta share koren quick.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S008",
+    "text": "Apnar card expired hoye jabe. Renew korte phone e asha security pin ta bolun 01955667788 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S009",
+    "text": "System notice: Transaction cancel korte 6 digit OTP ta ekhoni reply message e পাঠান.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S010",
+    "text": "Taka hold hoye ache. Release korte ektu age asha OTP number ta send korun 01766778899 te.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_otp_pin",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S011",
+    "text": "Assalamu alaikum sir, ami bank er Relationship Manager bolchi. Apnar card re-activate korte CVV r expiry date lagbe, 01735578901 e message din.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S012",
+    "text": "Ami bKash head office er senior officer bolchi. Apnar account investigation e ache, call korun 01811223300.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S013",
+    "text": "Nagad compliance team theke bolchi. NID update na korle 2 ghontar moddhe account bondho hobe. Dial 01922334411.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S014",
+    "text": "Bangladesh Bank fraud cell theke bolchi. Apnar number e illegal transaction dhora porche. Jogajog: 01733445522",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S015",
+    "text": "Rocket customer support manager bolchi. Apnar transaction limit barate call din 01844556633 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S016",
+    "text": "Card department head bolchi, apnar debit card hack hoyeche. Stop korte call din 01955667744 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S017",
+    "text": "Wallet IT admin bolchi, server maintainence cholche tai ekhon call kore verify korun 01666778855.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S018",
+    "text": "Customer service representative Tanvir bolchi. Apnar account review korte phone korun 01577889966.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S019",
+    "text": "Upay technical unit theke bolchi. System migration er jonno jogajog korun 01788990077 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S020",
+    "text": "Special audit cell officer bolchi. Apnar against e complaint asheche. Kotha bolun 01899001188.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_staff",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S021",
+    "text": "Congrats!! Apni 2000 taka cashback peyechen. Claim korte ei link e jaan: claim-now.example/cb, 24 ghonta somoy ache.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S022",
+    "text": "Obhinondon! Apnar number lucky draw te 50,000 taka jiteche. 1000 taka registration fee pathan 01711224455 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S023",
+    "text": "Eid mega offer! 10,000 taka shopping voucher jitte 200 taka processing fee pathan 01822335566 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S024",
+    "text": "Apni ajker shera grahok! 5000 taka bonus pete 300 taka service charge send koren 01933446677 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S025",
+    "text": "Double offer: 1000 taka pathiye 2000 taka cash back pawa jacche matro 10 minute e! Slot limited 01744557788.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S026",
+    "text": "Lottery result: 2nd prize 1 lakh taka! Tax fee 2,500 taka pathan 01855668899 e prize release korte.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S027",
+    "text": "Free recharge dhamaka! 500 taka recharge pete 50 taka gateway fee send korun 01966779900 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S028",
+    "text": "Congratulations! Smartphone jitechen. Delivery courier charge 400 taka pathan 01677880011 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S029",
+    "text": "Cash bonus alert: 8000 taka account e add hoyeche. Unlock korte 500 taka fee din 01588991122.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S030",
+    "text": "Instant loan voucher: 20,000 taka paben bina shurte. File processing fee 600 taka pathan 01799002233.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "prize_cashback",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S031",
+    "text": "bhai vul kore apnar number e 5000 taka chole geche, plz ferot den. ei number e send koren 01744556677",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S032",
+    "text": "Bhai, vul kore apnar number e 2500 taka pathaisi. Please ferot diye dan, ami call dhorchi na, sudhu message korchi. 01790001122",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S033",
+    "text": "Ami dokan theke bhul kore apnar account e 4000 taka cash in kore felchi. Plz 01811224488 e ferot pathan bhai.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S034",
+    "text": "Urgent bhai! Rogi hospital e, bhul kore 6000 taka apnar number e geche. Manusik vabe ferot den 01922335599 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S035",
+    "text": "Apnar number e bhul kore 1500 taka chole geche tuition fee. Doya kore 01733446600 e send koren.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S036",
+    "text": "Bhaiya, ammur oshudher taka bhul number e pathaisi 3200 taka. Quick ferot pathan 01844557711 e, khub bipode achi.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S037",
+    "text": "Sir mistakenly 8000 taka transfer hoyeche. Please balance check kore 01955668822 e back koren.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S038",
+    "text": "Accidental transfer 2000 taka apnar number e. Police e jananor age ferot pathan 01666779933 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S039",
+    "text": "Hello bhai, rent er taka bhul number e chole geche 5500 taka. Doya kore 01577880044 e ferot den.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S040",
+    "text": "Mistake transfer: 1800 taka apnar wallet e geche. Please send back to 01788991155 right now.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "wrong_number_refund",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S041",
+    "text": "Vai, ami agent bolchi, visa job er jonno 1 lakh taka advance lagbe. Wallet e pathaiyen 01712340987, guarantee dichi, next week e visa.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S042",
+    "text": "Official loan agent bolchi. 50,000 taka loan paben no documents e. Advance file charge 3000 taka pathan 01822334477.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S043",
+    "text": "Govt grant agent: Sarkari 30,000 taka onudan pete agent fee 1500 taka send korun 01933445588 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S044",
+    "text": "Driving license broker bolchi. Pariksha chara license paben. Advance 7000 taka pathan 01744556699 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S045",
+    "text": "Overseas recruitment agent: Malaysia visa ready! Medical fee 15,000 taka bKash koren 01855667700 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S046",
+    "text": "Part time work from home: Din e 1000 taka inkm koren. Security deposit 500 taka pathan 01966778811 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_S047",
+    "text": "Customs airport agent: Bidesh theke asha parcel release korte tax 2500 taka পাঠান 01677889922 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S048",
+    "text": "Sub-dealer agent: Mobile recharge er business e daily 20% labh. Advance investment 5000 taka pathan 01588990033.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_S049",
+    "text": "Electricity bill collection agent: Line katar age bill porishodh korun agent number 01799001144 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_S050",
+    "text": "Housing flat booking agent: Sarkari flat allotment registration fee 8000 taka pathan 01800112255 e.",
+    "language": "banglish",
+    "label": "scam",
+    "scam_type": "fake_agent",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G001",
+    "text": "Apnar order #4421 courier e diye deya hoyeche. Delivery 1-2 din er modhe. Tracking app e dekhun.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G002",
+    "text": "Bhai, kal ki shomoy dekha korbi? Bikel 5 ta dike chai, office er samne.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G003",
+    "text": "Apni last purchase er jonno 150 taka cashback peyechen. Amount ta next bill e adjust hobe. Details app e dekhun.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_G004",
+    "text": "Ami Shuvo, kal lunch e dekha korbi? 1 tar dike office er samne.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G005",
+    "text": "Apnar school er fee payment confirm holo. Receipt app e ache. Dhonnobad.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G006",
+    "text": "Apnar 01712345678 number e 100 taka recharge shofol hoyeche. Current balance 145 taka.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G007",
+    "text": "Salary credit: Nov 2026 er beton 45,000 taka bank account e joma hoyeche.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G008",
+    "text": "Daraz order parcel rider er kache ache. Ajke delivery hobe. OTP rider ke bolben.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_G009",
+    "text": "Electricity bill payment 1,450 taka successful. Ref: DESCO-99218. Thank you.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G010",
+    "text": "Doctor appointment confirm: Kal shondha 6:30 e Popular Diagnostic e Dr. Rahman.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G011",
+    "text": "Pathao parcel pickup hoyeche. Delivery track korun app e.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G012",
+    "text": "Amma kemon achen? Bashay pounchate ajke rat 9 ta bajbe.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G013",
+    "text": "Internet bill 700 taka paid hoyeche. Speed 30 Mbps active ache.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G014",
+    "text": "Wasa bill 520 taka porishodh kora hoyeche. Receipt save korun.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G015",
+    "text": "Chaldal delivery boy 15 minute er moddhe apnar thikanay ashche.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G016",
+    "text": "Foodpanda theke apnar burger delivery complete hoyeche. Have a nice meal!",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G017",
+    "text": "Train ticket confirmed: Suborno Express, Dhaka to Chittagong, Seat G-12.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_G018",
+    "text": "Mobile recharge 50 taka successful on Banglalink. Validity 28 days.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G019",
+    "text": "Uber driver pickup location e chole esheche. Car number Dhaka Metro-Ga 44-1234.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G020",
+    "text": "Bhai kal sokal 10 tay zoom meeting e thakben please. Client presentation ache.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G021",
+    "text": "Credit card minimum due 1,200 taka 15 tarikher age porishodh korun.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_G022",
+    "text": "Bank transfer of 4000 taka to Karim Hossain successful. TrxID: BT-99120.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G023",
+    "text": "Kalke cricket match khelbi? 7 tar shomoy field e chole ashish.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G024",
+    "text": "Shohoz bus ticket: Shyamoli Paribahan, Dhaka-Sylhet, Seat B3, B4.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G025",
+    "text": "Apnar OTP code holo 991283. Kaoke ei code bolben na. 5 min e expire hobe.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "hard"
+  },
+  {
+    "id": "EVAL_BL_G026",
+    "text": "Gas bill 1080 taka porishodh hoyeche. Ref: TITAS-88192.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G027",
+    "text": "Book delivery parcel Pathao courier e ache. Tracking id: PC-88219.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G028",
+    "text": "Gym monthly subscription 2000 taka debited successfully.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G029",
+    "text": "Dokan theke chal r dal niye ashish bashay ferar shomoy.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G030",
+    "text": "University semester exam schedule publish hoyeche website e.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G031",
+    "text": "Blood test report ready hoyeche. Lab counter theke collect korun.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G032",
+    "text": "Aarong e 2,800 taka purchase confirm holo. Point earn: 28 points.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G033",
+    "text": "Shwapno grocery purchase 3,450 taka approved at POS counter.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G034",
+    "text": "Air ticket confirm: US-Bangla Airlines Dhaka to Cox's Bazar flight BS-141.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_G035",
+    "text": "Notice: Friday shondhay family get-together ache fupu er bashay.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G036",
+    "text": "Your GP 1.5 GB internet pack activation successful. Dial *121*1# for info.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G037",
+    "text": "Cinema ticket confirmed at Star Cineplex. Showtime 4:30 PM.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G038",
+    "text": "Car repair kaj complete hoyeche. Garage theke car niye jan.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G039",
+    "text": "Prescription medicine delivery Shombhob pharmacy theke pathano hoyeche.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G040",
+    "text": "Office picnic er fee 1500 taka HR department e joma din 10 Nov er moddhe.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G041",
+    "text": "Apartment service charge 3000 taka paid successfully for November.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G042",
+    "text": "Broadband connection repair team aj bikel 3 tay ashbe line check korte.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G043",
+    "text": "Passport police verification complete. Passport office status check korun.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_G044",
+    "text": "Shonar bangla express train kal 7 tay rail station theke charbe.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G045",
+    "text": "Bhai kal bike niye ashis, ekta kaj ache Dhanmondi te.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G046",
+    "text": "Bank deposit 15,000 taka cash counter e joma deya hoyeche.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G047",
+    "text": "Dental appointment Dr. Noman clinic e Saturday bikel 5 tay.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G048",
+    "text": "Mobile insurance premium payment 350 taka successfully received.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  },
+  {
+    "id": "EVAL_BL_G049",
+    "text": "Dhaka University admission test admit card download link shuru hoyeche.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "easy"
+  },
+  {
+    "id": "EVAL_BL_G050",
+    "text": "Monthly dps 1000 taka auto debit hoyeche apnar savings account theke.",
+    "language": "banglish",
+    "label": "genuine",
+    "scam_type": "none",
+    "difficulty": "medium"
+  }
+]
