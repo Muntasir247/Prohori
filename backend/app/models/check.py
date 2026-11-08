@@ -5,13 +5,14 @@ Portable cross-dialect models using SQLAlchemy 2.0.
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
 from sqlalchemy import (
     Boolean,
+    Date,
     DateTime,
     ForeignKey,
     Integer,
@@ -58,12 +59,49 @@ class Campaign(Base):
     __tablename__ = "campaigns"
 
     id: Mapped[UUID] = uuid_pk()
-    label: Mapped[str] = mapped_column(String(80), nullable=False)
+    label: Mapped[str] = mapped_column(String(120), nullable=False)
     scam_type_id: Mapped[int | None] = mapped_column(
         SmallInteger, ForeignKey("scam_types.id"), nullable=True
     )
-    status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
-    created_at: Mapped[datetime] = created_at_col()
+    member_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    count_7d: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    prev_count_7d: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    is_surging: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    first_seen_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_seen_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    updated_at: Mapped[datetime] = updated_at_col()
+
+    scam_type = relationship("ScamType", lazy="joined")
+    cases = relationship("Case", back_populates="campaign")
+
+
+class DailyAggregate(Base):
+    __tablename__ = "daily_aggregates"
+
+    day: Mapped[date] = mapped_column(Date, primary_key=True)
+    risk_level: Mapped[str] = mapped_column(String(10), primary_key=True)
+    scam_type_id: Mapped[int] = mapped_column(SmallInteger, primary_key=True, default=0)
+    check_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    case_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    decided_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    agreed_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+
+class CheckEmbedding(Base):
+    __tablename__ = "check_embeddings"
+
+    check_id: Mapped[UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("checks.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    embedding: Mapped[list[float]] = mapped_column(JSON, nullable=False)
+
+    check = relationship("Check", lazy="joined")
 
 
 class Check(Base):
@@ -184,3 +222,4 @@ class Case(Base):
 
     check = relationship("Check", lazy="joined")
     scam_type = relationship("ScamType", lazy="joined")
+    campaign = relationship("Campaign", back_populates="cases")

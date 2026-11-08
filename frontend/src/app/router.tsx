@@ -22,6 +22,9 @@ import Settings from "@/routes/user/Settings";
 
 // Reviewer screens load only for signed-in staff (Doc 02 Section 6).
 const ReviewOverview = lazy(() => import("@/routes/review/Overview"));
+const RepeatNumbers = lazy(() => import("@/routes/review/RepeatNumbers"));
+const Campaigns = lazy(() => import("@/routes/review/Campaigns"));
+const Reports = lazy(() => import("@/routes/review/Reports"));
 
 // Route groups (public/user/review/admin/system) from Doc 02 Section 6. Phase 04
 // adds the auth and account screens (S03–S08, S22), the invite acceptance page,
@@ -70,6 +73,36 @@ export const router = createBrowserRouter([
       <RequireRole roles={["reviewer", "admin"]}>
         <Suspense fallback={null}>
           <ReviewOverview />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/review/numbers",
+    element: (
+      <RequireRole roles={["reviewer", "admin"]}>
+        <Suspense fallback={null}>
+          <RepeatNumbers />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/review/campaigns",
+    element: (
+      <RequireRole roles={["reviewer", "admin"]}>
+        <Suspense fallback={null}>
+          <Campaigns />
+        </Suspense>
+      </RequireRole>
+    ),
+  },
+  {
+    path: "/review/reports",
+    element: (
+      <RequireRole roles={["reviewer", "admin"]}>
+        <Suspense fallback={null}>
+          <Reports />
         </Suspense>
       </RequireRole>
     ),

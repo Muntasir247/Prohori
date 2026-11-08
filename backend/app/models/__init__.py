@@ -11,7 +11,16 @@ from app.models.api_key import ApiKey
 from app.models.audit import AuditEvent
 from app.models.auth_token import AuthToken, TokenPurpose
 from app.models.base import Base
-from app.models.check import Campaign, Case, Check, CheckNumber, RiskyNumber, ScamType
+from app.models.check import (
+    Campaign,
+    Case,
+    Check,
+    CheckEmbedding,
+    CheckNumber,
+    DailyAggregate,
+    RiskyNumber,
+    ScamType,
+)
 from app.models.knowledge import SafeAction, Sample, Tip
 from app.models.rate_limit import RateLimitCounter
 from app.models.session import Session
@@ -32,6 +41,8 @@ __all__ = [
     "ScamType",
     "Campaign",
     "Case",
+    "DailyAggregate",
+    "CheckEmbedding",
     "SafeAction",
     "Sample",
     "Tip",

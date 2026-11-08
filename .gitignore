@@ -30,6 +30,9 @@ venv/
 coverage/
 .coverage
 htmlcov/
+*.db
+*.sqlite
+*.sqlite3
 
 # Editor / OS
 .vscode/

@@ -281,9 +281,60 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
 - [ ] **Phase 08 — Reviewer workbench.** Queue, case detail, decisions, audit and
   notifications. _Done when:_ a report from S17 is decided in S26, and a later
   check on that number hits the hard rule.
-- [ ] **Phase 09 — Analytics, repeat numbers, campaigns.** Dashboard, repeat
+- [x] **Phase 09 — Analytics, repeat numbers, campaigns.** Dashboard, repeat
   numbers, clustering, export, nightly job. _Done when:_ charts move after a
   decision, with no hard-coded chart data.
+  - **Backend Analytics API (`api/v1/analytics.py`):**
+    - `GET /analytics/overview`: returns live KPIs (`open_cases`, `high_today`, `median_time_to_decision`,
+      `reviewer_agreement`), series for cases by risk level, top scam types (5 + Other), repeated risky numbers,
+      reviewer decisions over time, and Campaign Radar (`surging_campaigns`). Seamlessly blends past
+      `daily_aggregates` with today's live SQLite/Postgres rows. Supports date range, scam type, and risk filters.
+    - `GET /analytics/numbers`: paginated repeat numbers list with 30-day sparklines, report counts, check counts,
+      and high risk share.
+    - `PATCH /analytics/numbers/{id}`: status updates (`watch`, `confirmed_risky`, `cleared`) strictly require a
+      minimum 10-character reason and write an immutable audit log entry to `audit_events`.
+  - **Campaigns API (`api/v1/campaigns.py`):**
+    - `GET /campaigns`: lists scam campaigns with scam type mapping, member counts, 7-day velocity, and surging alerts.
+    - `PATCH /campaigns/{id}`: supports renaming labels and merging clusters into target campaigns (moving member cases,
+      deleting the merged source campaign, and logging to `audit_events`).
+  - **Streaming CSV Export (`api/v1/cases.py`):**
+    - `GET /cases/export.csv`: streams masked reviewed cases with UTF-8 BOM (`\xef\xbb\xbf`) for native Bengali support in Excel.
+    - **Formula Injection Defense:** escapes any cell beginning with `=`, `+`, `-`, or `@` with a leading single quote (`'`).
+    - Validates date range $\le 366$ days (returns 422 if exceeded) and writes an audit event before streaming.
+  - **Clustering & Idempotent Nightly Job (`analytics/clusters.py`, `jobs/nightly.py`, `app/jobs/nightly.py`):**
+    - Clusters 1024-dimensional semantic message embeddings using `sklearn.cluster.HDBSCAN(min_cluster_size=5)` with L2-normalized Euclidean metric.
+    - `jobs/nightly.py`: 100% idempotent; deletes unreported guest checks older than 30 days first, recounts `risky_numbers`,
+      rebuilds `daily_aggregates`, embeds reported masked messages, clusters embeddings, upserts campaigns preserving
+      reviewer labels, and sets `is_surging` when `count_7d >= 10` and `count_7d >= 2 * prev_count_7d`.
+    - Runnable standalone or via CLI `python -m jobs.nightly` (and `make nightly`).
+  - **Frontend Reviewer Analytics & Recharts Isolation (`routes/review/`, `components/charts/`):**
+    - **Strict Code-Splitting / No Public Import:** Recharts is never imported on public routes; all chart components
+      (`CasesByRiskChart`, `TopScamTypesChart`, `RepeatNumbersChart`, `ReviewerDecisionsChart`, `SparklineChart`)
+      are lazily loaded via `React.lazy()` under reviewer-gated routes.
+    - **S24 Review Overview (`/review`):** 4 KPI stat cards, Campaign Radar alert banner for surging campaigns,
+      filter bar with URL search params persistence (7d, 30d, 90d, custom), simulated data badge (`simulated-v1`),
+      and 60-second background polling with a last-updated timestamp.
+    - **Accessible Data-Table Toggles:** Every chart component includes an accessible toggle button (`aria-label="Toggle data table"`)
+      switching between visualization and an accessible HTML table.
+    - **Zero Mock / Fake Trends:** Empty states render explicitly when data is empty or filtered out.
+    - **S27 Repeat Numbers (`/review/numbers`):** Table with monospace masked numbers, status filter, search,
+      side drawer with 30-day sparkline, and status update modal enforcing audit reasons.
+    - **S28 Scam Campaigns (`/review/campaigns`):** Card grid with surging badges, detail drawer with representative
+      masked messages and shared numbers, rename modal, and merge campaign modal.
+    - **S29 Reports & Export (`/review/reports`):** CSV export form with client-side 366-day range validation,
+      compliance notices, and direct streaming download.
+  - **Verified:**
+    - Backend: 6 integration and unit tests passing in `tests/test_phase09_analytics.py`:
+      - Exact match between API `/analytics/overview` and direct SQL fixture counts.
+      - 100% idempotency of `jobs/nightly.py` and automatic deletion of 30-day-old guest checks.
+      - Reviewer decisions cause live chart series and KPIs to move immediately.
+      - Repeat numbers listing and status PATCH require a reason and write to audit.
+      - Campaign listing, rename, and merge with audit verified.
+      - CSV export streaming, UTF-8 BOM, Bangla Excel rendering, audit logging, and formula injection defense ($=$, $+$, $-$, $@$) verified.
+    - CLI: `python -m jobs.nightly` executes cleanly and idempotently with 0 errors.
+    - Frontend: 5 new tests in `src/features/analytics/analytics.test.tsx` (and all 59 vitest tests across frontend) passing 100%.
+    - Production build: `npm run build` succeeds, generating isolated `CartesianChart` and reviewer chunks while keeping public chunks lean.
+    - Code quality: `tsc --noEmit` clean, `eslint .` clean, `ruff check backend` clean, `ruff format --check backend` clean.
 - [ ] **Phase 10 — Differentiators.** Pressure Pause, sharing, Already Sent Money,
   read aloud. _Done when:_ all four work on a low-end Android Chrome profile.
 - [ ] **Phase 11 — Admin and partner API.** Admin screens and partner keys.

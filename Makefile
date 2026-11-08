@@ -17,7 +17,7 @@ PY := $(shell [ -x backend/.venv/bin/python ] && echo backend/.venv/bin/python \
 	|| echo python))
 
 .PHONY: help dev dev-backend dev-frontend install test test-backend test-frontend \
-	lint lint-backend lint-frontend migrate seed eval
+	lint lint-backend lint-frontend migrate seed eval nightly
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?##' $(MAKEFILE_LIST) | \
@@ -62,3 +62,6 @@ seed: ## Load simulated seed data
 
 eval: ## Run the evaluation harness
 	cd backend && $(PY) evals/run_eval.py
+
+nightly: ## Run the nightly batch job (F26)
+	cd backend && $(PY) -m app.jobs.nightly
