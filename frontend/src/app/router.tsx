@@ -11,6 +11,7 @@ import Landing from "@/routes/public/Landing";
 import Login from "@/routes/public/Login";
 import Register from "@/routes/public/Register";
 import ResetPassword from "@/routes/public/ResetPassword";
+import Safety from "@/routes/public/Safety";
 import VerifyEmail from "@/routes/public/VerifyEmail";
 import SharedResult from "@/routes/public/SharedResult";
 import NotFound from "@/routes/system/NotFound";
@@ -77,6 +78,7 @@ export const router = createBrowserRouter([
         element: <ShellLayout />,
         children: [
           // S09 is open to guests: no account is needed to check a message.
+          { path: "/safety", element: <Safety /> },
           { path: "/check", element: <CheckHome /> },
           { path: "/check/message", element: <MessageCheck /> },
           { path: "/check/payment", element: <PaymentCheck /> },

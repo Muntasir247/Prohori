@@ -21,7 +21,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy import delete, desc, func, select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import noload, selectinload
 
 from app.api.deps import DbSession, require_role
 from app.config import get_settings
@@ -126,6 +126,7 @@ async def list_kb_documents(
 ) -> list[KbDocumentOut]:
     query = (
         select(KbDocument, ScamType, func.count(KbChunk.id).label("chunk_count"))
+        .options(noload(KbDocument.scam_type))
         .outerjoin(ScamType, KbDocument.scam_type_id == ScamType.id)
         .outerjoin(KbChunk, KbDocument.id == KbChunk.document_id)
         .group_by(KbDocument.id, ScamType.id)
