@@ -135,3 +135,14 @@ def test_cors_exact_origin_validation(monkeypatch):
     s_invalid = Settings(**_BASE, CORS_ORIGINS="evil.com")  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="Must start with http"):
         _ = s_invalid.cors_origins
+
+
+def test_database_url_normalized_for_asyncpg(monkeypatch):
+    _clear_required(monkeypatch)
+    s1 = Settings(
+        **{**_BASE, "DATABASE_URL": "postgresql://u:p@host/db?sslmode=require"}
+    )  # type: ignore[arg-type]
+    assert s1.database_url == "postgresql+asyncpg://u:p@host/db?ssl=require"
+
+    s2 = Settings(**{**_BASE, "DATABASE_URL": "postgres://u:p@host/db"})  # type: ignore[arg-type]
+    assert s2.database_url == "postgresql+asyncpg://u:p@host/db"

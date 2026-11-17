@@ -1,6 +1,14 @@
-# Render Infrastructure Blueprint for Prohori (Production)
-# Doc 02 Section 14: Docker service with pre-deploy migrations, health check, 1GB RAM minimum, and nightly cron.
-# Plan 'starter' provides 1 GB RAM and always-on CPU (avoids free-tier sleep / cold starts).
+# Render Infrastructure Blueprint for Prohori
+# Web service + Managed PostgreSQL 16 database (Free tier compatible).
+# Automatically provisions database with pgvector, applies migrations, and runs FastAPI backend.
+
+databases:
+  - name: prohori-db
+    databaseName: prohori
+    user: prohori
+    plan: free # 1 GB storage, free for 30 days, no credit card required
+    region: singapore # Lowest latency for Bangladesh
+    postgresMajorVersion: "16"
 
 services:
   - type: web
@@ -8,9 +16,8 @@ services:
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    plan: starter # 1 GB RAM, 1 CPU, always-on (no sleeping)
-    region: singapore # Closest region to Bangladesh for optimal latency
-    preDeployCommand: alembic upgrade head
+    plan: free # Hobby free tier (or upgrade to starter for always-on 1GB RAM)
+    region: singapore
     healthCheckPath: /api/v1/health
     autoDeploy: true
     envVars:
@@ -19,74 +26,32 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: APP_ORIGIN
-        sync: false # e.g. https://prohori.vercel.app
+        value: https://theprohori.vercel.app
+      - key: CORS_ORIGINS
+        value: https://theprohori.vercel.app,https://sudo-sapians.vercel.app
       - key: DATABASE_URL
-        sync: false # PostgreSQL connection string (Neon or Supabase with pgvector)
+        fromDatabase:
+          name: prohori-db
+          property: connectionString
       - key: ANTHROPIC_API_KEY
-        sync: false # Anthropic Claude API Key
+        sync: false # Anthropic Claude API Key (sk-ant-...)
       - key: VOYAGE_API_KEY
-        sync: false # Voyage AI Embedding API Key
+        sync: false # Optional: Voyage AI Key (leave blank for deterministic keyword fallback)
       - key: NUMBER_HMAC_KEY
         generateValue: true # 256-bit cryptographically secure key for phone HMACs
       - key: SESSION_SECRET
         generateValue: true # 256-bit secret for session encryption and signing
       - key: RESEND_API_KEY
-        sync: false # Optional email delivery service
+        sync: false # Optional: Resend API Key
       - key: EMAIL_DRIVER
         value: console # console or resend
       - key: ALLOW_CONSOLE_EMAIL_IN_PROD
-        value: "true" # Permits console email driver in production for demos/evals without Resend
+        value: "true" # Permits console email driver in production for demos without Resend
       - key: TRUST_PROXY_HEADERS
         value: "true" # Extracts real client IP behind Render/Vercel reverse proxies
       - key: SENTRY_DSN
-        sync: false # Sentry error reporting with PII scrubber
+        sync: false # Optional: Sentry error reporting
       - key: DAILY_LLM_SPEND_CAP_USD
         value: "25.0"
       - key: LOG_LEVEL
         value: INFO
-      - key: CORS_ORIGINS
-        sync: false # e.g. https://prohori.vercel.app
-
-  - type: cron
-    name: prohori-nightly
-    runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
-    plan: starter # 1 GB RAM
-    region: singapore
-    schedule: "0 20 * * *" # Daily at 20:00 UTC (02:00 AM BST Bangladesh Time)
-    dockerCommand: python -m app.jobs.nightly
-    envVars:
-      - fromService:
-          type: web
-          name: prohori-backend
-          envVarKey: DATABASE_URL
-      - fromService:
-          type: web
-          name: prohori-backend
-          envVarKey: NUMBER_HMAC_KEY
-      - fromService:
-          type: web
-          name: prohori-backend
-          envVarKey: ANTHROPIC_API_KEY
-      - fromService:
-          type: web
-          name: prohori-backend
-          envVarKey: VOYAGE_API_KEY
-      - fromService:
-          type: web
-          name: prohori-backend
-          envVarKey: SENTRY_DSN
-      - fromService:
-          type: web
-          name: prohori-backend
-          envVarKey: ENVIRONMENT
-      - fromService:
-          type: web
-          name: prohori-backend
-          envVarKey: SESSION_SECRET
-      - fromService:
-          type: web
-          name: prohori-backend
-          envVarKey: ALLOW_CONSOLE_EMAIL_IN_PROD
-

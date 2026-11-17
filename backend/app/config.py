@@ -85,6 +85,19 @@ class Settings(BaseSettings):
             raise ValueError("must not be empty")
         return value
 
+    @field_validator("database_url")
+    @classmethod
+    def _normalize_database_url(cls, value: str) -> str:
+        """Convert Render/standard postgres:// or postgresql:// URLs to asyncpg."""
+        val = value.strip()
+        if val.startswith("postgres://"):
+            val = "postgresql+asyncpg://" + val[len("postgres://") :]
+        elif val.startswith("postgresql://"):
+            val = "postgresql+asyncpg://" + val[len("postgresql://") :]
+        if val.startswith("postgresql+asyncpg://") and "sslmode=" in val:
+            val = val.replace("sslmode=", "ssl=")
+        return val
+
     @model_validator(mode="after")
     def _production_sends_real_email(self) -> Settings:
         # The console driver exists for development; in production it would
