@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AppShell } from "@/components/AppShell";
 import { PipelineSteps } from "@/components/checks/PipelineSteps";
+import { RateLimitedCard } from "@/components/checks/RateLimitedCard";
 import { Button } from "@/components/ui/Button";
 import { useSession, useSyncLanguage } from "@/features/auth/useSession";
 import { checksApi } from "@/features/checks/api";
@@ -51,6 +52,7 @@ export default function MessageCheck() {
   const [claimedSender, setClaimedSender] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rateLimitWait, setRateLimitWait] = useState<number | null>(null);
   const [samples, setSamples] = useState<SampleItem[]>(FALLBACK_SAMPLES);
   const [showSamples, setShowSamples] = useState(false);
   const [copiedNotification, setCopiedNotification] = useState(false);
@@ -107,6 +109,7 @@ export default function MessageCheck() {
     if (!isValid) return;
 
     setError(null);
+    setRateLimitWait(null);
     setIsSubmitting(true);
 
     try {
@@ -121,9 +124,9 @@ export default function MessageCheck() {
     } catch (err: unknown) {
       setIsSubmitting(false);
       // NON-NEGOTIABLE: Preserve user typed text on error!
-      const status = (err as { status?: number })?.status;
-      if (status === 429) {
-        setError(t("errors.rate_limited"));
+      const apiErr = err as { status?: number; retryAfter?: number };
+      if (apiErr?.status === 429) {
+        setRateLimitWait(apiErr.retryAfter ?? 60);
       } else {
         setError(t("errors.check_failed_retry"));
       }
@@ -226,6 +229,7 @@ export default function MessageCheck() {
 
                 <textarea
                   id="message-text"
+                  name="message_text"
                   value={text}
                   onChange={(e) => {
                     setText(e.target.value);
@@ -274,11 +278,13 @@ export default function MessageCheck() {
                 />
               </summary>
               <div className="pt-3.5 flex flex-col gap-3">
-                <label className="flex flex-col gap-1.5 text-xs">
+                <label htmlFor="claimed-sender" className="flex flex-col gap-1.5 text-xs">
                   <span className="text-muted font-semibold">
                     {t("message_check.sender_select_label")}
                   </span>
                   <select
+                    id="claimed-sender"
+                    name="claimed_sender"
                     value={claimedSender}
                     onChange={(e) => setClaimedSender(e.target.value)}
                     className="rounded-xl border border-border bg-surface-2 p-3 text-xs text-text focus:border-info focus:outline-none"
@@ -340,6 +346,13 @@ export default function MessageCheck() {
                 </div>
               )}
             </div>
+
+            {rateLimitWait !== null && (
+              <RateLimitedCard
+                retryAfterSeconds={rateLimitWait}
+                onRetry={() => setRateLimitWait(null)}
+              />
+            )}
 
             {error && (
               <div

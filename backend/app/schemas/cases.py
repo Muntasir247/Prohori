@@ -58,6 +58,12 @@ class CaseDecisionIn(BaseModel):
     scam_type_id: int | None = None
 
 
+class CasePatchIn(BaseModel):
+    assigned_to: UUID | None = None
+    status: Literal["new", "in_review", "escalated", "closed"] | None = None
+    version: int
+
+
 class CheckNumberDetail(BaseModel):
     role: str
     masked_display: str
@@ -71,6 +77,8 @@ class CaseDetailOut(BaseModel):
     reference: str
     status: str
     version: int
+    assigned_to: UUID | None = None
+    assigned_to_name: str | None = None
     created_at: datetime
     decided_at: datetime | None = None
     decided_by: UUID | None = None

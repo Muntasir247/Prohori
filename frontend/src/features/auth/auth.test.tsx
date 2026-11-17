@@ -435,7 +435,7 @@ describe("RequireRole", () => {
   it("keeps a normal user out of reviewer routes", async () => {
     mockFetch({ "GET /api/v1/auth/session": () => json(200, baseUser) });
     renderAt("/review", routes);
-    expect(await screen.findByText("check-home")).toBeInTheDocument();
+    expect(await screen.findByTestId("error-page-403")).toBeInTheDocument();
     expect(screen.queryByText("reviewer-only")).not.toBeInTheDocument();
   });
 

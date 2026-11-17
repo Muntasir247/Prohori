@@ -10,7 +10,8 @@ interface ProviderOption {
   id: string;
   name: string;
   name_bn: string;
-  phone: string;
+  /** Offline fallback only for helplines verified on an official source (Doc 03 A06). */
+  verifiedFallbackPhone: string | null;
   icon: string;
 }
 
@@ -19,35 +20,35 @@ const PROVIDERS: ProviderOption[] = [
     id: "bkash",
     name: "bKash",
     name_bn: "বিকাশ",
-    phone: "16247",
+    verifiedFallbackPhone: "16247",
     icon: "simple-icons:bkash",
   },
   {
     id: "nagad",
     name: "Nagad",
     name_bn: "নগদ",
-    phone: "16167",
+    verifiedFallbackPhone: null,
     icon: "ph:wallet",
   },
   {
     id: "rocket",
     name: "Rocket (DBBL)",
     name_bn: "রকেট (ডাচ্-বাংলা)",
-    phone: "16216",
+    verifiedFallbackPhone: null,
     icon: "ph:device-mobile",
   },
   {
     id: "upay",
     name: "Upay (UCB)",
     name_bn: "উপায় (ইউসিবি)",
-    phone: "16268",
+    verifiedFallbackPhone: null,
     icon: "ph:money",
   },
   {
     id: "other",
     name: "Bank / Other MFS",
     name_bn: "ব্যাংক বা অন্যান্য",
-    phone: "999",
+    verifiedFallbackPhone: null,
     icon: "ph:bank",
   },
 ];
@@ -67,7 +68,7 @@ export default function AlreadySent() {
   const [isOffline, setIsOffline] = useState(
     typeof navigator !== "undefined" && !navigator.onLine
   );
-  const [, setActions] = useState<SafeActionResponse[]>([]);
+  const [actions, setActions] = useState<SafeActionResponse[]>([]);
 
   useEffect(() => {
     // Monitor online/offline state
@@ -85,7 +86,7 @@ export default function AlreadySent() {
         }
       })
       .catch(() => {
-        // Safe to ignore: offline fallback is hardcoded in UI
+        // Safe to ignore: offline fallback copy & verified bKash helpline remain available
       });
 
     return () => {
@@ -93,6 +94,21 @@ export default function AlreadySent() {
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
+
+  // Resolve helpline strictly from active, verified DB safe_actions (with verified bKash offline fallback)
+  const verifiedProviderAction = actions.find(
+    (a) =>
+      a.is_active &&
+      a.provider?.toLowerCase() === selectedProvider.id &&
+      Boolean(a.phone) &&
+      Boolean(a.source_url) &&
+      Boolean(a.verified_at)
+  );
+  const activeVerifiedPhone =
+    verifiedProviderAction?.phone ?? selectedProvider.verifiedFallbackPhone;
+  const keepEvidenceAction = actions.find((a) => a.id === "keep_evidence");
+  const recoveryAction = actions.find((a) => a.id === "do_not_pay_recovery");
+  const genericHelplineAction = actions.find((a) => a.id === "call_provider_helpline");
 
   return (
     <AppShell>
@@ -216,20 +232,36 @@ export default function AlreadySent() {
                 </div>
               </div>
 
-              {/* Call Helpline Button */}
-              <a
-                href={`tel:${selectedProvider.phone}`}
-                className="flex items-center justify-center gap-3 rounded-xl bg-accent px-5 py-4 text-sm font-bold text-on-accent hover:brightness-110 active:scale-98 transition-all"
-                data-testid="step-1-call-btn"
-              >
-                <Icon icon="ph:phone-call" className="text-xl" />
-                <span>
-                  {t("already_sent.call_provider", {
-                    provider: isBn ? selectedProvider.name_bn : selectedProvider.name,
-                    number: selectedProvider.phone,
-                  })}
-                </span>
-              </a>
+              {/* Call Helpline Button (verified only) or Official App Notice */}
+              {activeVerifiedPhone ? (
+                <a
+                  href={`tel:${activeVerifiedPhone}`}
+                  className="flex items-center justify-center gap-3 rounded-xl bg-accent px-5 py-4 text-sm font-bold text-on-accent hover:brightness-110 active:scale-98 transition-all"
+                  data-testid="step-1-call-btn"
+                >
+                  <Icon icon="ph:phone-call" className="text-xl" />
+                  <span>
+                    {t("already_sent.call_provider", {
+                      provider: isBn ? selectedProvider.name_bn : selectedProvider.name,
+                      number: activeVerifiedPhone,
+                    })}
+                  </span>
+                </a>
+              ) : (
+                <div
+                  className="flex items-start gap-3 rounded-xl border border-border-strong bg-surface-2 p-4 text-xs sm:text-sm text-text leading-relaxed"
+                  role="note"
+                  data-testid="step-1-official-app-notice"
+                >
+                  <Icon icon="ph:info" className="text-lg text-info shrink-0 mt-0.5" aria-hidden />
+                  <span>
+                    {(isBn ? genericHelplineAction?.body_bn : genericHelplineAction?.body_en) ||
+                      t("already_sent.official_app_notice", {
+                        provider: isBn ? selectedProvider.name_bn : selectedProvider.name,
+                      })}
+                  </span>
+                </div>
+              )}
             </div>
           </section>
 
@@ -248,7 +280,8 @@ export default function AlreadySent() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-muted leading-relaxed">
-                {t("already_sent.step2_desc")}
+                {(isBn ? keepEvidenceAction?.body_bn : keepEvidenceAction?.body_en) ||
+                  t("already_sent.step2_desc")}
               </p>
               <div className="rounded-xl border border-border bg-bg/80 p-3.5 text-xs text-text flex items-center gap-3 shadow-inner">
                 <Icon icon="ph:camera" className="text-xl text-brand shrink-0" />
@@ -276,7 +309,8 @@ export default function AlreadySent() {
                 </h2>
               </div>
               <p className="text-xs sm:text-sm text-muted leading-relaxed">
-                {t("already_sent.step3_desc")}
+                {(isBn ? recoveryAction?.body_bn : recoveryAction?.body_en) ||
+                  t("already_sent.step3_desc")}
               </p>
               <div className="rounded-xl border border-risk-high/30 bg-risk-high/10 p-3.5 text-xs text-text flex items-center gap-3">
                 <Icon icon="ph:warning" className="text-xl text-risk-high shrink-0" />

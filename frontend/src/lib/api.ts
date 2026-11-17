@@ -20,7 +20,7 @@ export class ApiError extends Error {
   readonly requestId?: string;
   readonly retryAfter?: number;
 
-  constructor(status: number, envelope?: ApiErrorEnvelope) {
+  constructor(status: number, envelope?: ApiErrorEnvelope, retryAfterHeader?: number) {
     super(envelope?.error.code ?? `http_${status}`);
     this.name = "ApiError";
     this.status = status;
@@ -28,7 +28,7 @@ export class ApiError extends Error {
     this.messageKey = envelope?.error.message_key ?? "errors.unknown";
     this.fields = envelope?.error.fields ?? {};
     this.requestId = envelope?.error.request_id;
-    this.retryAfter = envelope?.error.retry_after;
+    this.retryAfter = envelope?.error.retry_after ?? retryAfterHeader;
   }
 }
 
@@ -53,7 +53,9 @@ export async function apiFetch<T>(
     } catch {
       envelope = undefined;
     }
-    throw new ApiError(res.status, envelope);
+    const raRaw = res.headers?.get?.("Retry-After");
+    const retryAfterHeader = raRaw && /^\d+$/.test(raRaw.trim()) ? Number(raRaw.trim()) : undefined;
+    throw new ApiError(res.status, envelope, retryAfterHeader);
   }
 
   if (res.status === 204) return undefined as T;

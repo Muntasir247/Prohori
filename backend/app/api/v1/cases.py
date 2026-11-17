@@ -22,6 +22,7 @@ from app.models.api_key import ApiKey
 from app.models.audit import AuditEvent
 from app.models.base import utcnow
 from app.models.check import Case, CaseNote, Check, CheckNumber, RiskyNumber, ScamType
+from app.models.notification import Notification
 from app.models.user import User
 from app.schemas.cases import (
     CaseDecisionIn,
@@ -29,6 +30,7 @@ from app.schemas.cases import (
     CaseListResponse,
     CaseNoteIn,
     CaseNoteOut,
+    CasePatchIn,
     CaseSummary,
     CheckNumberDetail,
     ScamTypeSummary,
@@ -463,11 +465,21 @@ async def get_case_detail(
         else None
     )
 
+    assigned_to_name: str | None = None
+    if case.assigned_to is not None:
+        assignee_row = (
+            await session.execute(select(User).where(User.id == case.assigned_to))
+        ).scalar_one_or_none()
+        if assignee_row is not None:
+            assigned_to_name = assignee_row.display_name
+
     return CaseDetailOut(
         id=case.id,
         reference=case.reference,
         status=case.status,
         version=case.version,
+        assigned_to=case.assigned_to,
+        assigned_to_name=assigned_to_name,
         created_at=case.created_at,
         decided_at=case.decided_at,
         decided_by=case.decided_by,
@@ -498,6 +510,84 @@ async def get_case_detail(
         notes=notes,
         timeline=timeline,
     )
+
+
+@router.patch(
+    "/{id}",
+    response_model=CaseDetailOut,
+    summary="Assign reviewer or update case status with optimistic locking (S26, F11)",
+)
+async def patch_case(
+    id: str,
+    body: CasePatchIn,
+    user: ReviewerUser,
+    session: DbSession,
+) -> CaseDetailOut:
+    """Assign/unassign a case or update its workflow status with version locking."""
+    case = await _get_case_or_404(session, id)
+
+    if case.version != body.version:
+        raise AppError(
+            "stale_version",
+            status=409,
+            message_key="errors.case_version_conflict",
+        )
+
+    fields_set = body.model_fields_set
+    if "assigned_to" not in fields_set and "status" not in fields_set:
+        raise AppError(
+            "validation_failed",
+            status=422,
+            message_key="errors.validation_failed",
+        )
+
+    before_state = {
+        "assigned_to": str(case.assigned_to) if case.assigned_to else None,
+        "status": case.status,
+        "version": case.version,
+    }
+
+    if "assigned_to" in fields_set:
+        if body.assigned_to is not None:
+            assignee = (
+                await session.execute(select(User).where(User.id == body.assigned_to))
+            ).scalar_one_or_none()
+            if assignee is None or assignee.role not in ("reviewer", "admin"):
+                raise AppError(
+                    "validation_failed",
+                    status=422,
+                    message_key="errors.invalid_assignee",
+                )
+            case.assigned_to = assignee.id
+            if "status" not in fields_set and case.status == "new":
+                case.status = "in_review"
+        else:
+            case.assigned_to = None
+
+    if "status" in fields_set and body.status is not None:
+        case.status = body.status
+
+    case.version += 1
+
+    after_state = {
+        "assigned_to": str(case.assigned_to) if case.assigned_to else None,
+        "status": case.status,
+        "version": case.version,
+    }
+
+    audit = AuditEvent(
+        actor_id=user.id,
+        actor_role=user.role,
+        action="case.update",
+        entity_type="case",
+        entity_id=str(case.id),
+        before=before_state,
+        after=after_state,
+    )
+    session.add(audit)
+    await session.commit()
+
+    return await get_case_detail(str(case.id), user, session)
 
 
 @router.post(
@@ -578,6 +668,24 @@ async def record_case_decision(
         after=after_state,
     )
     session.add(audit)
+
+    # Notify signed-in reporter when their reported case is decided (F22, S23)
+    check_row = (
+        await session.execute(select(Check).where(Check.id == case.check_id))
+    ).scalar_one_or_none()
+    if check_row is not None and check_row.user_id is not None:
+        session.add(
+            Notification(
+                user_id=check_row.user_id,
+                type="case_decided",
+                payload={
+                    "case_id": str(case.id),
+                    "reference": case.reference,
+                    "status": body.decision,
+                },
+            )
+        )
+
     await session.commit()
 
     return await get_case_detail(str(case.id), user, session)

@@ -17,6 +17,7 @@ from app.api.v1 import (
     checks,
     health,
     me,
+    notifications,
     public,
     shares,
 )
@@ -25,6 +26,7 @@ api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(health.router)
 api_router.include_router(auth.router)
 api_router.include_router(me.router)
+api_router.include_router(notifications.router)
 api_router.include_router(checks.router)
 api_router.include_router(shares.router)
 api_router.include_router(public.router)

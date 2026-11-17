@@ -127,7 +127,7 @@ export default function CaseQueue() {
       new: "bg-brand/15 text-brand border-brand/30",
       in_review: "bg-warning/15 text-warning border-warning/30",
       confirmed_scam: "bg-risk-high/15 text-risk-high border-risk-high/30",
-      not_scam: "bg-success/15 text-success border-success/30",
+      not_scam: "bg-surface-2 text-text-2 border-border-strong",
       escalated: "bg-info/15 text-info border-info/30",
       closed: "bg-surface-2 text-muted border-border",
     };

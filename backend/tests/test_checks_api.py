@@ -281,3 +281,22 @@ async def test_simulate_failure_unsetting_api_key_returns_unavailable_never_low(
     # Must have fallback advice
     assert len(data["reasons"]) > 0
     assert len(data["safe_actions"]) > 0
+
+
+@pytest.mark.asyncio
+async def test_rule_only_check_resolves_real_safe_actions_not_generic_fallback(
+    client: AsyncClient,
+):
+    payload = {
+        "text": "আপনার বিকাশ অ্যাকাউন্ট ২৪ ঘণ্টার মধ্যে বন্ধ হয়ে যাবে। চালু রাখতে এই নম্বরে ওটিপি পাঠান।",
+        "language_hint": "bn",
+    }
+    res = await client.post("/api/v1/check-message", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+
+    assert data["final_level"] == "High"
+    assert len(data["safe_actions"]) >= 2
+    for action in data["safe_actions"]:
+        assert action["label"] not in ("পদক্ষেপ নিন", "Take action")
+        assert action["body"], f"Expected non-empty body for action {action['id']}"

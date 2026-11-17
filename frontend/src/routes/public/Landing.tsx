@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { LanternHeroAsset, ReviewerDeskIllustration } from "@/components/brand/Illustrations";
 import { EighthWatchMark, ProhoriLogo } from "@/components/brand/ProhoriLogo";
 import { PhoneDemo } from "@/components/landing/PhoneDemo";
 import { checksApi } from "@/features/checks/api";
@@ -438,8 +439,8 @@ export default function Landing() {
 
               {/* E: human review */}
               <Reveal className="md:col-span-3" delay={140}>
-                <div className="flex h-full flex-col justify-between gap-8 rounded-[28px] border border-border bg-surface-2 p-7">
-                  <Icon icon="ph:users-three" className="text-2xl text-text" aria-hidden />
+                <div className="flex h-full flex-col justify-between gap-6 rounded-[28px] border border-border bg-surface-2 p-7">
+                  <ReviewerDeskIllustration className="w-full max-w-[260px]" />
                   <div>
                     <h3 className="text-lg font-semibold">{t("landing.promise_review_title")}</h3>
                     <p className="mt-1.5 text-[15px] text-text-2">{t("landing.promise_review_desc")}</p>
@@ -450,9 +451,9 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* Manifesto: the honest limit, as big type */}
+        {/* Manifesto: the honest limit, paired with the Eighth Watch lantern (Doc 01 §11 A1) */}
         <section className="border-t border-border">
-          <div className="mx-auto w-full max-w-[1240px] px-4 py-20 md:px-8 lg:py-32">
+          <div className="mx-auto grid w-full max-w-[1240px] grid-cols-1 items-center gap-10 px-4 py-20 md:px-8 lg:grid-cols-[1.25fr_0.75fr] lg:py-32">
             <Reveal>
               <p className="max-w-[20ch] font-display text-[36px] font-bold leading-[1.2] tracking-[-0.01em] sm:text-[52px] lg:text-[64px]">
                 {isBn ? (
@@ -471,6 +472,12 @@ export default function Landing() {
                   en: "We look for known warning signs and tell you the next step. Prohori can be wrong. Your provider's helpline is the final check.",
                 })}
               </p>
+            </Reveal>
+            <Reveal delay={120} className="flex justify-center lg:justify-end">
+              <LanternHeroAsset
+                alt={isBn ? "প্রহরীর হারিকেন লণ্ঠন" : "Prohori hurricane lantern"}
+                className="w-full max-w-[320px]"
+              />
             </Reveal>
           </div>
         </section>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 
+import { OnboardingHandIllustration } from "@/components/brand/Illustrations";
 import { Button } from "@/components/ui/Button";
 import { authApi } from "@/features/auth/api";
 import { clearPendingOnboarding, queueOnboarding } from "@/features/auth/preferences";
@@ -109,6 +110,9 @@ export default function Onboarding() {
 
       {step === 2 && (
         <section className="flex flex-col gap-4">
+          <div className="flex justify-center py-2">
+            <OnboardingHandIllustration />
+          </div>
           <h1 className="text-xl font-semibold">{t("onboarding.howto_title")}</h1>
           <ol className="flex flex-col gap-3">
             {howto.map((line, i) => (

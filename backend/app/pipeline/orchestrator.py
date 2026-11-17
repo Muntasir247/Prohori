@@ -235,7 +235,11 @@ class PipelineOrchestrator:
             )
             final_level = "High"
             reasons = [template_exp.title, template_exp.explanation]
-            action_ids = list(template_exp.safe_action_ids)
+            action_ids = list(
+                dict.fromkeys(
+                    ACTION_ALIASES.get(aid, aid) for aid in template_exp.safe_action_ids
+                )
+            )
             caution = template_exp.caution
 
             elapsed_ms = (dt.datetime.now(dt.UTC) - start_time).total_seconds() * 1000.0

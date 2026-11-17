@@ -28,7 +28,11 @@ from app.pipeline.normalize import (
     guess_language_script,
     normalize_phone_number,
 )
-from app.pipeline.orchestrator import CAUTION_TEXTS, PipelineOrchestrator
+from app.pipeline.orchestrator import (
+    ACTION_ALIASES,
+    CAUTION_TEXTS,
+    PipelineOrchestrator,
+)
 from app.pipeline.riskmodel import PaymentInput, PaymentRiskModel
 from app.schemas.checks import (
     CheckHistoryItem,
@@ -138,11 +142,16 @@ async def resolve_safe_actions_with_db(
                 provider_helpline_added = True
                 break
 
+    seen_ids: set[str] = {item.id for item in items}
     for raw_id in action_ids:
-        if raw_id == "call_provider_helpline" and provider_helpline_added:
+        aid = ACTION_ALIASES.get(raw_id, raw_id)
+        if aid == "call_provider_helpline" and provider_helpline_added:
             continue
-        if raw_id in db_actions:
-            a = db_actions[raw_id]
+        if aid in seen_ids:
+            continue
+        seen_ids.add(aid)
+        if aid in db_actions:
+            a = db_actions[aid]
             items.append(
                 SafeActionItem(
                     id=a.id,
@@ -155,7 +164,7 @@ async def resolve_safe_actions_with_db(
             # Fallback item
             items.append(
                 SafeActionItem(
-                    id=raw_id,
+                    id=aid,
                     label="পদক্ষেপ নিন" if is_bn else "Take action",
                     body=None,
                     phone=None,
@@ -434,7 +443,7 @@ async def run_payment_check(
         reasons=reasons,
         red_flags=[f.feature for f in model_res.top_factors],
         safe_action_ids=action_ids,
-        route="payment_model",
+        route="rules_only",
         is_fallback=False,
         risk_model_version=model_res.model_version,
         created_at=now_dt,

@@ -75,6 +75,8 @@ export interface CaseDetail {
   reference: string;
   status: "new" | "in_review" | "confirmed_scam" | "not_scam" | "escalated" | "closed";
   version: number;
+  assigned_to?: string | null;
+  assigned_to_name?: string | null;
   created_at: string;
   decided_at?: string | null;
   decided_by?: string | null;
@@ -86,6 +88,12 @@ export interface CaseDetail {
   numbers: CheckNumberDetail[];
   notes: CaseNote[];
   timeline: CaseTimelineItem[];
+}
+
+export interface CasePatchPayload {
+  assigned_to?: string | null;
+  status?: "new" | "in_review" | "escalated" | "closed";
+  version: number;
 }
 
 export interface CaseDecisionPayload {

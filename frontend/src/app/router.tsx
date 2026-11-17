@@ -14,12 +14,14 @@ import ResetPassword from "@/routes/public/ResetPassword";
 import Safety from "@/routes/public/Safety";
 import VerifyEmail from "@/routes/public/VerifyEmail";
 import SharedResult from "@/routes/public/SharedResult";
+import { ErrorPage, RouteErrorBoundary } from "@/routes/system/ErrorPage";
 import NotFound from "@/routes/system/NotFound";
 import AlreadySent from "@/routes/user/AlreadySent";
 import CheckDetail from "@/routes/user/CheckDetail";
 import CheckHome from "@/routes/user/CheckHome";
 import History from "@/routes/user/History";
 import MessageCheck from "@/routes/user/MessageCheck";
+import Notifications from "@/routes/user/Notifications";
 import Onboarding from "@/routes/user/Onboarding";
 import PaymentCheck from "@/routes/user/PaymentCheck";
 import Result from "@/routes/user/Result";
@@ -54,6 +56,7 @@ const staff = (roles: Array<"reviewer" | "admin">, page: ReactNode) => (
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       { path: "/", element: <Landing /> },
 
@@ -86,6 +89,7 @@ export const router = createBrowserRouter([
           { path: "/already-sent", element: <AlreadySent /> },
           { path: "/history", element: <History /> },
           { path: "/history/:id", element: <CheckDetail /> },
+          { path: "/notifications", element: <Notifications /> },
           { path: "/settings", element: <Settings /> },
 
           // Reviewer group (S24+). RequireRole is UX only; the API enforces roles.
@@ -107,6 +111,7 @@ export const router = createBrowserRouter([
         ],
       },
 
+      { path: "/403", element: <ErrorPage code={403} /> },
       { path: "*", element: <NotFound /> },
     ],
   },

@@ -1,5 +1,11 @@
 import { apiFetch } from "@/lib/api";
-import type { CaseDecisionPayload, CaseDetail, CaseListResponse, CaseNote } from "./types";
+import type {
+  CaseDecisionPayload,
+  CaseDetail,
+  CaseListResponse,
+  CaseNote,
+  CasePatchPayload,
+} from "./types";
 
 export const casesApi = {
   listCases: (params?: {
@@ -22,6 +28,12 @@ export const casesApi = {
   },
 
   getCase: (id: string) => apiFetch<CaseDetail>(`/cases/${id}`),
+
+  patchCase: (id: string, payload: CasePatchPayload) =>
+    apiFetch<CaseDetail>(`/cases/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
 
   recordDecision: (id: string, payload: CaseDecisionPayload) =>
     apiFetch<CaseDetail>(`/cases/${id}/decision`, {

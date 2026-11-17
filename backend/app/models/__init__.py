@@ -27,6 +27,7 @@ from app.models.check import (
 )
 from app.models.eval import EvalRun, PromptVersion
 from app.models.knowledge import KbChunk, KbDocument, SafeAction, Sample, Tip
+from app.models.notification import Notification
 from app.models.rate_limit import RateLimitCounter
 from app.models.session import Session
 from app.models.user import User, UserRole
@@ -56,6 +57,7 @@ __all__ = [
     "ApiKey",
     "KbDocument",
     "KbChunk",
+    "Notification",
     "PromptVersion",
     "EvalRun",
 ]

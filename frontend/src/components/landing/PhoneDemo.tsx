@@ -225,7 +225,7 @@ export function PhoneDemo({ isBn }: { isBn: boolean }) {
 
         {/* Device (always dark, like a real phone) */}
         <div
-          className="force-dark relative h-[500px] w-[248px] rounded-[44px] border border-[#2f4540] bg-[#070d0c] p-2.5 shadow-[0_40px_80px_-30px_rgba(6,14,12,0.55)] sm:h-[530px] sm:w-[262px]"
+          className="force-dark relative h-[500px] w-[248px] rounded-[44px] border border-border-strong bg-raat p-2.5 shadow-[0_40px_80px_-30px_rgba(6,14,12,0.55)] sm:h-[530px] sm:w-[262px]"
           role="img"
           aria-label={
             isBn
@@ -237,7 +237,7 @@ export function PhoneDemo({ isBn }: { isBn: boolean }) {
             {/* Status bar */}
             <div className="flex items-center justify-between px-6 pb-1 pt-3 text-[11px] font-semibold text-text">
               <span className="tabular-nums">{isBn ? "৯:৪১" : "9:41"}</span>
-              <span className="absolute left-1/2 top-2.5 h-5 w-20 -translate-x-1/2 rounded-full bg-[#070d0c]" />
+              <span className="absolute left-1/2 top-2.5 h-5 w-20 -translate-x-1/2 rounded-full bg-raat" />
               <span className="flex items-center gap-1 text-[13px]">
                 <Icon icon="ph:cell-signal-full" aria-hidden />
                 <Icon icon="ph:wifi-high" aria-hidden />

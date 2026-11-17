@@ -37,10 +37,26 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
   - **Not verified here:** a live `status: "ok"` health result and `make`/
     `docker compose` — this machine has no Postgres, Docker, or make. Health
     returns 503 `degraded` until a database is reachable (expected).
-- [ ] **Phase 02 — Design system.** Build tokens and the 29 components. _Done when:_
+- [x] **Phase 02 — Design system.** Build tokens and reusable components. _Done when:_
   no hard-coded colors outside `tokens.css`; axe reports no serious issues.
-- [~] **Phase 03 — Database and seed data.** Create the schema and realistic
+  - **Tokens & Branding:** Night Watch color system (`frontend/src/styles/tokens.css`,
+    dark default + light mode), Hanken Grotesk / Anek Bangla / Noto Sans Bengali / IBM Plex Mono,
+    Eighth Watch SVG logo (`components/brand/ProhoriLogo.tsx`), and Doc 01 §11 visual assets
+    A1–A6 (`public/assets/lantern-hero.jpg` + `components/brand/Illustrations.tsx`).
+  - **Components:** Radix UI primitives (`@radix-ui/react-dialog`, `@radix-ui/react-tabs`,
+    `@radix-ui/react-tooltip`, `@radix-ui/react-dropdown-menu`) wired into `components/ui/`
+    (`Modal`, `Tabs`, `Tooltip`, `DropdownMenu`, `EmptyState`, `Button`, `TextField`), plus
+    domain risk/check components (`RiskBanner`, `RiskBadge`, `RiskMeter`, `PressurePause`,
+    `HighlightedMessage`, `PipelineSteps`, `RateLimitedCard`, `OfflineBanner`).
+  - **Verified:** 0 hardcoded hex colors outside `tokens.css`; axe-core WCAG 2.2 AA audit
+    passes with 0 serious violations; initial public gzip bundle stays under 200 kB (`196.85 kB`).
+- [x] **Phase 03 — Database and seed data.** Create the schema and realistic
   simulated data. _Done when:_ audit update fails, seeded counts match.
+  - **Live Render Postgres verified:** `prohori-db` (PostgreSQL 16, Singapore) running with
+    migrations `0001` + `0002` applied, `/api/v1/health` returning `{"status":"ok","database":"up"}`,
+    and live seeded samples/tips/safe-actions + new check persistence serving `200 OK`.
+    *(Note: local `upgrade → downgrade → upgrade` and direct `psql` `UPDATE audit_events`
+    trigger proof still require running against a Postgres shell.)*
   - **Migrations (done):** Alembic `0001_core_schema` and
     `0002_knowledge_safety_operations` hold the exact Doc 02 Section 8 DDL — the
     four extensions, six enum types, all **24 tables**, indexes (incl. hnsw / gin
@@ -278,9 +294,24 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
     - Frontend: 54 vitest tests passing 100% across all screens, components, and interactions.
     - Lint & Typecheck: `tsc --noEmit` clean; `eslint .` clean (0 errors, 0 warnings); backend `ruff check .` clean; `ruff format --check .` clean.
     - Production build: `npm run build` succeeds cleanly.
-- [ ] **Phase 08 — Reviewer workbench.** Queue, case detail, decisions, audit and
+- [x] **Phase 08 — Reviewer workbench.** Queue, case detail, decisions, audit and
   notifications. _Done when:_ a report from S17 is decided in S26, and a later
   check on that number hits the hard rule.
+  - **Backend (`api/v1/cases.py`, `api/v1/notifications.py`, `models/notification.py`):**
+    - `GET /api/v1/cases` (filters, search, `high_first` sort, pagination), `GET /api/v1/cases/{id}`
+      (masked text, trace, numbers, notes, audit timeline, assignee).
+    - `PATCH /api/v1/cases/{id}`: reviewer claim/assign/unassign and status updates with version-based
+      optimistic locking (`409 stale_version`), `new → in_review` auto-transition, and `case.update` audit logging.
+    - `POST /api/v1/cases/{id}/decision`: optimistic locking (`409`), updates `risky_numbers` to
+      `confirmed_risky` (triggering hard-rule High on subsequent checks), logs `case.decision` audit,
+      and creates a `case_decided` row in `notifications` for signed-in reporters.
+    - `POST /api/v1/cases/{id}/notes` + `GET /api/v1/notifications` + `POST /api/v1/notifications/read`.
+  - **Frontend:** S25 Case Queue (`routes/review/CaseQueue.tsx`, keyboard J/K/Enter/R, neutral `--text-2`
+    `not_scam` badge), S26 Case Detail (`routes/review/CaseDetail.tsx`, Claim/Unassign button, decision
+    workflow with 409 reload prompt, autosaved note drafts), S23 Notifications (`routes/user/Notifications.tsx`,
+    Radix Tabs All/Unread, Mark all read, BottomNav Alerts tab with unread indicator).
+  - **Verified:** `test_notifications_and_case_patch.py`, `test_phase13_hardening.py`, and
+    `section_b.test.tsx` all passing.
 - [x] **Phase 09 — Analytics, repeat numbers, campaigns.** Dashboard, repeat
   numbers, clustering, export, nightly job. _Done when:_ charts move after a
   decision, with no hard-coded chart data.
@@ -510,16 +541,17 @@ Status key: `[ ]` not started · `[~]` in progress · `[x]` done.
   final form check. _Done when:_ demo works twice in a row, and form answers match
   what was built.
   - **1. Frontend Deployment Configuration (`vercel.json`, `frontend/vercel.json`):**
-    - Configured SPA fallback to `/index.html` for client-side routing.
-    - Reverse-proxy rewrite rules proxying `/api/(.*)` to the Render backend host, ensuring session cookies (`__Host-prohori_session`) remain same-origin under modern browser security policies.
+    - Deployed live at **`https://theprohori.vercel.app`** (`https://sudo-sapians.vercel.app` 307 redirects to main) tracking branch **`main`**.
+    - Configured SPA fallback to `/index.html` for client-side routing (deep links `/safety`, `/already-sent`, `/check`, `/login`, `/notifications` verified `200 OK`).
+    - Reverse-proxy rewrite rules proxying `/api/(.*)` to `https://prohori-backend.onrender.com/api/$1`, keeping session cookies (`__Host-prohori_session`) same-origin.
     - Baseline static security headers configured: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`.
-    - Production bundle size measured: **150.26 kB** initial public transfer (JS gzip 143.99 kB, CSS gzip 6.27 kB), well within the 200 kB budget target in Doc 01 (**24.8% headroom**). Recharts and reviewer modules lazily loaded on demand.
-  - **2. Backend Docker & Platform Cron Infrastructure (`render.yaml`):**
-    - Render multi-service blueprint for production deployment in Singapore (`ap-southeast-1`):
-      - Web Service (`prohori-backend`): Docker container on **Starter plan** (1 GB RAM, 1 CPU, always-on — eliminates free-tier cold-start delays).
-      - Automated pre-deploy database migration command: `alembic upgrade head`.
-      - Health checks routed to `/api/v1/health` and root alias `/health` (added to `backend/app/main.py`).
-      - Cron Service (`prohori-nightly`): scheduled at `0 20 * * *` (02:00 AM BST daily) running `python -m app.jobs.nightly`.
+    - Production bundle size measured: **196.85 kB** initial public transfer (JS gzip 184.14 kB, CSS gzip 12.71 kB, including Radix UI primitives), within the 200 kB budget target in Doc 01. Recharts and reviewer/admin modules lazily loaded on demand.
+  - **2. Backend Docker & Nightly Cron Infrastructure (`render.yaml`, `.github/workflows/nightly.yml`):**
+    - Render Blueprint (`exs-dbu9ka5ckfvc73cobbm0`) and `prohori-backend` (`https://prohori-backend.onrender.com`, Singapore) aligned to track **`main`** (switched from `phase-03-04-db-auth`).
+    - **Current hosting tier (Free / Hobby — no card on file):** `prohori-backend` runs on Render Free tier (auto-sleeps on inactivity; pre-warm before live demo) and `prohori-db` runs on Render Free PostgreSQL 16 (**expires Dec 18, 2026**, no PITR). Upgrade to Render Starter + Neon/Supabase before public rollout.
+    - Container startup runs `alembic upgrade head && exec uvicorn ...`; health probe at `/api/v1/health` verified `{"status":"ok","database":"up"}`.
+    - **Nightly Cron:** Active free-tier schedule configured in `.github/workflows/nightly.yml` (`0 20 * * *`, 02:00 AM BST + manual `workflow_dispatch`); Render-native `prohori-nightly` cron block is documented in `render.yaml` for when a payment method is added.
+    - **Render Env Vars Status (names only):** 13 core vars configured (`ANTHROPIC_API_KEY` confirmed live with `is_fallback: false`). Optional vars **not yet set** on Render: `VOYAGE_API_KEY` (keyword fallback active), `RESEND_API_KEY` (console email driver active), `SENTRY_DSN` (Sentry inactive), `SEED_*_PASSWORD` (only needed for custom re-seeding).
   - **3. Managed Database & Disaster Recovery Runbook (`docs/DEPLOY.md`):**
     - Complete, step-by-step provisioning instructions for Neon or Supabase with PostgreSQL 16 and `pgvector`, `pg_trgm`, `btree_gin`, and `uuid-ossp` extensions.
     - Comprehensive production environment variables catalog with **zero real secrets/values printed**.

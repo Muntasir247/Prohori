@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 
 import { AppShell } from "@/components/AppShell";
 import { ReviewNav } from "@/components/review/ReviewNav";
+import { useSession } from "@/features/auth/useSession";
 import { casesApi } from "@/features/cases/api";
 import type { CaseDetail as CaseDetailType } from "@/features/cases/types";
 import { HighlightedMessage } from "@/components/checks/HighlightedMessage";
@@ -15,12 +16,14 @@ import { Button } from "@/components/ui/Button";
 export default function CaseDetail() {
   const { id } = useParams<{ id: string }>();
   const { i18n } = useTranslation();
+  const { data: currentUser } = useSession();
   const lang = (i18n.language as "bn" | "en") || "bn";
 
   const [caseData, setCaseData] = useState<CaseDetailType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [conflictError, setConflictError] = useState<string | null>(null);
+  const [updatingAssignment, setUpdatingAssignment] = useState(false);
 
   // Decision form
   const [decision, setDecision] = useState<"confirmed_scam" | "not_scam" | "escalated" | "closed">("confirmed_scam");
@@ -170,6 +173,32 @@ export default function CaseDetail() {
     };
   });
 
+  const handleAssignment = async (assignTo: string | null) => {
+    if (!caseData) return;
+    try {
+      setUpdatingAssignment(true);
+      setConflictError(null);
+      const updated = await casesApi.patchCase(caseData.id, {
+        assigned_to: assignTo,
+        version: caseData.version,
+      });
+      setCaseData(updated);
+    } catch (err: unknown) {
+      const e = err as { status?: number; message?: string };
+      if (e.status === 409) {
+        setConflictError(
+          lang === "bn"
+            ? "অন্য একজন রিভিউয়ার ইতিমধ্যে এই কেস আপডেট করেছেন। অনুগ্রহ করে রিলোড করুন।"
+            : "Another reviewer already updated this case. Please reload before changing assignment."
+        );
+      } else {
+        setError(e.message || "Failed to update assignment");
+      }
+    } finally {
+      setUpdatingAssignment(false);
+    }
+  };
+
   return (
     <AppShell>
       <div className="mx-auto max-w-6xl py-6 flex flex-col gap-6">
@@ -208,7 +237,7 @@ export default function CaseDetail() {
                   caseData.status === "confirmed_scam"
                     ? "bg-risk-high/15 text-risk-high border border-risk-high/30"
                     : caseData.status === "not_scam"
-                      ? "bg-success/15 text-success border border-success/30"
+                      ? "bg-surface-2 text-text-2 border border-border-strong"
                       : caseData.status === "new"
                         ? "bg-brand/15 text-brand border border-brand/30"
                         : "bg-surface-2 text-muted border border-border"
@@ -221,18 +250,52 @@ export default function CaseDetail() {
               <Icon icon="ph:clock" />
               <span>{lang === "bn" ? "রিপোর্ট দাখিলের সময়: " : "Reported: "}</span>
               <span>{formatDate(caseData.created_at, lang)}</span>
+              {caseData.assigned_to_name && (
+                <span className="ml-2 text-text-2" data-testid="case-assignee-label">
+                  • {lang === "bn" ? "দায়িত্বপ্রাপ্ত: " : "Assigned: "}
+                  {caseData.assigned_to_name}
+                </span>
+              )}
             </p>
           </div>
 
-          {caseData.decided_at && (
-            <div className="text-right text-xs bg-surface-2/60 p-3 rounded-xl border border-border/70">
-              <span className="font-semibold text-text">{lang === "bn" ? "নিষ্পত্তি হয়েছে: " : "Decided: "}</span>
-              <span className="text-muted font-mono">{formatDate(caseData.decided_at, lang)}</span>
-              {caseData.decision_reason && (
-                <p className="text-2xs text-muted italic mt-1">"{caseData.decision_reason}"</p>
-              )}
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-3">
+            {currentUser && (
+              caseData.assigned_to === currentUser.id ? (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={updatingAssignment}
+                  onClick={() => handleAssignment(null)}
+                  data-testid="unassign-case-btn"
+                  className="w-auto px-3.5 text-xs"
+                >
+                  {lang === "bn" ? "দায়িত্ব ছাড়ুন" : "Unassign"}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={updatingAssignment}
+                  onClick={() => handleAssignment(currentUser.id)}
+                  data-testid="claim-case-btn"
+                  className="w-auto px-3.5 text-xs"
+                >
+                  {lang === "bn" ? "আমি যাচাই করব" : "Claim case"}
+                </Button>
+              )
+            )}
+
+            {caseData.decided_at && (
+              <div className="text-right text-xs bg-surface-2/60 p-3 rounded-xl border border-border/70">
+                <span className="font-semibold text-text">{lang === "bn" ? "নিষ্পত্তি হয়েছে: " : "Decided: "}</span>
+                <span className="text-muted font-mono">{formatDate(caseData.decided_at, lang)}</span>
+                {caseData.decision_reason && (
+                  <p className="text-2xs text-muted italic mt-1">"{caseData.decision_reason}"</p>
+                )}
+              </div>
+            )}
+          </div>
         </header>
 
         {/* Conflict error banner (R09, T18) */}

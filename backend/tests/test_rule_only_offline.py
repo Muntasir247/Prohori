@@ -72,7 +72,8 @@ def test_rule_only_high_offline_bangla():
     assert "ওটিপি" in explanation.title or "পিন" in explanation.title
     assert "কোনো ব্যাংক, বিকাশ, নগদ বা রকেট" in explanation.explanation
     assert len(explanation.safe_action_ids) >= 2
-    assert "never_share_otp" in explanation.safe_action_ids
+    assert "do_not_send" in explanation.safe_action_ids
+    assert "call_provider_helpline" in explanation.safe_action_ids
 
     # Print summary of the offline verification
     print("\n" + "=" * 70)
@@ -86,3 +87,25 @@ def test_rule_only_high_offline_bangla():
     print(f"Explanation Title (Bangla): {explanation.title}")
     print(f"Safe Actions: {explanation.safe_action_ids}")
     print("=" * 70 + "\n")
+
+
+def test_all_template_safe_action_ids_exist_and_are_active_in_catalog():
+    import json
+    from pathlib import Path
+
+    from app.pipeline.templates import TEMPLATES
+
+    seed_path = Path("seed/safe_actions.json")
+    if not seed_path.exists():
+        seed_path = Path("backend/seed/safe_actions.json")
+    catalog = {
+        item["id"]: item
+        for item in json.loads(seed_path.read_text(encoding="utf-8"))
+    }
+    for rule_id, by_lang in TEMPLATES.items():
+        for lang, tpl in by_lang.items():
+            for aid in tpl.safe_action_ids:
+                assert aid in catalog, f"{rule_id}[{lang}] unknown action id: {aid}"
+                assert catalog[aid].get("is_active") is True, (
+                    f"{rule_id}[{lang}] inactive action id: {aid}"
+                )

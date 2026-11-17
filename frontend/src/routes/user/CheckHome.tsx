@@ -1,8 +1,9 @@
-﻿import { Icon } from "@iconify/react";
+import { Icon } from "@iconify/react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { AppShell } from "@/components/AppShell";
+import { WeeklyTipIllustration } from "@/components/brand/Illustrations";
 import { RiskBadge } from "@/components/checks/RiskBadge";
 import { useSession, useSyncLanguage } from "@/features/auth/useSession";
 import { checksApi } from "@/features/checks/api";
@@ -121,15 +122,18 @@ export default function CheckHome() {
 
       {/* Weekly tip */}
       {tip && (
-        <section className="rounded-lg border border-border bg-surface p-5 sm:p-6">
-          <p className="flex items-center gap-2 text-sm font-semibold text-text-2">
-            <Icon icon="ph:lightbulb" className="text-lg" aria-hidden />
-            {t("check.weekly_tip_badge")}
-          </p>
-          <h2 className="mt-3 text-lg font-semibold leading-snug text-text">
-            {isBn ? tip.title_bn : tip.title_en}
-          </h2>
-          <p className="mt-1 text-[15px] text-text-2">{isBn ? tip.body_bn : tip.body_en}</p>
+        <section className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div className="min-w-0 flex-1">
+            <p className="flex items-center gap-2 text-sm font-semibold text-text-2">
+              <Icon icon="ph:lightbulb" className="text-lg" aria-hidden />
+              {t("check.weekly_tip_badge")}
+            </p>
+            <h2 className="mt-3 text-lg font-semibold leading-snug text-text">
+              {isBn ? tip.title_bn : tip.title_en}
+            </h2>
+            <p className="mt-1 text-[15px] text-text-2">{isBn ? tip.body_bn : tip.body_en}</p>
+          </div>
+          <WeeklyTipIllustration className="h-16 w-24 shrink-0 self-start sm:self-center" />
         </section>
       )}
 

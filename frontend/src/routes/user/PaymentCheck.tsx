@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { AppShell } from "@/components/AppShell";
 import { PipelineSteps } from "@/components/checks/PipelineSteps";
+import { RateLimitedCard } from "@/components/checks/RateLimitedCard";
 import { Button } from "@/components/ui/Button";
 import { checksApi } from "@/features/checks/api";
 
@@ -23,6 +24,7 @@ export default function PaymentCheck() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rateLimitWait, setRateLimitWait] = useState<number | null>(null);
 
   const isValid = amount.trim().length > 0;
 
@@ -31,6 +33,7 @@ export default function PaymentCheck() {
     if (!isValid) return;
 
     setError(null);
+    setRateLimitWait(null);
     setIsSubmitting(true);
 
     try {
@@ -48,9 +51,9 @@ export default function PaymentCheck() {
     } catch (err: unknown) {
       setIsSubmitting(false);
       // NON-NEGOTIABLE: Preserve inputs on error!
-      const status = (err as { status?: number })?.status;
-      if (status === 429) {
-        setError(t("errors.rate_limited"));
+      const apiErr = err as { status?: number; retryAfter?: number };
+      if (apiErr?.status === 429) {
+        setRateLimitWait(apiErr.retryAfter ?? 60);
       } else {
         setError(t("errors.check_failed_retry"));
       }
@@ -261,6 +264,13 @@ export default function PaymentCheck() {
                 className="w-full rounded-2xl border border-border bg-surface p-3.5 text-xs text-text placeholder:text-muted focus:border-info focus:outline-none font-mono"
               />
             </div>
+
+            {rateLimitWait !== null && (
+              <RateLimitedCard
+                retryAfterSeconds={rateLimitWait}
+                onRetry={() => setRateLimitWait(null)}
+              />
+            )}
 
             {error && (
               <div

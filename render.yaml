@@ -51,7 +51,44 @@ services:
         value: "true" # Extracts real client IP behind Render/Vercel reverse proxies
       - key: SENTRY_DSN
         sync: false # Optional: Sentry error reporting
+      - key: SEED_USER_PASSWORD
+        sync: false # Optional: demo user password for scripts/seed.py
+      - key: SEED_REVIEWER_PASSWORD
+        sync: false # Optional: demo reviewer password for scripts/seed.py
+      - key: SEED_ADMIN_PASSWORD
+        sync: false # Optional: demo admin password for scripts/seed.py
       - key: DAILY_LLM_SPEND_CAP_USD
         value: "25.0"
       - key: LOG_LEVEL
         value: INFO
+
+# Optional Render Cron Job (requires a paid payment method on Render).
+# On Free tier, nightly analytics and campaign clustering run via
+# `.github/workflows/nightly.yml` (02:00 AM Asia/Dhaka daily).
+# Uncomment once a Render payment method is on file:
+#
+#   - type: cron
+#     name: prohori-nightly
+#     runtime: docker
+#     dockerfilePath: ./backend/Dockerfile
+#     dockerContext: ./backend
+#     dockerCommand: python -m app.jobs.nightly
+#     schedule: "0 20 * * *" # 02:00 AM Asia/Dhaka (UTC+6)
+#     region: singapore
+#     envVars:
+#       - key: ENVIRONMENT
+#         value: production
+#       - key: ALLOW_CONSOLE_EMAIL_IN_PROD
+#         value: "true"
+#       - key: DATABASE_URL
+#         fromDatabase:
+#           name: prohori-db
+#           property: connectionString
+#       - key: ANTHROPIC_API_KEY
+#         sync: false
+#       - key: VOYAGE_API_KEY
+#         sync: false
+#       - key: NUMBER_HMAC_KEY
+#         sync: false
+#       - key: SESSION_SECRET
+#         sync: false

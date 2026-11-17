@@ -6,6 +6,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ProhoriLogo } from "@/components/brand/ProhoriLogo";
 import { homeFor, useLogout, useSession } from "@/features/auth/useSession";
+import { useNotifications } from "@/features/notifications/api";
 
 // True inside ShellLayout. A page's own <AppShell> then renders only its
 // children, so the header, nav and footer stay mounted across navigation.
@@ -83,10 +84,11 @@ function Frame({ children, wide }: { children: ReactNode; wide?: boolean }) {
           <div className="flex items-center gap-1 sm:gap-2">
             <Link
               to="/already-sent"
-              className="hidden min-h-11 items-center gap-2 rounded-md px-3 text-sm font-semibold text-risk-high transition-colors duration-[120ms] hover:bg-risk-high-tint md:inline-flex"
+              aria-label={t("landing.card_sent_title")}
+              className="inline-flex min-h-11 items-center gap-2 rounded-md px-2.5 text-sm font-semibold text-risk-high transition-colors duration-[120ms] hover:bg-risk-high-tint md:px-3"
             >
               <Icon icon="ph:siren" className="text-lg" aria-hidden />
-              <span>{t("landing.card_sent_title")}</span>
+              <span className="hidden md:inline">{t("landing.card_sent_title")}</span>
             </Link>
             <LanguageToggle />
             <AccountMenu />
@@ -131,15 +133,19 @@ function Frame({ children, wide }: { children: ReactNode; wide?: boolean }) {
 const USER_NAV = [
   { to: "/check", key: "nav.check", icon: "ph:chat-text" },
   { to: "/history", key: "nav.history", icon: "ph:clock-counter-clockwise" },
-  { to: "/already-sent", key: "nav.already_sent", icon: "ph:siren" },
+  { to: "/notifications", key: "nav.alerts", icon: "ph:bell" },
   { to: "/settings", key: "nav.settings", icon: "ph:gear-six" },
 ] as const;
 
 function UserNav({ className = "" }: { className?: string }) {
   const { t } = useTranslation();
+  const { data: user } = useSession();
+  const { data: notifData } = useNotifications(Boolean(user), true);
+  const unreadCount = notifData?.unread_count ?? 0;
+
   return (
     <nav aria-label={t("nav.main")} className={`items-center gap-1 ${className}`}>
-      {USER_NAV.filter((i) => i.to !== "/already-sent").map((item) => (
+      {USER_NAV.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
@@ -152,7 +158,15 @@ function UserNav({ className = "" }: { className?: string }) {
           }
         >
           <Icon icon={item.icon} className="text-xl" aria-hidden />
-          {t(item.key)}
+          <span>{t(item.key)}</span>
+          {item.to === "/notifications" && unreadCount > 0 && (
+            <span
+              data-testid="nav-unread-badge"
+              className="inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 py-0.5 font-mono text-[11px] font-bold text-on-accent"
+            >
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
         </NavLink>
       ))}
     </nav>
@@ -161,6 +175,10 @@ function UserNav({ className = "" }: { className?: string }) {
 
 function BottomNav() {
   const { t } = useTranslation();
+  const { data: user } = useSession();
+  const { data: notifData } = useNotifications(Boolean(user), true);
+  const unreadCount = notifData?.unread_count ?? 0;
+
   return (
     <nav
       aria-label={t("nav.main")}
@@ -175,13 +193,16 @@ function BottomNav() {
                 `relative flex h-full flex-col items-center justify-center gap-1 text-xs font-medium transition-colors duration-[120ms] ${
                   isActive
                     ? "text-text before:absolute before:inset-x-6 before:top-0 before:h-0.5 before:rounded-full before:bg-accent"
-                    : item.to === "/already-sent"
-                      ? "text-risk-high"
-                      : "text-text-2 hover:text-text"
+                    : "text-text-2 hover:text-text"
                 }`
               }
             >
-              <Icon icon={item.icon} className="text-2xl" aria-hidden />
+              <span className="relative inline-flex">
+                <Icon icon={item.icon} className="text-2xl" aria-hidden />
+                {item.to === "/notifications" && unreadCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1 h-2.5 w-2.5 rounded-full bg-accent" />
+                )}
+              </span>
               <span className="max-w-full truncate px-1">{t(item.key)}</span>
             </NavLink>
           </li>

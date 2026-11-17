@@ -315,25 +315,41 @@ describe("Phase 10: Differentiators", () => {
       expect(screen.getByTestId("call-cyber-btn")).toHaveAttribute("href", "tel:01320010148");
     });
 
-    it("pre-selects provider from query param ?provider=nagad and switches hotlines", async () => {
+    it("pre-selects provider from query param ?provider=nagad, avoids unverified tel links, and uses verified API helplines when active", async () => {
       const routes: Record<string, Handler> = {
-        "GET /api/v1/safe-actions?context=after_payment": () => json(200, []),
+        "GET /api/v1/safe-actions?context=after_payment": () =>
+          json(200, [
+            {
+              id: "call_nagad_helpline",
+              label_en: "Call Nagad helpline",
+              label_bn: "নগদ হেল্পলাইনে কল করুন",
+              body_en: "Verified Nagad helpline.",
+              body_bn: "যাচাইকৃত নগদ হেল্পলাইন।",
+              context: "both",
+              min_level: "Low",
+              provider: "nagad",
+              phone: "16167",
+              source_url: "https://nagad.com.bd/contact",
+              verified_at: "2026-11-08",
+              is_active: true,
+            },
+          ]),
       };
 
       renderDifferentiators(["/already-sent?provider=nagad"], routes);
 
       await screen.findByTestId("already-sent-title");
 
-      // Verify Nagad hotline is selected
-      const callBtn = screen.getByTestId("step-1-call-btn");
+      // Active verified Nagad helpline from API renders direct tel: link
+      const callBtn = await screen.findByTestId("step-1-call-btn");
       expect(callBtn).toHaveAttribute("href", "tel:16167");
 
-      // Click Rocket provider button
+      // Click Rocket (not verified/active in API) -> must show official-app notice, NOT an unverified tel: link
       const rocketBtn = screen.getByTestId("provider-picker-rocket");
       fireEvent.click(rocketBtn);
 
-      // Hotline updates to Rocket 16216
-      expect(screen.getByTestId("step-1-call-btn")).toHaveAttribute("href", "tel:16216");
+      expect(screen.queryByTestId("step-1-call-btn")).not.toBeInTheDocument();
+      expect(screen.getByTestId("step-1-official-app-notice")).toBeInTheDocument();
     });
   });
 

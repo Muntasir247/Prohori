@@ -50,9 +50,9 @@ TEMPLATES: dict[str, dict[LanguageCode, RuleOnlyExplanation]] = {
                 "আপনার অ্যাকাউন্ট সাময়িক স্থগিত করুন।"
             ),
             safe_action_ids=[
-                "never_share_otp",
-                "call_official_helpline",
-                "block_number",
+                "do_not_send",
+                "call_provider_helpline",
+                "keep_evidence",
             ],
         ),
         "en": RuleOnlyExplanation(
@@ -71,9 +71,9 @@ TEMPLATES: dict[str, dict[LanguageCode, RuleOnlyExplanation]] = {
                 "to protect your funds."
             ),
             safe_action_ids=[
-                "never_share_otp",
-                "call_official_helpline",
-                "block_number",
+                "do_not_send",
+                "call_provider_helpline",
+                "keep_evidence",
             ],
         ),
     },
@@ -93,9 +93,9 @@ TEMPLATES: dict[str, dict[LanguageCode, RuleOnlyExplanation]] = {
                 "প্রয়োজনে নম্বরটি আপনার ফোন ও ওয়ালেটে ব্লক করুন।"
             ),
             safe_action_ids=[
-                "block_number",
-                "do_not_send_money",
-                "report_suspicious_activity",
+                "do_not_send",
+                "call_provider_helpline",
+                "keep_evidence",
             ],
         ),
         "en": RuleOnlyExplanation(
@@ -113,9 +113,9 @@ TEMPLATES: dict[str, dict[LanguageCode, RuleOnlyExplanation]] = {
                 "Block the number in your phone and mobile wallet immediately."
             ),
             safe_action_ids=[
-                "block_number",
-                "do_not_send_money",
-                "report_suspicious_activity",
+                "do_not_send",
+                "call_provider_helpline",
+                "keep_evidence",
             ],
         ),
     },
@@ -131,9 +131,9 @@ TEMPLATES: dict[str, dict[LanguageCode, RuleOnlyExplanation]] = {
             ),
             caution="সংশ্লিষ্ট প্রতিষ্ঠানের অফিশিয়াল অ্যাপ বা হেল্পলাইনে যাচাই করুন।",
             safe_action_ids=[
-                "pause_and_verify",
-                "call_official_helpline",
-                "block_number",
+                "do_not_send",
+                "confirm_another_way",
+                "call_provider_helpline",
             ],
         ),
         "en": RuleOnlyExplanation(
@@ -151,9 +151,9 @@ TEMPLATES: dict[str, dict[LanguageCode, RuleOnlyExplanation]] = {
                 "app or helpline."
             ),
             safe_action_ids=[
-                "pause_and_verify",
-                "call_official_helpline",
-                "block_number",
+                "do_not_send",
+                "confirm_another_way",
+                "call_provider_helpline",
             ],
         ),
     },
