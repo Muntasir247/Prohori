@@ -14,7 +14,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip wheel --wheel-dir /wheels -r requirements.txt
+RUN pip wheel --wheel-dir /wheels -r requirements.txt \
+    && pip wheel --wheel-dir /wheels https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
 
 
 # --- Stage 2: minimal runtime image ---------------------------------------
@@ -31,7 +32,7 @@ WORKDIR /app
 
 COPY --from=builder /wheels /wheels
 COPY requirements.txt .
-RUN pip install --no-index --find-links=/wheels -r requirements.txt \
+RUN pip install --no-index --find-links=/wheels /wheels/*.whl \
     && rm -rf /wheels
 
 COPY . .

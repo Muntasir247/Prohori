@@ -94,6 +94,19 @@ def test_production_with_resend_starts_with_secure_cookies(monkeypatch):
     assert settings.cookie_secure is True
 
 
+def test_production_allows_console_email_when_explicitly_flagged(monkeypatch):
+    _clear_required(monkeypatch)
+    monkeypatch.delenv("ENVIRONMENT", raising=False)
+    settings = Settings(
+        **_BASE,
+        ENVIRONMENT="production",
+        EMAIL_DRIVER="console",
+        ALLOW_CONSOLE_EMAIL_IN_PROD=True,
+    )  # type: ignore[arg-type]
+    assert settings.email_driver == "console"
+    assert settings.cookie_secure is True
+
+
 def test_cors_exact_origin_validation(monkeypatch):
     _clear_required(monkeypatch)
     # Valid extra origins
@@ -104,6 +117,14 @@ def test_cors_exact_origin_validation(monkeypatch):
     assert "https://app.prohori.com" in s1.cors_origins
     assert "https://admin.prohori.com" in s1.cors_origins
     assert "*" not in s1.cors_origins
+
+    # Bracketed or quoted origins are cleanly sanitized
+    s_bracketed = Settings(
+        **_BASE,
+        CORS_ORIGINS='["https://app.prohori.com", "https://admin.prohori.com"]',
+    )  # type: ignore[arg-type]
+    assert "https://app.prohori.com" in s_bracketed.cors_origins
+    assert "https://admin.prohori.com" in s_bracketed.cors_origins
 
     # Wildcard is strictly forbidden
     s_wildcard = Settings(**_BASE, CORS_ORIGINS="*")  # type: ignore[arg-type]

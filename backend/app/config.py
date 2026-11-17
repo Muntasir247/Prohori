@@ -66,6 +66,9 @@ class Settings(BaseSettings):
     # overwrites the header; otherwise any client can spoof its IP and dodge the
     # per-IP login lock and request limits (R01, R13).
     trust_proxy_headers: bool = Field(default=False, alias="TRUST_PROXY_HEADERS")
+    allow_console_email_in_prod: bool = Field(
+        default=False, alias="ALLOW_CONSOLE_EMAIL_IN_PROD"
+    )
 
     # --- Operational ------------------------------------------------------
     environment: Literal["development", "test", "production"] = Field(
@@ -85,9 +88,11 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def _production_sends_real_email(self) -> Settings:
         # The console driver exists for development; in production it would
-        # silently drop verification/reset mail. Fail fast instead.
-        if self.environment == "production" and (
-            self.email_driver != "resend" or not self.resend_api_key
+        # silently drop verification/reset mail. Fail fast unless explicitly allowed.
+        if (
+            self.environment == "production"
+            and not self.allow_console_email_in_prod
+            and (self.email_driver != "resend" or not self.resend_api_key)
         ):
             raise ValueError(
                 "production requires EMAIL_DRIVER=resend and RESEND_API_KEY"
@@ -104,7 +109,7 @@ class Settings(BaseSettings):
         origins = [self.app_origin]
         if self.allowed_cors_origins:
             for item in self.allowed_cors_origins.split(","):
-                item = item.strip()
+                item = item.strip().strip("[]\"' ")
                 if not item:
                     continue
                 if item == "*":

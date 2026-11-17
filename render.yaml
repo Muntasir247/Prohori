@@ -14,6 +14,8 @@ services:
     healthCheckPath: /api/v1/health
     autoDeploy: true
     envVars:
+      - key: PORT
+        value: 8000
       - key: ENVIRONMENT
         value: production
       - key: APP_ORIGIN
@@ -32,6 +34,10 @@ services:
         sync: false # Optional email delivery service
       - key: EMAIL_DRIVER
         value: console # console or resend
+      - key: ALLOW_CONSOLE_EMAIL_IN_PROD
+        value: "true" # Permits console email driver in production for demos/evals without Resend
+      - key: TRUST_PROXY_HEADERS
+        value: "true" # Extracts real client IP behind Render/Vercel reverse proxies
       - key: SENTRY_DSN
         sync: false # Sentry error reporting with PII scrubber
       - key: DAILY_LLM_SPEND_CAP_USD
@@ -75,4 +81,12 @@ services:
           type: web
           name: prohori-backend
           envVarKey: ENVIRONMENT
+      - fromService:
+          type: web
+          name: prohori-backend
+          envVarKey: SESSION_SECRET
+      - fromService:
+          type: web
+          name: prohori-backend
+          envVarKey: ALLOW_CONSOLE_EMAIL_IN_PROD
 
