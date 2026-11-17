@@ -23,9 +23,9 @@ from sqlalchemy import (
     Uuid,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.types import JSON
 
 from app.models.base import Base, created_at_col, updated_at_col, uuid_pk
+from app.models.check import _VECTOR_1024, risk_level_type
 
 
 class SafeAction(Base):
@@ -46,7 +46,9 @@ class SafeAction(Base):
     context: Mapped[str] = mapped_column(
         String(16), nullable=False, default="before_payment"
     )  # "before_payment" | "after_payment" | "both"
-    min_level: Mapped[str] = mapped_column(String(10), nullable=False, default="Low")
+    min_level: Mapped[str] = mapped_column(
+        risk_level_type(), nullable=False, default="Low"
+    )
     provider: Mapped[str | None] = mapped_column(String(20), nullable=True)
     phone: Mapped[str | None] = mapped_column(String(20), nullable=True)
     source_url: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -123,7 +125,7 @@ class KbChunk(Base):
     chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     token_count: Mapped[int] = mapped_column(Integer, nullable=False)
-    embedding: Mapped[list[float] | None] = mapped_column(JSON, nullable=True)
+    embedding: Mapped[list[float] | None] = mapped_column(_VECTOR_1024, nullable=True)
     embedding_model: Mapped[str | None] = mapped_column(String(40), nullable=True)
 
     document = relationship("KbDocument", back_populates="chunks")

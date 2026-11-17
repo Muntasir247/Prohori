@@ -17,10 +17,13 @@ from sqlalchemy import (
     String,
     UniqueConstraint,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 
 from app.models.base import Base, created_at_col
+
+_JSONB = JSON().with_variant(JSONB(), "postgresql")
 
 
 class PromptVersion(Base):
@@ -54,7 +57,7 @@ class EvalRun(Base):
         Numeric(5, 4), nullable=True
     )
     unsafe_flags: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    report: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    report: Mapped[dict[str, Any]] = mapped_column(_JSONB, nullable=False, default=dict)
     created_at: Mapped[datetime] = created_at_col()
 
     prompt_version = relationship(

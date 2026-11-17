@@ -11,9 +11,11 @@ from typing import Any
 from uuid import UUID
 
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     Date,
     DateTime,
+    Enum,
     ForeignKey,
     Integer,
     Numeric,
@@ -22,10 +24,84 @@ from sqlalchemy import (
     Text,
     Uuid,
 )
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 
 from app.models.base import Base, created_at_col, updated_at_col, uuid_pk
+
+_JSONB = JSON().with_variant(JSONB(), "postgresql")
+_TEXT_ARRAY = JSON().with_variant(ARRAY(Text), "postgresql")
+_BIGINT_ARRAY = JSON().with_variant(ARRAY(BigInteger), "postgresql")
+try:
+    from pgvector.sqlalchemy import Vector
+
+    _VECTOR_1024 = JSON().with_variant(Vector(1024), "postgresql")
+except ImportError:  # pragma: no cover
+    _VECTOR_1024 = JSON()
+
+
+def risk_level_type() -> Enum:
+    return Enum(
+        "Low",
+        "Medium",
+        "High",
+        name="risk_level",
+        native_enum=True,
+        create_constraint=False,
+        validate_strings=True,
+    )
+
+
+def check_kind_type() -> Enum:
+    return Enum(
+        "message",
+        "payment",
+        name="check_kind",
+        native_enum=True,
+        create_constraint=False,
+        validate_strings=True,
+    )
+
+
+def check_route_type() -> Enum:
+    return Enum(
+        "rules_only",
+        "haiku",
+        "sonnet",
+        "fallback",
+        name="check_route",
+        native_enum=True,
+        create_constraint=False,
+        validate_strings=True,
+    )
+
+
+def case_status_type() -> Enum:
+    return Enum(
+        "new",
+        "in_review",
+        "confirmed_scam",
+        "not_scam",
+        "escalated",
+        "closed",
+        name="case_status",
+        native_enum=True,
+        create_constraint=False,
+        validate_strings=True,
+    )
+
+
+def number_status_type() -> Enum:
+    return Enum(
+        "watch",
+        "confirmed_risky",
+        "cleared",
+        name="number_status",
+        native_enum=True,
+        create_constraint=False,
+        validate_strings=True,
+    )
 
 
 class ScamType(Base):
@@ -35,10 +111,6 @@ class ScamType(Base):
     slug: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
     name_en: Mapped[str] = mapped_column(String(80), nullable=False)
     name_bn: Mapped[str] = mapped_column(String(80), nullable=False)
-    description_en: Mapped[str | None] = mapped_column(Text, nullable=True)
-    description_bn: Mapped[str | None] = mapped_column(Text, nullable=True)
-    severity: Mapped[str] = mapped_column(String(10), nullable=False, default="Medium")
-    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 
 class RiskyNumber(Base):
@@ -50,7 +122,9 @@ class RiskyNumber(Base):
     check_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     report_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     high_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    status: Mapped[str] = mapped_column(String(20), nullable=False, default="watch")
+    status: Mapped[str] = mapped_column(
+        number_status_type(), nullable=False, default="watch"
+    )
     first_seen_at: Mapped[datetime] = created_at_col()
     last_seen_at: Mapped[datetime] = created_at_col()
 
@@ -83,7 +157,7 @@ class DailyAggregate(Base):
     __tablename__ = "daily_aggregates"
 
     day: Mapped[date] = mapped_column(Date, primary_key=True)
-    risk_level: Mapped[str] = mapped_column(String(10), primary_key=True)
+    risk_level: Mapped[str] = mapped_column(risk_level_type(), primary_key=True)
     scam_type_id: Mapped[int] = mapped_column(SmallInteger, primary_key=True, default=0)
     check_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     case_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
@@ -99,7 +173,7 @@ class CheckEmbedding(Base):
         ForeignKey("checks.id", ondelete="CASCADE"),
         primary_key=True,
     )
-    embedding: Mapped[list[float]] = mapped_column(JSON, nullable=False)
+    embedding: Mapped[list[float]] = mapped_column(_VECTOR_1024, nullable=False)
 
     check = relationship("Check", lazy="joined")
 
@@ -113,7 +187,7 @@ class Check(Base):
     )
     guest_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     api_key_id: Mapped[UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
-    kind: Mapped[str] = mapped_column(String(10), nullable=False)
+    kind: Mapped[str] = mapped_column(check_kind_type(), nullable=False)
     masked_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     text_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     trimmed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
@@ -128,26 +202,28 @@ class Check(Base):
     local_hour: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
 
     extracted: Mapped[dict[str, Any]] = mapped_column(
-        JSON, nullable=False, default=dict
+        _JSONB, nullable=False, default=dict
     )
-    rule_hits: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
-    rule_level: Mapped[str | None] = mapped_column(String(10), nullable=True)
-    llm_level: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    rule_hits: Mapped[list[Any]] = mapped_column(_JSONB, nullable=False, default=list)
+    rule_level: Mapped[str | None] = mapped_column(risk_level_type(), nullable=True)
+    llm_level: Mapped[str | None] = mapped_column(risk_level_type(), nullable=True)
     model_prob: Mapped[Decimal | None] = mapped_column(Numeric(5, 4), nullable=True)
-    final_level: Mapped[str | None] = mapped_column(String(10), nullable=True)
-    reasons: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
-    red_flags: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
-    highlights: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    final_level: Mapped[str | None] = mapped_column(risk_level_type(), nullable=True)
+    reasons: Mapped[list[str]] = mapped_column(_JSONB, nullable=False, default=list)
+    red_flags: Mapped[list[Any]] = mapped_column(_JSONB, nullable=False, default=list)
+    highlights: Mapped[list[Any]] = mapped_column(_JSONB, nullable=False, default=list)
     safe_action_ids: Mapped[list[str]] = mapped_column(
-        JSON, nullable=False, default=list
+        _TEXT_ARRAY, nullable=False, default=list
     )
     scam_type_id: Mapped[int | None] = mapped_column(
         SmallInteger, ForeignKey("scam_types.id"), nullable=True
     )
     retrieved_chunk_ids: Mapped[list[int]] = mapped_column(
-        JSON, nullable=False, default=list
+        _BIGINT_ARRAY, nullable=False, default=list
     )
-    route: Mapped[str] = mapped_column(String(20), nullable=False, default="rules_only")
+    route: Mapped[str] = mapped_column(
+        check_route_type(), nullable=False, default="rules_only"
+    )
     is_fallback: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     prompt_version: Mapped[str | None] = mapped_column(String(20), nullable=True)
     model_name: Mapped[str | None] = mapped_column(String(40), nullable=True)
@@ -193,7 +269,9 @@ class Case(Base):
     check_id: Mapped[UUID] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("checks.id"), unique=True, nullable=False
     )
-    status: Mapped[str] = mapped_column(String(20), nullable=False, default="new")
+    status: Mapped[str] = mapped_column(
+        case_status_type(), nullable=False, default="new"
+    )
     assigned_to: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
@@ -241,7 +319,7 @@ class CaseNote(Base):
     author_id: Mapped[UUID | None] = mapped_column(
         Uuid(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
-    note: Mapped[str] = mapped_column(String(2000), nullable=False)
+    note: Mapped[str] = mapped_column("body", String(1000), nullable=False)
     created_at: Mapped[datetime] = created_at_col()
 
     case = relationship("Case", back_populates="notes")

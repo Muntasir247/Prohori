@@ -768,7 +768,16 @@ async def _insert_samples(conn, text, rows):  # noqa: ANN001
     )
 
 
+def _parse_date(val: Any) -> date | None:
+    if val is None or isinstance(val, date):
+        return val
+    return date.fromisoformat(str(val))
+
+
 async def _insert_tips(conn, text, rows):  # noqa: ANN001
+    payload = [
+        {**r, "active_from": _parse_date(r.get("active_from"))} for r in rows
+    ]
     await conn.execute(
         text(
             "INSERT INTO tips (id, title_en, title_bn, body_en, body_bn, active_from) "
@@ -778,11 +787,14 @@ async def _insert_tips(conn, text, rows):  # noqa: ANN001
             "body_en = EXCLUDED.body_en, body_bn = EXCLUDED.body_bn, "
             "active_from = EXCLUDED.active_from"
         ),
-        rows,
+        payload,
     )
 
 
 async def _insert_safe_actions(conn, text, rows):  # noqa: ANN001
+    payload = [
+        {**r, "verified_at": _parse_date(r.get("verified_at"))} for r in rows
+    ]
     await conn.execute(
         text(
             "INSERT INTO safe_actions (id, label_en, label_bn, body_en, body_bn, "
@@ -799,7 +811,7 @@ async def _insert_safe_actions(conn, text, rows):  # noqa: ANN001
             "source_url = EXCLUDED.source_url, verified_at = EXCLUDED.verified_at, "
             "is_active = EXCLUDED.is_active, sort_order = EXCLUDED.sort_order"
         ),
-        rows,
+        payload,
     )
 
 
@@ -855,7 +867,7 @@ async def _insert_checks(conn, text, rows):  # noqa: ANN001
                 "reasons": json.dumps(r["reasons"]),
                 "red_flags": json.dumps(r["red_flags"]),
                 "highlights": json.dumps(r["highlights"]),
-                "safe_action_ids": pg_text_array(r["safe_action_ids"]),
+                "safe_action_ids": list(r["safe_action_ids"]),
             }
         )
     await conn.execute(

@@ -8,11 +8,14 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Uuid
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, Uuid
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import JSON
 
 from app.models.base import Base, created_at_col, uuid_pk
+
+_TEXT_ARRAY = JSON().with_variant(ARRAY(Text), "postgresql")
 
 
 class ApiKey(Base):
@@ -22,7 +25,7 @@ class ApiKey(Base):
     name: Mapped[str] = mapped_column(String(80), nullable=False)
     key_prefix: Mapped[str] = mapped_column(String(20), nullable=False)
     key_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
-    scopes: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    scopes: Mapped[list[str]] = mapped_column(_TEXT_ARRAY, nullable=False, default=list)
     rate_limit_per_min: Mapped[int] = mapped_column(Integer, nullable=False, default=60)
     last_used_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
