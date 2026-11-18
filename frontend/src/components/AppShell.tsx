@@ -1,16 +1,13 @@
 import { Icon } from "@iconify/react";
-import { createContext, type ReactNode, Suspense, useContext, useEffect, useRef, useState } from "react";
+import { type ReactNode, Suspense, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ProhoriLogo } from "@/components/brand/ProhoriLogo";
+import { InShellContext, useInShell } from "@/components/shellContext";
 import { homeFor, useLogout, useSession } from "@/features/auth/useSession";
 import { useNotifications } from "@/features/notifications/api";
-
-// True inside ShellLayout. A page's own <AppShell> then renders only its
-// children, so the header, nav and footer stay mounted across navigation.
-const InShell = createContext(false);
 
 /**
  * Router layout for every screen that uses the app frame. The frame mounts once;
@@ -18,13 +15,13 @@ const InShell = createContext(false);
  */
 export function ShellLayout() {
   return (
-    <InShell.Provider value={true}>
+    <InShellContext.Provider value={true}>
       <Frame>
         <Suspense fallback={<PageFallback />}>
           <Outlet />
         </Suspense>
       </Frame>
-    </InShell.Provider>
+    </InShellContext.Provider>
   );
 }
 
@@ -33,7 +30,7 @@ export function ShellLayout() {
  * rendered on its own (unit tests, isolated previews) it draws the full frame.
  */
 export function AppShell({ children, wide }: { children: ReactNode; wide?: boolean }) {
-  const inShell = useContext(InShell);
+  const inShell = useInShell();
   if (inShell) return <>{children}</>;
   return <Frame wide={wide}>{children}</Frame>;
 }

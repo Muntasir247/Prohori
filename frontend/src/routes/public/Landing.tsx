@@ -7,6 +7,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { LanternHeroAsset, ReviewerDeskIllustration } from "@/components/brand/Illustrations";
 import { EighthWatchMark, ProhoriLogo } from "@/components/brand/ProhoriLogo";
 import { PhoneDemo } from "@/components/landing/PhoneDemo";
+import { homeFor, useSession } from "@/features/auth/useSession";
 import { checksApi } from "@/features/checks/api";
 import type { SampleItem } from "@/features/checks/types";
 
@@ -136,6 +137,17 @@ function Flagged({ text, words }: { text: string; words: string[] }) {
 export default function Landing() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { data: sessionUser } = useSession();
+  const signedInUser =
+    sessionUser && typeof sessionUser === "object" && "id" in sessionUser && sessionUser.id
+      ? sessionUser
+      : null;
+  const accountHref = signedInUser ? homeFor(signedInUser) : "/login";
+  const accountLabel = signedInUser
+    ? signedInUser.role === "reviewer" || signedInUser.role === "admin"
+      ? t("landing.go_to_workbench")
+      : t("landing.go_to_app")
+    : t("landing.sign_in");
   const [samples, setSamples] = useState<SampleItem[]>([]);
   const isBn = i18n.language === "bn";
   const lang: Lang = isBn ? "bn" : "en";
@@ -177,11 +189,11 @@ export default function Landing() {
           <div className="flex items-center gap-1 sm:gap-2">
             <LanguageToggle />
             <Link
-              to="/login"
+              to={accountHref}
               data-testid="landing-check-button"
               className="inline-flex min-h-10 items-center rounded-full border border-border px-4 text-sm font-medium text-text transition-colors hover:border-border-strong hover:bg-surface"
             >
-              {t("landing.sign_in")}
+              {accountLabel}
             </Link>
           </div>
         </div>
@@ -551,8 +563,8 @@ export default function Landing() {
             <Link to="/already-sent" className="text-text-2 transition-colors hover:text-text">
               {t("landing.card_sent_title")}
             </Link>
-            <Link to="/login" className="text-text-2 transition-colors hover:text-text">
-              {t("landing.sign_in")}
+            <Link to={accountHref} className="text-text-2 transition-colors hover:text-text">
+              {accountLabel}
             </Link>
           </nav>
         </div>

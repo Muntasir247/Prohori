@@ -86,7 +86,7 @@ export default function PaymentCheck() {
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-info" />
                 <span className="text-xs text-info font-semibold">
-                  PAYMENT FRAUD MODEL
+                  {t("payment_check.model_badge")}
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-text">
@@ -101,7 +101,7 @@ export default function PaymentCheck() {
             <div className="double-bezel min-w-0">
               <div className="double-bezel-inner p-4 sm:p-5 flex flex-col gap-2.5 min-w-0">
                 <label htmlFor="payment-amount" className="text-xs text-muted font-semibold">
-                  {t("payment_check.amount_label")} (BDT)
+                  {t("payment_check.amount_label")}
                 </label>
                 <div className="relative min-w-0">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-info text-xl font-mono">
@@ -150,7 +150,7 @@ export default function PaymentCheck() {
                 <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3.5 min-w-0">
                   <label htmlFor="recipient-number" className="flex flex-col gap-1.5 text-xs min-w-0">
                     <span className="text-muted font-semibold">
-                      {t("payment_check.number_label")} ({t("payment_check.optional")})
+                      {t("payment_check.number_label")}
                     </span>
                     <input
                       id="recipient-number"
@@ -258,7 +258,7 @@ export default function PaymentCheck() {
             {/* Optional message text */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="optional-msg" className="text-xs font-semibold text-muted">
-                {t("payment_check.message_box_label")} ({t("payment_check.optional")})
+                {t("payment_check.message_box_label")}
               </label>
               <textarea
                 id="optional-msg"

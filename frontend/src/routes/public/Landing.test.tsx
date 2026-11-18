@@ -26,22 +26,37 @@ afterEach(() => {
 
 describe("Landing screen (S01)", () => {
   it("renders hero and primary action buttons", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify([]), {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("/api/v1/auth/session")) {
+        return new Response(JSON.stringify(null), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify([]), {
         status: 200,
         headers: { "Content-Type": "application/json" },
-      }),
-    );
+      });
+    });
 
     renderLanding();
 
     expect(screen.getByTestId("hero-primary-cta")).toBeInTheDocument();
     expect(screen.getByTestId("hero-secondary-cta")).toBeInTheDocument();
+    expect(screen.getByTestId("landing-check-button")).toHaveAttribute("href", "/login");
   });
 
   it("renders sample chips when samples are returned", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("/api/v1/auth/session")) {
+        return new Response(JSON.stringify(null), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      return new Response(
         JSON.stringify([
           {
             id: "lottery_1",
@@ -52,13 +67,43 @@ describe("Landing screen (S01)", () => {
           },
         ]),
         { status: 200, headers: { "Content-Type": "application/json" } },
-      ),
-    );
+      );
+    });
 
     renderLanding();
 
     await waitFor(() =>
       expect(screen.getByTestId("landing-sample-chip")).toBeInTheDocument(),
+    );
+  });
+
+  it("links header account button to /check when signed in as a user", async () => {
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("/api/v1/auth/session")) {
+        return new Response(
+          JSON.stringify({
+            id: "u-1",
+            email: "user@prohori.test",
+            display_name: "Rahim",
+            role: "user",
+            language: "bn",
+            theme: "dark",
+            onboarding_completed: true,
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } },
+        );
+      }
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    });
+
+    renderLanding();
+
+    await waitFor(() =>
+      expect(screen.getByTestId("landing-check-button")).toHaveAttribute("href", "/check"),
     );
   });
 });

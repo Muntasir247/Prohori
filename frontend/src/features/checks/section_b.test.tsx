@@ -3,7 +3,9 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { ShellLayout } from "@/components/AppShell";
 import { OfflineBanner } from "@/components/OfflineBanner";
+import { RequireRole } from "@/components/RequireRole";
 import { RateLimitedCard } from "@/components/checks/RateLimitedCard";
 import { Modal } from "@/components/ui/Modal";
 import i18n from "@/lib/i18n";
@@ -11,6 +13,7 @@ import CaseDetail from "@/routes/review/CaseDetail";
 import ErrorPage from "@/routes/system/ErrorPage";
 import MessageCheck from "@/routes/user/MessageCheck";
 import Notifications from "@/routes/user/Notifications";
+import PaymentCheck from "@/routes/user/PaymentCheck";
 
 type Handler = (url: string, init?: RequestInit) => Response | Promise<Response>;
 
@@ -230,5 +233,55 @@ describe("Section B: Notifications (S23), Case Claim, S36 Errors, S37 429/Offlin
     renderWithProviders(<RateLimitedCard retryAfterSeconds={30} />);
     expect(screen.getByTestId("rate-limited-card")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /16247/ })).toHaveAttribute("href", "tel:16247");
+  });
+
+  it("renders PaymentCheck with translated option labels and no duplicated parentheticals in Bangla", async () => {
+    await i18n.changeLanguage("bn");
+    mockFetch({});
+    const { container } = renderWithProviders(<PaymentCheck />, ["/check/payment"]);
+
+    const text = container.textContent ?? "";
+    expect(text).not.toContain("payment_check.");
+    expect(text).not.toContain("(BDT) (BDT)");
+    expect(text).not.toContain("(ঐচ্ছিক) (ঐচ্ছিক)");
+    expect(text).not.toContain("PAYMENT FRAUD MODEL");
+    expect(screen.getByTestId("recipient-status-known")).toHaveTextContent("পরিচিত");
+    expect(screen.getByTestId("channel-chip-phone_call")).toHaveTextContent("ফোন কল");
+    expect(screen.getByTestId("rushed-yes-button")).toHaveTextContent("হ্যাঁ, তাড়া দিচ্ছে");
+  });
+
+  it("renders 403 inside ShellLayout without nested <main> landmarks", async () => {
+    mockFetch({
+      "GET /api/v1/auth/session": () =>
+        json(200, {
+          id: "u-regular",
+          email: "user@prohori.test",
+          display_name: "Rahim",
+          role: "user",
+          language: "en",
+          theme: "dark",
+          onboarding_completed: true,
+        }),
+    });
+
+    const { container } = renderWithProviders(
+      <Routes>
+        <Route element={<ShellLayout />}>
+          <Route
+            path="/review"
+            element={
+              <RequireRole roles={["reviewer", "admin"]}>
+                <div>Secret Review</div>
+              </RequireRole>
+            }
+          />
+        </Route>
+      </Routes>,
+      ["/review"]
+    );
+
+    const card = await screen.findByTestId("error-page-403");
+    expect(card.tagName).toBe("SECTION");
+    expect(container.querySelectorAll("main")).toHaveLength(1);
   });
 });

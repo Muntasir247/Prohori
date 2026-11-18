@@ -310,9 +310,10 @@ describe("Phase 10: Differentiators", () => {
       const callBtn = screen.getByTestId("step-1-call-btn");
       expect(callBtn).toHaveAttribute("href", "tel:16247");
 
-      // Step 4 direct emergency links
+      // Step 4: national emergency 999 renders, unverified CID number is NOT hardcoded
       expect(screen.getByTestId("call-999-btn")).toHaveAttribute("href", "tel:999");
-      expect(screen.getByTestId("call-cyber-btn")).toHaveAttribute("href", "tel:01320010148");
+      expect(screen.queryByTestId("call-cyber-btn")).not.toBeInTheDocument();
+      expect(screen.getByTestId("cyber-police-official-notice")).toBeInTheDocument();
     });
 
     it("pre-selects provider from query param ?provider=nagad, avoids unverified tel links, and uses verified API helplines when active", async () => {
@@ -333,6 +334,20 @@ describe("Phase 10: Differentiators", () => {
               verified_at: "2026-11-08",
               is_active: true,
             },
+            {
+              id: "call_cyber_police",
+              label_en: "Call CID Cyber Police",
+              label_bn: "সিআইডি সাইবার পুলিশ",
+              body_en: "Verified CID Cyber Police support center.",
+              body_bn: "যাচাইকৃত সিআইডি সাইবার পুলিশ।",
+              context: "after_payment",
+              min_level: "Low",
+              provider: "cid_cyber",
+              phone: "01320010148",
+              source_url: "https://www.police.gov.bd/en/cyber_crime",
+              verified_at: "2026-11-18",
+              is_active: true,
+            },
           ]),
       };
 
@@ -343,6 +358,10 @@ describe("Phase 10: Differentiators", () => {
       // Active verified Nagad helpline from API renders direct tel: link
       const callBtn = await screen.findByTestId("step-1-call-btn");
       expect(callBtn).toHaveAttribute("href", "tel:16167");
+
+      // Active verified CID Cyber Police helpline from API renders direct tel: link
+      const cyberBtn = await screen.findByTestId("call-cyber-btn");
+      expect(cyberBtn).toHaveAttribute("href", "tel:01320010148");
 
       // Click Rocket (not verified/active in API) -> must show official-app notice, NOT an unverified tel: link
       const rocketBtn = screen.getByTestId("provider-picker-rocket");

@@ -109,6 +109,15 @@ export default function AlreadySent() {
   const keepEvidenceAction = actions.find((a) => a.id === "keep_evidence");
   const recoveryAction = actions.find((a) => a.id === "do_not_pay_recovery");
   const genericHelplineAction = actions.find((a) => a.id === "call_provider_helpline");
+  // Law-enforcement direct tel: links beyond national 999 come strictly from verified safe_actions (Doc 02 Rule #3).
+  const verifiedCyberAction = actions.find(
+    (a) =>
+      a.is_active &&
+      (a.id === "call_cyber_police" || a.provider?.toLowerCase() === "cid_cyber") &&
+      Boolean(a.phone) &&
+      Boolean(a.source_url) &&
+      Boolean(a.verified_at)
+  );
 
   return (
     <AppShell>
@@ -350,14 +359,29 @@ export default function AlreadySent() {
                   <Icon icon="ph:phone" className="text-base text-accent" />
                   <span>{t("already_sent.call_999")}</span>
                 </a>
-                <a
-                  href="tel:01320010148"
-                  className="flex items-center justify-center gap-2 rounded-xl border border-border bg-surface-2 px-4 py-3.5 text-xs font-bold text-text hover:border-brand hover:text-brand transition-all active:scale-95 shadow-sm"
-                  data-testid="call-cyber-btn"
-                >
-                  <Icon icon="ph:lock-simple" className="text-base text-brand" />
-                  <span>{t("already_sent.call_cyber_police")}</span>
-                </a>
+                {verifiedCyberAction?.phone ? (
+                  <a
+                    href={`tel:${verifiedCyberAction.phone}`}
+                    className="flex items-center justify-center gap-2 rounded-xl border border-border bg-surface-2 px-4 py-3.5 text-xs font-bold text-text hover:border-brand hover:text-brand transition-all active:scale-95 shadow-sm"
+                    data-testid="call-cyber-btn"
+                  >
+                    <Icon icon="ph:lock-simple" className="text-base text-brand" />
+                    <span>
+                      {t("already_sent.call_cyber_police", {
+                        number: verifiedCyberAction.phone,
+                      })}
+                    </span>
+                  </a>
+                ) : (
+                  <div
+                    className="flex items-start gap-2.5 rounded-xl border border-border bg-surface-2 px-4 py-3 text-xs text-muted leading-relaxed"
+                    role="note"
+                    data-testid="cyber-police-official-notice"
+                  >
+                    <Icon icon="ph:shield-check" className="text-base text-brand shrink-0 mt-0.5" aria-hidden />
+                    <span>{t("already_sent.cyber_police_notice")}</span>
+                  </div>
+                )}
               </div>
             </div>
           </section>
