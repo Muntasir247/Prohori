@@ -14,7 +14,8 @@ if (OriginalRequest) {
           super(input, init);
           return;
         } catch {
-          const { signal: _signal, ...rest } = init;
+          const rest = { ...init };
+          delete rest.signal;
           super(input, rest);
           return;
         }
@@ -22,8 +23,11 @@ if (OriginalRequest) {
       super(input, init);
     }
   }
-  // @ts-ignore Patching global Request for jsdom compatibility
   globalThis.Request = PatchedRequest as unknown as typeof Request;
+}
+
+if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = () => undefined;
 }
 
 vi.mock("@iconify/react", () => ({

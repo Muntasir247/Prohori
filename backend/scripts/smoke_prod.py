@@ -43,9 +43,7 @@ class SmokeTestRunner:
     def __init__(self, base_url: str, reviewer_password: str | None = None) -> None:
         self.base_url = base_url.rstrip("/")
         # If url doesn't end in /api/v1, adjust prefix
-        self.api_prefix = (
-            "/api/v1" if not self.base_url.endswith("/api/v1") else ""
-        )
+        self.api_prefix = "/api/v1" if not self.base_url.endswith("/api/v1") else ""
         self.reviewer_password = (
             reviewer_password
             or os.environ.get("SEED_REVIEWER_PASSWORD")
@@ -75,7 +73,9 @@ class SmokeTestRunner:
             req_headers.update(headers)
 
         payload_bytes = json.dumps(data).encode("utf-8") if data is not None else None
-        req = urllib.request.Request(url, data=payload_bytes, headers=req_headers, method=method)
+        req = urllib.request.Request(
+            url, data=payload_bytes, headers=req_headers, method=method
+        )
 
         start_time = time.perf_counter()
         try:
@@ -97,18 +97,24 @@ class SmokeTestRunner:
             elapsed_ms = (time.perf_counter() - start_time) * 1000.0
             return 599, {"error": str(e)}, elapsed_ms
 
-    def log_step(self, step_no: int, title: str, passed: bool, latency: float, details: str) -> None:
+    def log_step(
+        self, step_no: int, title: str, passed: bool, latency: float, details: str
+    ) -> None:
         icon = f"{GREEN}✓ PASS{RESET}" if passed else f"{RED}✗ FAIL{RESET}"
-        print(f"[{BOLD}Step {step_no}{RESET}] {title.ljust(40)} {icon} ({latency:.1f}ms)")
+        print(
+            f"[{BOLD}Step {step_no}{RESET}] {title.ljust(40)} {icon} ({latency:.1f}ms)"
+        )
         if details:
             print(f"         {CYAN}{details}{RESET}")
-        self.results.append({
-            "step": step_no,
-            "title": title,
-            "passed": passed,
-            "latency_ms": latency,
-            "details": details,
-        })
+        self.results.append(
+            {
+                "step": step_no,
+                "title": title,
+                "passed": passed,
+                "latency_ms": latency,
+                "details": details,
+            }
+        )
 
     def run(self) -> bool:
         print(f"\n{BOLD}{'=' * 75}{RESET}")
@@ -120,8 +126,15 @@ class SmokeTestRunner:
 
         # --- Step 1: Health Check ---
         status, body, lat = self._request("GET", "/health")
-        passed = (status == 200 and body.get("status") == "ok" and body.get("database") == "up")
-        details = f"HTTP {status} | status={body.get('status')} | db={body.get('database')} | v={body.get('version')}"
+        passed = (
+            status == 200
+            and body.get("status") == "ok"
+            and body.get("database") == "up"
+        )
+        details = (
+            f"HTTP {status} | status={body.get('status')} "
+            f"| db={body.get('database')} | v={body.get('version')}"
+        )
         self.log_step(1, "GET /health (Liveness & DB ping)", passed, lat, details)
         if not passed:
             all_passed = False
@@ -136,12 +149,15 @@ class SmokeTestRunner:
         check_id = body.get("id") or body.get("check_id")
         final_level = body.get("risk_level") or body.get("final_level")
         reasons = body.get("reasons", [])
-        passed = (status == 200 and check_id is not None and final_level == "High")
+        safe_count = len(body.get("safe_actions", []))
+        passed = status == 200 and check_id is not None and final_level == "High"
         details = (
             f"HTTP {status} | Check ID: {check_id} | Risk: {final_level} | "
-            f"Reasons: {len(reasons)} | Safe Actions: {len(body.get('safe_actions', []))}"
+            f"Reasons: {len(reasons)} | Safe Actions: {safe_count}"
         )
-        self.log_step(2, "POST /check-message (Bangla Scam Check)", passed, lat, details)
+        self.log_step(
+            2, "POST /check-message (Bangla Scam Check)", passed, lat, details
+        )
         if not passed:
             all_passed = False
 
@@ -151,18 +167,31 @@ class SmokeTestRunner:
         if check_id:
             report_payload = {
                 "consent": True,
-                "note": "Smoke test verification: scam PIN harvesting message reported by victim",
+                "note": (
+                    "Smoke test verification: scam PIN harvesting message "
+                    "reported by victim"
+                ),
             }
-            status, body, lat = self._request("POST", f"/checks/{check_id}/report", data=report_payload)
+            status, body, lat = self._request(
+                "POST", f"/checks/{check_id}/report", data=report_payload
+            )
             case_ref = body.get("case_reference") or body.get("reference")
             case_id = body.get("case_id") or body.get("id")
-            passed = (status in (200, 201) and case_ref is not None)
+            passed = status in (200, 201) and case_ref is not None
             details = f"HTTP {status} | Case Reference: {case_ref} | Case ID: {case_id}"
-            self.log_step(3, "POST /checks/{id}/report (Victim Report)", passed, lat, details)
+            self.log_step(
+                3, "POST /checks/{id}/report (Victim Report)", passed, lat, details
+            )
             if not passed:
                 all_passed = False
         else:
-            self.log_step(3, "POST /checks/{id}/report (Victim Report)", False, 0.0, "Skipped due to check failure")
+            self.log_step(
+                3,
+                "POST /checks/{id}/report (Victim Report)",
+                False,
+                0.0,
+                "Skipped due to check failure",
+            )
             all_passed = False
 
         # --- Step 4: Reviewer Login ---
@@ -174,9 +203,10 @@ class SmokeTestRunner:
         user_info = body.get("user") if isinstance(body.get("user"), dict) else body
         role = user_info.get("role") if isinstance(user_info, dict) else None
         has_session_cookie = any("prohori" in c.name for c in self.cookie_jar)
-        passed = (status == 200 and role in ("reviewer", "admin") and has_session_cookie)
+        auth_email = user_info.get("email") if isinstance(user_info, dict) else None
+        passed = status == 200 and role in ("reviewer", "admin") and has_session_cookie
         details = (
-            f"HTTP {status} | Authenticated as: {user_info.get('email') if isinstance(user_info, dict) else None} "
+            f"HTTP {status} | Authenticated as: {auth_email} "
             f"| Role: {role} | Session Cookie: [REDACTED/ACTIVE]"
         )
         self.log_step(4, "POST /auth/login (Reviewer Login)", passed, lat, details)
@@ -197,19 +227,35 @@ class SmokeTestRunner:
         if target_case_id:
             decision_payload = {
                 "decision": "confirmed_scam",
-                "reason": "Smoke test audit: verified phishing attempt impersonating official wallet support.",
+                "reason": (
+                    "Smoke test audit: verified phishing attempt impersonating "
+                    "official wallet support."
+                ),
                 "scam_type_id": 1,
                 "version": target_version,
             }
-            status, body, lat = self._request("POST", f"/cases/{target_case_id}/decision", data=decision_payload)
+            status, body, lat = self._request(
+                "POST", f"/cases/{target_case_id}/decision", data=decision_payload
+            )
             new_status = body.get("status")
-            passed = (status == 200 and new_status == "confirmed_scam")
-            details = f"HTTP {status} | Decided Case: {target_case_id} | Final Status: {new_status}"
-            self.log_step(5, "POST /cases/{id}/decision (Reviewer Decision)", passed, lat, details)
+            passed = status == 200 and new_status == "confirmed_scam"
+            details = (
+                f"HTTP {status} | Decided Case: {target_case_id} "
+                f"| Final Status: {new_status}"
+            )
+            self.log_step(
+                5, "POST /cases/{id}/decision (Reviewer Decision)", passed, lat, details
+            )
             if not passed:
                 all_passed = False
         else:
-            self.log_step(5, "POST /cases/{id}/decision (Reviewer Decision)", False, 0.0, "No target case available")
+            self.log_step(
+                5,
+                "POST /cases/{id}/decision (Reviewer Decision)",
+                False,
+                0.0,
+                "No target case available",
+            )
             all_passed = False
 
         # --- Summary ---
@@ -218,12 +264,18 @@ class SmokeTestRunner:
         passed_count = sum(1 for r in self.results if r["passed"])
         total_count = len(self.results)
         if all_passed:
-            print(f"{GREEN}{BOLD}✓ ALL {total_count}/{total_count} SMOKE CHECKS PASSED SUCCESSFULLY{RESET}")
+            print(
+                f"{GREEN}{BOLD}✓ ALL {total_count}/{total_count} "
+                f"SMOKE CHECKS PASSED SUCCESSFULLY{RESET}"
+            )
             print(f" Total round-trip latency: {total_lat:.1f}ms")
             print(f"{BOLD}{'=' * 75}{RESET}\n")
             return True
         else:
-            print(f"{RED}{BOLD}✗ SMOKE TEST FAILED: {passed_count}/{total_count} passed{RESET}")
+            print(
+                f"{RED}{BOLD}✗ SMOKE TEST FAILED: "
+                f"{passed_count}/{total_count} passed{RESET}"
+            )
             print(f"{BOLD}{'=' * 75}{RESET}\n")
             return False
 
@@ -232,7 +284,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Prohori Production Smoke Test Runner")
     parser.add_argument(
         "--base-url",
-        default=os.environ.get("PROD_URL") or os.environ.get("API_BASE_URL") or "http://localhost:8000",
+        default=os.environ.get("PROD_URL")
+        or os.environ.get("API_BASE_URL")
+        or "http://localhost:8000",
         help="Base URL of Prohori backend (e.g. https://prohori-backend.onrender.com)",
     )
     parser.add_argument(
@@ -242,11 +296,12 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    runner = SmokeTestRunner(base_url=args.base_url, reviewer_password=args.reviewer_password)
+    runner = SmokeTestRunner(
+        base_url=args.base_url, reviewer_password=args.reviewer_password
+    )
     success = runner.run()
     sys.exit(0 if success else 1)
 
 
 if __name__ == "__main__":
     main()
-

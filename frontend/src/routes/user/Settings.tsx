@@ -79,7 +79,11 @@ export default function Settings() {
 
   const selectTab = (next: Tab, index: number) => {
     setTab(next);
-    tabRefs.current[index]?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+    tabRefs.current[index]?.scrollIntoView?.({
+      block: "nearest",
+      inline: "nearest",
+      behavior: "smooth",
+    });
   };
 
   const onLogout = async () => {
