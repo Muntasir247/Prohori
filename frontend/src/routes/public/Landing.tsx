@@ -73,10 +73,9 @@ const SCAM_MESSAGES: {
   },
 ];
 
+// Only helplines verified on an official source get direct tel: links (Doc 03 A06).
 const HELPLINES: { name: string | Copy; num: string }[] = [
   { name: "bKash", num: "16247" },
-  { name: "Nagad", num: "16167" },
-  { name: "Rocket", num: "16216" },
   { name: { bn: "জাতীয় জরুরি সেবা", en: "National emergency" }, num: "999" },
 ];
 

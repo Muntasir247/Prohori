@@ -365,8 +365,8 @@ export default function MessageCheck() {
               </div>
             )}
 
-            {/* Submit Button - Sticky on Mobile per Doc 01 S10 */}
-            <div className="sticky bottom-4 z-10 sm:static">
+            {/* Submit Button - Sticky above mobile BottomNav per Doc 01 S10 */}
+            <div className="sticky bottom-20 z-10 lg:static">
               <Button
                 type="submit"
                 variant="primary"

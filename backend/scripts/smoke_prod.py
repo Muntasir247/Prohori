@@ -151,7 +151,7 @@ class SmokeTestRunner:
         if check_id:
             report_payload = {
                 "consent": True,
-                "user_note": "Smoke test verification: scam PIN harvesting message reported by victim",
+                "note": "Smoke test verification: scam PIN harvesting message reported by victim",
             }
             status, body, lat = self._request("POST", f"/checks/{check_id}/report", data=report_payload)
             case_ref = body.get("case_reference") or body.get("reference")
@@ -171,13 +171,13 @@ class SmokeTestRunner:
             "password": self.reviewer_password,
         }
         status, body, lat = self._request("POST", "/auth/login", data=login_payload)
-        user_info = body.get("user", {})
-        role = user_info.get("role")
+        user_info = body.get("user") if isinstance(body.get("user"), dict) else body
+        role = user_info.get("role") if isinstance(user_info, dict) else None
         has_session_cookie = any("prohori" in c.name for c in self.cookie_jar)
         passed = (status == 200 and role in ("reviewer", "admin") and has_session_cookie)
         details = (
-            f"HTTP {status} | Authenticated as: {user_info.get('email')} | Role: {role} | "
-            f"Session Cookie: [REDACTED/ACTIVE]"
+            f"HTTP {status} | Authenticated as: {user_info.get('email') if isinstance(user_info, dict) else None} "
+            f"| Role: {role} | Session Cookie: [REDACTED/ACTIVE]"
         )
         self.log_step(4, "POST /auth/login (Reviewer Login)", passed, lat, details)
         if not passed:
@@ -185,19 +185,21 @@ class SmokeTestRunner:
 
         # --- Step 5: Reviewer Decision on Case ---
         target_case_id = case_id
+        target_version = 1
         if not target_case_id:
             # Query queue for a new case
-            q_status, q_body, _ = self._request("GET", "/cases?status=new&limit=1")
+            q_status, q_body, _ = self._request("GET", "/cases?status=new&page_size=1")
             items = q_body.get("items", []) if isinstance(q_body, dict) else q_body
             if items and len(items) > 0:
                 target_case_id = items[0].get("id")
+                target_version = items[0].get("version", 1)
 
         if target_case_id:
             decision_payload = {
-                "status": "confirmed_scam",
-                "decision_reason": "Smoke test audit: verified phishing attempt impersonating official wallet support.",
+                "decision": "confirmed_scam",
+                "reason": "Smoke test audit: verified phishing attempt impersonating official wallet support.",
                 "scam_type_id": 1,
-                "version": 1,
+                "version": target_version,
             }
             status, body, lat = self._request("POST", f"/cases/{target_case_id}/decision", data=decision_payload)
             new_status = body.get("status")

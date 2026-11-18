@@ -98,22 +98,23 @@ export default function PaymentCheck() {
             </header>
 
             {/* Question 1: Amount */}
-            <div className="double-bezel">
-              <div className="double-bezel-inner p-5 flex flex-col gap-2.5">
+            <div className="double-bezel min-w-0">
+              <div className="double-bezel-inner p-4 sm:p-5 flex flex-col gap-2.5 min-w-0">
                 <label htmlFor="payment-amount" className="text-xs text-muted font-semibold">
                   {t("payment_check.amount_label")} (BDT)
                 </label>
-                <div className="relative">
+                <div className="relative min-w-0">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-info text-xl font-mono">
                     ৳
                   </span>
                   <input
                     id="payment-amount"
+                    name="amount_bdt"
                     type="text"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     placeholder="5000"
-                    className="w-full rounded-xl border border-border bg-bg/90 py-3.5 pl-10 pr-4 text-xl font-black text-text placeholder:text-muted focus:border-info focus:outline-none font-mono shadow-inner"
+                    className="w-full min-w-0 rounded-xl border border-border bg-bg/90 py-3.5 pl-10 pr-4 text-xl font-black text-text placeholder:text-muted focus:border-info focus:outline-none font-mono shadow-inner"
                     data-testid="payment-amount-input"
                     required
                   />
@@ -122,18 +123,18 @@ export default function PaymentCheck() {
             </div>
 
             {/* Question 2: Recipient Status (SegmentedControl) */}
-            <div className="double-bezel">
-              <div className="double-bezel-inner p-5 flex flex-col gap-3.5">
+            <div className="double-bezel min-w-0">
+              <div className="double-bezel-inner p-4 sm:p-5 flex flex-col gap-3.5 min-w-0">
                 <span className="text-xs text-muted font-semibold">
                   {t("payment_check.recipient_label")}
                 </span>
-                <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-bg/80 p-1.5 border border-border">
+                <div className="grid grid-cols-3 gap-1.5 rounded-xl bg-bg/80 p-1.5 border border-border min-w-0">
                   {(["known", "new", "not_sure"] as const).map((status) => (
                     <button
                       key={status}
                       type="button"
                       onClick={() => setRecipientStatus(status)}
-                      className={`py-2.5 text-xs font-bold rounded-lg transition-all ${
+                      className={`min-w-0 break-words px-1.5 py-2.5 text-xs font-bold rounded-lg transition-all ${
                         recipientStatus === status
                           ? "bg-info text-on-risk shadow-sm"
                           : "text-muted hover:text-text"
@@ -146,24 +147,28 @@ export default function PaymentCheck() {
                 </div>
 
                 {/* Recipient Number & Provider */}
-                <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <label className="flex flex-col gap-1.5 text-xs">
+                <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3.5 min-w-0">
+                  <label htmlFor="recipient-number" className="flex flex-col gap-1.5 text-xs min-w-0">
                     <span className="text-muted font-semibold">
                       {t("payment_check.number_label")} ({t("payment_check.optional")})
                     </span>
                     <input
+                      id="recipient-number"
+                      name="recipient_number"
                       type="text"
                       value={recipientNumber}
                       onChange={(e) => setRecipientNumber(e.target.value)}
                       placeholder="01712345678"
-                      className="rounded-xl border border-border bg-surface-2 p-3 text-xs text-text placeholder:text-muted focus:border-info focus:outline-none font-mono"
+                      className="w-full min-w-0 rounded-xl border border-border bg-surface-2 p-3 text-xs text-text placeholder:text-muted focus:border-info focus:outline-none font-mono"
                       data-testid="recipient-number-input"
                     />
                   </label>
 
-                  <label className="flex flex-col gap-1.5 text-xs">
+                  <label htmlFor="payment-provider" className="flex flex-col gap-1.5 text-xs min-w-0">
                     <span className="text-muted font-semibold">{t("payment_check.provider_label")}</span>
                     <select
+                      id="payment-provider"
+                      name="provider"
                       value={provider}
                       onChange={(e) =>
                         setProvider(
@@ -175,7 +180,7 @@ export default function PaymentCheck() {
                             | "other"
                         )
                       }
-                      className="rounded-xl border border-border bg-surface-2 p-3 text-xs text-text focus:border-info focus:outline-none"
+                      className="w-full min-w-0 rounded-xl border border-border bg-surface-2 p-3 text-xs text-text focus:border-info focus:outline-none"
                       data-testid="payment-provider-select"
                     >
                       <option value="bkash">bKash (বিকাশ)</option>
@@ -225,18 +230,18 @@ export default function PaymentCheck() {
             </div>
 
             {/* Question 4: Are you being rushed? */}
-            <div className="double-bezel">
-              <div className="double-bezel-inner p-5 flex flex-col gap-3">
+            <div className="double-bezel min-w-0">
+              <div className="double-bezel-inner p-4 sm:p-5 flex flex-col gap-3 min-w-0">
                 <span className="text-xs text-muted font-semibold">
                   {t("payment_check.rushed_label")}
                 </span>
-                <div className="grid grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-3 gap-2 min-w-0">
                   {(["yes", "no", "not_sure"] as const).map((r) => (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setRushed(r)}
-                      className={`py-3 text-xs font-bold rounded-xl border transition-all ${
+                      className={`min-w-0 break-words px-1.5 py-3 text-xs font-bold rounded-xl border transition-all ${
                         rushed === r
                           ? "border-warning bg-warning/15 text-warning font-bold"
                           : "border-border bg-surface-2 text-muted hover:text-text"
