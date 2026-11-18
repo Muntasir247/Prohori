@@ -121,16 +121,17 @@ async def test_role_denial_on_every_admin_route_automatically(
     _, reviewer_tok = reviewer_user
     _, user_tok = standard_user
 
-    # Inspect all registered admin endpoints from client app
+    # Inspect all registered admin endpoints via OpenAPI schema (works across
+    # both flattened APIRoutes and FastAPI 0.163+ _IncludedRouter trees).
     app = client._transport.app
-    admin_routes: list[tuple[str, str]] = []
-    for route in app.routes:
-        path = getattr(route, "path", "")
-        if path.startswith("/api/v1/admin"):
-            methods = getattr(route, "methods", set())
-            for m in methods:
-                if m in ("GET", "POST", "PATCH", "DELETE"):
-                    admin_routes.append((m, path))
+    openapi_paths = app.openapi().get("paths", {})
+    admin_routes: list[tuple[str, str]] = [
+        (method.upper(), path)
+        for path, operations in openapi_paths.items()
+        if path.startswith("/api/v1/admin")
+        for method in operations
+        if method.upper() in ("GET", "POST", "PATCH", "DELETE")
+    ]
 
     assert len(admin_routes) >= 10, "Expected at least 10 admin endpoints"
 
